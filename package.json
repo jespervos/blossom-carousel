@@ -1,0 +1,33 @@
+{
+  "name": "blossom-carousel",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Jesper Vos",
+  "license": "MIT",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jesper_vos/blossom-carousel"
+  },
+  "bugs": {
+    "url": "https://github.com/jesper_vos/blossom-carousel/issues"
+  },
+  "homepage": "https://www.blossom-carousel.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blossom",
+    "carousel",
+    "js",
+    "vanilla",
+    "javascript"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}

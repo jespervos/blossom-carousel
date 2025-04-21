@@ -1,0 +1,53 @@
+[blossom-carousel] {
+  display: inline-block;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: clip;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  list-style-type: none;
+  inline-size: 100%;
+  max-inline-size: 100vw;
+  box-sizing: border-box;
+
+  /* hide scrollbar */
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* &[has-repeat="true"] {
+    scroll-padding: 0 50% !important;
+    padding: 0 50% !important;
+  } */
+
+  &[has-snap="true"] {
+    scroll-snap-type: var(--snap-type) !important;
+  }
+
+  &[has-overflow="true"] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+
+      /* disable snapping when dragging */
+      @media (pointer: fine) {
+        scroll-snap-type: none !important;
+      }
+    }
+  }
+
+  & > * {
+    display: inline-block;
+    white-space: initial;
+    vertical-align: top;
+  }
+
+  /* prevent drag interaction on children */
+  & * {
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+}

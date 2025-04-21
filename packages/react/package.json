@@ -1,0 +1,35 @@
+{
+  "name": "@blossom-carousel/react",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/blossom-carousel-react.umd.js",
+  "module": "dist/blossom-carousel-react.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/blossom-carousel-react.es.js",
+      "require": "./dist/blossom-carousel-react.umd.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@blossom-carousel/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.1",
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite-plugin-dts": "^4.5.3"
+  }
+}
