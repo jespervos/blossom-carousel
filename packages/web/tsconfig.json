@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

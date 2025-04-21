@@ -19,7 +19,7 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/main.js"),
+      entry: path.resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
       fileName: (format) => `blossom-carousel-vue.${format}.js`,
       cssFileName: () => "blossom-carousel-vue.css",

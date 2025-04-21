@@ -7,10 +7,10 @@ const BlossomCarousel = ({
   children,
   ...rest
 }) => {
-  const scrollerRef = useRef(null);
+  const rootRef = useRef(null);
 
   useEffect(() => {
-    const blossom = Blossom(scrollerRef.current, { repeat });
+    const blossom = Blossom(rootRef.current, { repeat });
     blossom.init();
     return () => {
       blossom.destroy();
@@ -18,7 +18,7 @@ const BlossomCarousel = ({
   }, [repeat]);
 
   return (
-    <Component ref={scrollerRef} blossom-carousel="true" {...rest}>
+    <Component ref={rootRef} blossom-carousel="true" {...rest}>
       {children}
     </Component>
   );

@@ -7,10 +7,10 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jesper_vos/blossom-carousel"
+    "url": "git+https://github.com/jespervos/blossom-carousel"
   },
   "bugs": {
-    "url": "https://github.com/jesper_vos/blossom-carousel/issues"
+    "url": "https://github.com/jespervos/blossom-carousel/issues"
   },
   "homepage": "https://www.blossom-carousel.com",
   "main": "index.js",
@@ -20,9 +20,22 @@
   "keywords": [
     "blossom",
     "carousel",
+    "slider",
+    "slideshow",
+    "scroll",
+    "scroller",
+    "drag",
+    "dragging",
     "js",
     "vanilla",
-    "javascript"
+    "javascript",
+    "typescript",
+    "web",
+    "html",
+    "css",
+    "svelte",
+    "react",
+    "vue"
   ],
   "workspaces": [
     "packages/*"

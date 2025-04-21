@@ -34,3 +34,6 @@ coverage/
 # Misc
 *.pid
 pids/
+
+# Temporary ignore
+README.md

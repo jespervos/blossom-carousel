@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["svelte"]
+  },
+  "include": ["src/**/*"]
+}

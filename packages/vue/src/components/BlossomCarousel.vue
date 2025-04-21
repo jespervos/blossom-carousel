@@ -1,5 +1,5 @@
 <template>
-  <component :is="is" ref="scroller" blossom-carousel="true">
+  <component :is="is" ref="root" blossom-carousel="true">
     <slot />
   </component>
 </template>
@@ -19,12 +19,12 @@ const props = defineProps({
   },
 });
 
-const scroller = shallowRef(null);
-defineExpose({ el: scroller });
+const root = shallowRef(null);
+defineExpose({ el: root });
 
 let blossom = null;
 onMounted(() => {
-  blossom = Blossom(scroller.value);
+  blossom = Blossom(root.value);
   blossom.init();
 });
 onBeforeUnmount(() => {

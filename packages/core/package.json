@@ -4,7 +4,17 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./style.css": "./style.css"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts"
+  },
+  "devDependencies": {
+    "tsup": "^6.0.0"
   }
 }

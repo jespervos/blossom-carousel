@@ -4,6 +4,7 @@ import BlossomCarousel from "./components/BlossomCarousel.vue";
 
 <template>
   <div class="page">
+    <h1>Blossom in Vue</h1>
     <BlossomCarousel class="carousel" is="ul">
       <li v-for="i in 12" :key="`slide${i}`" class="slide">
         {{ i }}
@@ -19,6 +20,7 @@ import BlossomCarousel from "./components/BlossomCarousel.vue";
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 .carousel {
