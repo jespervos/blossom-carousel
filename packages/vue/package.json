@@ -2,15 +2,17 @@
   "name": "@blossom-carousel/vue",
   "version": "0.0.1",
   "type": "module",
-  "main": "dist/blossom-carousel-vue.umd.js",
-  "module": "dist/blossom-carousel-vue.es.js",
-  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/blossom-carousel-vue.umd.cjs",
+  "module": "dist/blossom-carousel-vue.js",
   "exports": {
     ".": {
-      "import": "./dist/blossom-carousel-vue.es.js",
-      "require": "./dist/blossom-carousel-vue.umd.js",
-      "types": "./dist/index.d.ts"
-    }
+      "import": "./dist/blossom-carousel-vue.js",
+      "require": "./dist/blossom-carousel-vue.umd.cjs"
+    },
+    "./style.css": "./dist/blossom-carousel-vue.css"
   },
   "publishConfig": {
     "access": "public"
