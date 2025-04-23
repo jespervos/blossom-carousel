@@ -1,6 +1,18 @@
 {
   "name": "@blossom-carousel/core",
+  "private": true,
   "version": "0.0.1",
+  "author": "Jesper Vos",
+  "license": "MIT",
+  "description": "A native-scroll-first carousel component for the web.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jespervos/blossom-carousel"
+  },
+  "bugs": {
+    "url": "https://github.com/jespervos/blossom-carousel/issues"
+  },
+  "homepage": "https://www.blossom-carousel.com",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

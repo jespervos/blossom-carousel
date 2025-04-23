@@ -1,2 +1,2 @@
-import BlossomCarousel from "./components/BlossomCarousel.jsx";
-export default BlossomCarousel;
+import BlossomCarousel from "./BlossomCarousel.jsx";
+export { BlossomCarousel };

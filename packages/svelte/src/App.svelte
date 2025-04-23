@@ -1,5 +1,5 @@
 <script>
-  import BlossomCarousel from './components/BlossomCarousel.svelte';
+  import BlossomCarousel from './BlossomCarousel.svelte';
 </script>
 
 <div class="page">

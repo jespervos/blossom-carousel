@@ -4,7 +4,7 @@
   "private": true,
   "author": "Jesper Vos",
   "license": "MIT",
-  "description": "",
+  "description": "A native-scroll-first carousel component for the web.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jespervos/blossom-carousel"
@@ -17,26 +17,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "blossom",
-    "carousel",
-    "slider",
-    "slideshow",
-    "scroll",
-    "scroller",
-    "drag",
-    "dragging",
-    "js",
-    "vanilla",
-    "javascript",
-    "typescript",
-    "web",
-    "html",
-    "css",
-    "svelte",
-    "react",
-    "vue"
-  ],
   "workspaces": [
     "packages/*"
   ],

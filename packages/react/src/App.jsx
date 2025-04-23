@@ -1,5 +1,5 @@
 import React from "react";
-import BlossomCarousel from "./components/BlossomCarousel.jsx";
+import BlossomCarousel from "./BlossomCarousel.jsx";
 
 export default function App() {
   return (

@@ -6,8 +6,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
-      formats: ["es"],
-      fileName: () => "blossom-carousel.js",
+      fileName: "blossom-carousel-vue",
     },
     rollupOptions: {
       external: ["@blossom-carousel/core"],

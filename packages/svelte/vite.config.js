@@ -4,10 +4,7 @@ import dts from "vite-plugin-dts";
 import path from "path";
 
 export default defineConfig({
-  plugins: [
-    svelte(),
-    dts({ skipDiagnostics: true }),
-  ],
+  plugins: [svelte(), dts({ skipDiagnostics: true })],
   resolve: {
     alias: [
       {
@@ -24,8 +21,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
-      fileName: (format) => `blossom-carousel-svelte.${format}.js`,
-      cssFileName: () => "blossom-carousel-svelte.css",
+      fileName: "blossom-carousel-svelte",
     },
     rollupOptions: {
       external: ["svelte"],
