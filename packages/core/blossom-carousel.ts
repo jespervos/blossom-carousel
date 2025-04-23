@@ -444,9 +444,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function snapSelect({ axis = "x" }: AxisOption): number {
     const restingX = project({ axis });
-    const nearestSnapPoint = snapPoints.reduce((prev, curr) =>
-      Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
-    );
+    let nearestSnapPoint = clamp(restingX, 0, end);
+    if (snapPoints.length) {
+      nearestSnapPoint = snapPoints.reduce((prev, curr) =>
+        Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
+      );
+    }
     return nearestSnapPoint;
   }
 
