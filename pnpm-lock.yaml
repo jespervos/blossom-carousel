@@ -47,8 +47,8 @@ importers:
   packages/react:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.6
-        version: 0.0.6(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.0.9
+        version: 0.0.9(rollup@4.40.0)(typescript@5.8.3)
       react:
         specifier: ^18.0.0
         version: 18.3.1
