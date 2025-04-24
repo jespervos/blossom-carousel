@@ -70,9 +70,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let scrollerHeight = 300;
   let scrollPaddingLeft = 0;
   let scrollPaddingRight = 0;
-  let snapPoints: number[] = [0, 150, 300];
+  let snapPoints: number[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
+  let hasSnap = false;
 
   function init() {
     links = scroller?.querySelectorAll("a[href]") || null;
@@ -86,8 +87,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     resizeObserver.observe(scroller);
 
     const { scrollSnapType } = window.getComputedStyle(scroller);
+    hasSnap = scrollSnapType !== "none";
     scroller.style.setProperty("--snap-type", scrollSnapType);
     scroller.style["scroll-snap-type"] = "none";
+
+    scroller.setAttribute("has-repeat", options.repeat ? "true" : "false");
   }
 
   function destroy() {
@@ -130,35 +134,70 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scrollPaddingLeft = parseInt(styles.paddingLeft) || 0;
     end = scrollerScrollWidth - scrollerWidth - 4;
 
-    // precompute snap point for all slides
-    // and filter out duplicates (in case of multiple rows)
-    const scrollerLeft = scroller.offsetLeft;
-    snapPoints = Array.from(scroller.children)
-      .map((el) => {
-        const { offsetLeft, clientWidth } = el as HTMLElement;
-        const { scrollSnapAlign } = window.getComputedStyle(el);
-
-        const left = offsetLeft - scrollerLeft;
-        switch (scrollSnapAlign) {
-          case "start":
-            return left;
-          case "end":
-            return left + clientWidth - scrollerWidth + scrollPaddingRight;
-          case "center":
-            return left + clientWidth * 0.5 - scrollerWidth / 2;
-          default:
-            return null;
-        }
-      })
-      .filter((snapPoint): snapPoint is number => snapPoint !== null)
-      .reduce((acc: number[], curr) => {
-        if (acc[acc.length - 1] !== curr) {
-          acc.push(curr);
-        }
-        return acc;
-      }, []);
+    snapPoints = !hasSnap ? [] : findSnapPoints(scroller);
 
     if (options?.repeat) onRepeat(null, null);
+  }
+
+  function findSnapPoints(scroller: HTMLElement): number[] {
+    let points: { align: string; el: HTMLElement | Element }[] = [];
+
+    let cycles = 0;
+    const traverseDOM = (node: HTMLElement | Element) => {
+      cycles++;
+      // break if the max depth is reached
+      if (cycles > 100) return;
+
+      const styles = window.getComputedStyle(node);
+      const scrollSnapAlign = styles.scrollSnapAlign;
+
+      // break if a snap-type value  is found
+      if (scrollSnapAlign !== "none") {
+        points.push({
+          align: scrollSnapAlign,
+          el: node,
+        });
+        return;
+      }
+
+      // traverse all children
+      const children = node.children;
+      if (children.length === 0) return;
+      for (let child of children) {
+        traverseDOM(child);
+      }
+    };
+    traverseDOM(scroller);
+
+    // precompute snap point for all slides
+    const scrollerLeft = scroller.offsetLeft;
+    let snapPoints = points.map(({ el, align }) => {
+      const { offsetLeft, clientWidth } = el as HTMLElement;
+      const left = offsetLeft - scrollerLeft;
+      switch (align) {
+        case "start":
+          return left;
+        case "end":
+          return left + clientWidth - scrollerWidth + scrollPaddingRight;
+        case "center":
+          return left + clientWidth * 0.5 - scrollerWidth / 2;
+        default:
+          return null;
+      }
+    });
+
+    // Filter out duplicates (i.e. in case of multiple rows)
+    snapPoints = snapPoints.filter(
+      (snapPoint): snapPoint is number => snapPoint !== null
+    );
+    snapPoints = snapPoints.reduce((acc: number[], curr: any) => {
+      if (acc[acc.length - 1] !== curr) {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
+
+    return snapPoints as number[];
   }
 
   function onScroll() {

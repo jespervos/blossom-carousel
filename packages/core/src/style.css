@@ -16,10 +16,10 @@
     display: none;
   }
 
-  /* &[has-repeat="true"] {
-    scroll-padding: 0 50% !important;
-    padding: 0 50% !important;
-  } */
+  &[has-repeat="true"] {
+    scroll-padding-inline: 50% !important;
+    padding-inline: 50% !important;
+  }
 
   &[has-snap="true"] {
     scroll-snap-type: var(--snap-type) !important;
