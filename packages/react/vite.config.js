@@ -5,18 +5,6 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react(), dts()],
-  resolve: {
-    alias: {
-      "@blossom-carousel/core": path.resolve(
-        __dirname,
-        "../core/blossom-carousel.ts"
-      ),
-      "@blossom-carousel/core/style.css": path.resolve(
-        __dirname,
-        "../core/style.css"
-      ),
-    },
-  },
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),

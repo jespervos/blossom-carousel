@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Blossom } from "@blossom-carousel/core";
+import "@blossom-carousel/core/style.css";
 
 const BlossomCarousel = ({
   as: Component = "div",
