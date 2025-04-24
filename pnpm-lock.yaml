@@ -25,11 +25,30 @@ importers:
         specifier: ^6.0.0
         version: 6.7.0(postcss@8.5.3)(typescript@5.8.3)
 
+  packages/dev:
+    dependencies:
+      '@blossom-carousel/core':
+        specifier: workspace:*
+        version: link:../core
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13(typescript@5.8.3)
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.2
+        version: 5.2.3(vite@6.3.3)(vue@3.5.13(typescript@5.8.3))
+      vite:
+        specifier: ^6.3.1
+        version: 6.3.3
+      vite-plugin-dts:
+        specifier: ^4.5.3
+        version: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
+
   packages/react:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.5
-        version: 0.0.5(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.0.6
+        version: 0.0.6(rollup@4.40.0)(typescript@5.8.3)
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -50,8 +69,8 @@ importers:
   packages/svelte:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.6
+        version: 0.0.6(rollup@4.40.0)(typescript@5.8.3)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.0.0
@@ -69,27 +88,27 @@ importers:
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.5
-        version: 0.0.5(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.0.6
+        version: 0.0.6(rollup@4.40.0)(typescript@5.8.3)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^5.2.2
-        version: 5.2.3(vite@6.3.2)(vue@3.5.13(typescript@5.8.3))
+        specifier: ^5.2.3
+        version: 5.2.3(vite@6.3.3)(vue@3.5.13(typescript@5.8.3))
       vite:
-        specifier: ^6.3.1
-        version: 6.3.2
+        specifier: ^6.3.3
+        version: 6.3.3
       vite-plugin-dts:
         specifier: ^4.5.3
-        version: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.2)
+        version: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
 
   packages/web:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.6
+        version: 0.0.6(typescript@5.8.3)
     devDependencies:
       typescript:
         specifier: ^5.0.0
@@ -183,11 +202,8 @@ packages:
     resolution: {integrity: sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==}
     engines: {node: '>=6.9.0'}
 
-  '@blossom-carousel/core@0.0.2':
-    resolution: {integrity: sha512-1tDYWWYowezQQkATFmaDmaqCiMBhxD3Dc1UfGaTfwmW1GiyPS1qooU6lz2vdi4dKhlHuU5iZ2GKNkv424QIeVQ==}
-
-  '@blossom-carousel/core@0.0.5':
-    resolution: {integrity: sha512-9/WzFR8b209rD3RLSBc9J4b8OqpxfTSAadN35BtcK1G82sanru0tO9cxr5QoiZqQuPCV1nV33rIh7V/RcMs6fw==}
+  '@blossom-carousel/core@0.0.6':
+    resolution: {integrity: sha512-xjZgOZgxhnHqy3/xESf1IWGXREIDkKc9OlNZBY4Qy0sUw6f/Cebj/tNIcEqf+PlJnameVGa8pZi+3BoygRVikw==}
 
   '@esbuild/aix-ppc64@0.25.2':
     resolution: {integrity: sha512-wCIboOL2yXZym2cgm6mlA742s9QeJ8DjGVaL39dLN4rRwrOgOyYSnOaFPhKZGLb2ngj4EyfAFjsNJwPXZvseag==}
@@ -1931,12 +1947,30 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@blossom-carousel/core@0.0.2': {}
-
-  '@blossom-carousel/core@0.0.5(rollup@4.40.0)(typescript@5.8.3)':
+  '@blossom-carousel/core@0.0.6(rollup@4.40.0)(typescript@5.8.3)':
     dependencies:
       vite: 6.3.3
       vite-plugin-dts: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - rollup
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - yaml
+
+  '@blossom-carousel/core@0.0.6(typescript@5.8.3)':
+    dependencies:
+      vite: 6.3.3
+      vite-plugin-dts: 4.5.3(typescript@5.8.3)(vite@6.3.3)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -2393,9 +2427,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.2.3(vite@6.3.2)(vue@3.5.13(typescript@5.8.3))':
+  '@vitejs/plugin-vue@5.2.3(vite@6.3.3)(vue@3.5.13(typescript@5.8.3))':
     dependencies:
-      vite: 6.3.2
+      vite: 6.3.3
       vue: 3.5.13(typescript@5.8.3)
 
   '@volar/language-core@2.4.12':
@@ -3270,6 +3304,25 @@ snapshots:
       - supports-color
 
   vite-plugin-dts@4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3):
+    dependencies:
+      '@microsoft/api-extractor': 7.52.4
+      '@rollup/pluginutils': 5.1.4(rollup@4.40.0)
+      '@volar/typescript': 2.4.12
+      '@vue/language-core': 2.2.0(typescript@5.8.3)
+      compare-versions: 6.1.1
+      debug: 4.4.0
+      kolorist: 1.8.0
+      local-pkg: 1.1.1
+      magic-string: 0.30.17
+      typescript: 5.8.3
+    optionalDependencies:
+      vite: 6.3.3
+    transitivePeerDependencies:
+      - '@types/node'
+      - rollup
+      - supports-color
+
+  vite-plugin-dts@4.5.3(typescript@5.8.3)(vite@6.3.3):
     dependencies:
       '@microsoft/api-extractor': 7.52.4
       '@rollup/pluginutils': 5.1.4(rollup@4.40.0)
