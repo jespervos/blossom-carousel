@@ -7,6 +7,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, shallowRef } from "vue";
 import { Blossom } from "@blossom-carousel/core";
+import "@blossom-carousel/core/style.css";
 
 const props = defineProps({
   is: {

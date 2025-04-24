@@ -55,7 +55,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blossom-carousel/core": "^0.0.2"
+    "@blossom-carousel/core": "^0.0.4"
   },
   "peerDependencies": {
     "vue": "^3.5.13"

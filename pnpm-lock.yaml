@@ -69,8 +69,8 @@ importers:
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.4
+        version: 0.0.4(rollup@4.40.0)(typescript@5.8.3)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -185,6 +185,9 @@ packages:
 
   '@blossom-carousel/core@0.0.2':
     resolution: {integrity: sha512-1tDYWWYowezQQkATFmaDmaqCiMBhxD3Dc1UfGaTfwmW1GiyPS1qooU6lz2vdi4dKhlHuU5iZ2GKNkv424QIeVQ==}
+
+  '@blossom-carousel/core@0.0.4':
+    resolution: {integrity: sha512-8HfvBLK1IFvM5iDWOuJAZnMWRz6LhohaXwc/V/uqosXvL5tI+ywHI9mX/RlA03TIjJvbTArzbYnmbKXe/Z7OoA==}
 
   '@esbuild/aix-ppc64@0.25.2':
     resolution: {integrity: sha512-wCIboOL2yXZym2cgm6mlA742s9QeJ8DjGVaL39dLN4rRwrOgOyYSnOaFPhKZGLb2ngj4EyfAFjsNJwPXZvseag==}
@@ -1929,6 +1932,26 @@ snapshots:
       '@babel/helper-validator-identifier': 7.25.9
 
   '@blossom-carousel/core@0.0.2': {}
+
+  '@blossom-carousel/core@0.0.4(rollup@4.40.0)(typescript@5.8.3)':
+    dependencies:
+      vite: 6.3.3
+      vite-plugin-dts: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - rollup
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - yaml
 
   '@esbuild/aix-ppc64@0.25.2':
     optional: true
