@@ -1,5 +1,5 @@
 <template>
-  <component :is="is" ref="root" blossom-carousel="true">
+  <component :is="as" ref="root" blossom-carousel="true">
     <slot />
   </component>
 </template>
@@ -10,7 +10,7 @@ import { Blossom } from "@blossom-carousel/core";
 import "@blossom-carousel/core/style.css";
 
 const props = defineProps({
-  is: {
+  as: {
     type: String,
     default: "div",
   },
