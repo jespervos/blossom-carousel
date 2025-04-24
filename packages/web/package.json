@@ -42,8 +42,7 @@
   "exports": {
     ".": {
       "import": "./dist/blossom-carousel-web.js",
-      "require": "./dist/blossom-carousel-web.umd.cjs",
-      "types": "dist/index.d.ts"
+      "require": "./dist/blossom-carousel-web.umd.cjs"
     },
     "./style.css": "./dist/blossom-carousel-web.css"
   },
@@ -56,10 +55,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blossom-carousel/core": "workspace:*"
+    "@blossom-carousel/core": "^0.0.2"
   },
   "devDependencies": {
-    "vite": "^4.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vite": "^4.0.0"
   }
 }

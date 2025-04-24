@@ -21,8 +21,8 @@ importers:
   packages/react:
     dependencies:
       '@blossom-carousel/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.2
+        version: 0.0.2
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -43,8 +43,8 @@ importers:
   packages/svelte:
     dependencies:
       '@blossom-carousel/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.2
+        version: 0.0.2
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.0.0
@@ -62,8 +62,8 @@ importers:
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.2
+        version: 0.0.2
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -81,8 +81,8 @@ importers:
   packages/web:
     dependencies:
       '@blossom-carousel/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: ^0.0.2
+        version: 0.0.2
     devDependencies:
       typescript:
         specifier: ^5.0.0
@@ -175,6 +175,9 @@ packages:
   '@babel/types@7.27.0':
     resolution: {integrity: sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==}
     engines: {node: '>=6.9.0'}
+
+  '@blossom-carousel/core@0.0.2':
+    resolution: {integrity: sha512-1tDYWWYowezQQkATFmaDmaqCiMBhxD3Dc1UfGaTfwmW1GiyPS1qooU6lz2vdi4dKhlHuU5iZ2GKNkv424QIeVQ==}
 
   '@esbuild/aix-ppc64@0.25.2':
     resolution: {integrity: sha512-wCIboOL2yXZym2cgm6mlA742s9QeJ8DjGVaL39dLN4rRwrOgOyYSnOaFPhKZGLb2ngj4EyfAFjsNJwPXZvseag==}
@@ -1877,6 +1880,8 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
+
+  '@blossom-carousel/core@0.0.2': {}
 
   '@esbuild/aix-ppc64@0.25.2':
     optional: true

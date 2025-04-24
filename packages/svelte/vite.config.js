@@ -24,10 +24,11 @@ export default defineConfig({
       fileName: "blossom-carousel-svelte",
     },
     rollupOptions: {
-      external: ["svelte"],
+      external: ["svelte", "@blossom-carousel/core"],
       output: {
         globals: {
           svelte: "Svelte",
+          "@blossom-carousel/core": "BlossomCarouselCore",
         },
       },
     },
