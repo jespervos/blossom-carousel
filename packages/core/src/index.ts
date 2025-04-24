@@ -1,2 +1,2 @@
-export { Blossom } from "./blossom-carousel";
+export { Blossom } from "./blossom-carousel-core";
 import "./style.css";
