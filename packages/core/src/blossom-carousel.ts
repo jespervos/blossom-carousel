@@ -91,7 +91,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller.style.setProperty("--snap-type", scrollSnapType);
     scroller.style["scroll-snap-type"] = "none";
 
-    scroller.setAttribute("has-repeat", options.repeat ? "true" : "false");
+    scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
   }
 
   function destroy() {
@@ -150,6 +150,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
       const styles = window.getComputedStyle(node);
       const scrollSnapAlign = styles.scrollSnapAlign;
+
+      console.log(cycles, node, scrollSnapAlign);
 
       // break if a snap-type value  is found
       if (scrollSnapAlign !== "none") {

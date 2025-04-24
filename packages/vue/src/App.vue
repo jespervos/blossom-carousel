@@ -4,7 +4,7 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 
 <template>
   <div class="page">
-    <h1>Blossom in Vue</h1>
+    <h1>Blossom Vue</h1>
     <BlossomCarousel class="carousel">
       <ul class="track">
         <li v-for="i in 12" :key="`slide${i}`" class="slide">

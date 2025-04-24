@@ -29,6 +29,6 @@ onMounted(() => {
   blossom.init();
 });
 onBeforeUnmount(() => {
-  blossom.destroy();
+  blossom?.destroy();
 });
 </script>
