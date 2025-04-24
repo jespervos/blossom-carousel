@@ -88,8 +88,8 @@ importers:
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.7
-        version: 0.0.7(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.0.8
+        version: 0.0.8(rollup@4.40.0)(typescript@5.8.3)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -205,8 +205,8 @@ packages:
   '@blossom-carousel/core@0.0.6':
     resolution: {integrity: sha512-xjZgOZgxhnHqy3/xESf1IWGXREIDkKc9OlNZBY4Qy0sUw6f/Cebj/tNIcEqf+PlJnameVGa8pZi+3BoygRVikw==}
 
-  '@blossom-carousel/core@0.0.7':
-    resolution: {integrity: sha512-xUANK98UgQQb/m2p5ay9RM2Yb4ng6pbSQswRfkbekbsCCt+Sy0nqAUb51M+2Gl3L1375CmVYd46Lsw+jBS/dRg==}
+  '@blossom-carousel/core@0.0.8':
+    resolution: {integrity: sha512-7yNGD9o3ykCldsW67Y9WOL7UDWrOdnmLYESqFYLnVSuJEf6abyvWNw+ee5Z8kpVvlf5jYihzGnu696u6WhSSyw==}
 
   '@esbuild/aix-ppc64@0.25.3':
     resolution: {integrity: sha512-W8bFfPA8DowP8l//sxjJLSLkD8iEjMc7cBVyP+u4cEv9sM7mdUCkgsj+t0n/BWPFtv7WWCN5Yzj0N6FJNUUqBQ==}
@@ -1950,7 +1950,7 @@ snapshots:
       - typescript
       - yaml
 
-  '@blossom-carousel/core@0.0.7(rollup@4.40.0)(typescript@5.8.3)':
+  '@blossom-carousel/core@0.0.8(rollup@4.40.0)(typescript@5.8.3)':
     dependencies:
       vite: 6.3.3
       vite-plugin-dts: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)

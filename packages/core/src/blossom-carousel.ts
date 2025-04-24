@@ -151,8 +151,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       const styles = window.getComputedStyle(node);
       const scrollSnapAlign = styles.scrollSnapAlign;
 
-      console.log(cycles, node, scrollSnapAlign);
-
       // break if a snap-type value  is found
       if (scrollSnapAlign !== "none") {
         points.push({
