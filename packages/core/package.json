@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for the web.",
@@ -12,20 +12,33 @@
     "url": "https://github.com/jespervos/blossom-carousel/issues"
   },
   "homepage": "https://www.blossom-carousel.com",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/blossom-carousel-core.umd.cjs",
+  "module": "dist/blossom-carousel-core.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/blossom-carousel-core.js",
+      "require": "./dist/blossom-carousel-core.umd.cjs"
     },
-    "./style.css": "./style.css"
+    "./style.css": "./dist/blossom-carousel-core.css"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "tsup": "^6.0.0"
+  },
+  "dependencies": {
+    "vite": "^6.3.3",
+    "vite-plugin-dts": "^4.5.3"
   }
 }

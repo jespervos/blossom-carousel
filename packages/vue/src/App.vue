@@ -45,6 +45,6 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   display: flex;
   align-items: center;
   justify-content: center;
-  scroll-snap-align: center;
+  /* scroll-snap-align: center; */
 }
 </style>
