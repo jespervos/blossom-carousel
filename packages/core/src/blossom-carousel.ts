@@ -1,5 +1,3 @@
-import "./style.css";
-
 interface Point {
   x: number;
   y: number;

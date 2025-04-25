@@ -5,12 +5,10 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 <template>
   <div class="page">
     <h1>Blossom Dev</h1>
-    <BlossomCarousel class="carousel">
-      <ul class="track">
-        <li v-for="i in 12" :key="`slide${i}`" class="slide">
-          {{ i }}
-        </li>
-      </ul>
+    <BlossomCarousel class="carousel" as="ul">
+      <li v-for="i in 12" :key="`slide${i}`" class="slide">
+        {{ i }}
+      </li>
     </BlossomCarousel>
   </div>
 </template>
@@ -33,9 +31,7 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 
   padding-block: 4rem;
   margin-block: -4rem;
-}
 
-.track {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 300px;
@@ -43,13 +39,14 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 }
 
 .slide {
-  width: 100%;
+  /* width: 300px; */
   aspect-ratio: 3/4;
   border-radius: 1rem;
   background-color: #404040;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* margin-right: 1rem; */
   scroll-snap-align: center;
 }
 </style>

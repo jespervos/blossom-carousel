@@ -6,7 +6,6 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, shallowRef } from "vue";
-import { Blossom } from "@blossom-carousel/core";
 import "@blossom-carousel/core/style.css";
 
 const props = defineProps({
@@ -24,7 +23,14 @@ const root = shallowRef(null);
 defineExpose({ el: root });
 
 let blossom = null;
-onMounted(() => {
+onMounted(async () => {
+  const hasMouse = window.matchMedia(
+    "(hover: hover) and (pointer: fine)"
+  ).matches;
+  if (!hasMouse) return;
+
+  const { Blossom } = await import("@blossom-carousel/core");
+
   blossom = Blossom(root.value);
   blossom.init();
 });
