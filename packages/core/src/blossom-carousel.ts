@@ -84,10 +84,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(scroller);
 
+    const hasMouse = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches;
+
     const { scrollSnapType } = window.getComputedStyle(scroller);
     hasSnap = scrollSnapType !== "none";
     scroller.style.setProperty("--snap-type", scrollSnapType);
-    scroller.style["scroll-snap-type"] = "none";
+    if (hasMouse) {
+      scroller.style["scroll-snap-type"] = "none";
+    }
 
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
   }
