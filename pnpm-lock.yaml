@@ -88,8 +88,8 @@ importers:
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.9
-        version: 0.0.9(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.0.11
+        version: 0.0.11(rollup@4.40.0)(typescript@5.8.3)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -201,6 +201,9 @@ packages:
   '@babel/types@7.27.0':
     resolution: {integrity: sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==}
     engines: {node: '>=6.9.0'}
+
+  '@blossom-carousel/core@0.0.11':
+    resolution: {integrity: sha512-0Drxpe/dUsU0Xtd6aA/3vYrBATq4aYN/gaUPTi/18I5YbBPrwYmdzrardG3YxWO/qDpxQEL4JGVQ+dWW/tKTdg==}
 
   '@blossom-carousel/core@0.0.6':
     resolution: {integrity: sha512-xjZgOZgxhnHqy3/xESf1IWGXREIDkKc9OlNZBY4Qy0sUw6f/Cebj/tNIcEqf+PlJnameVGa8pZi+3BoygRVikw==}
@@ -1909,6 +1912,26 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
+
+  '@blossom-carousel/core@0.0.11(rollup@4.40.0)(typescript@5.8.3)':
+    dependencies:
+      vite: 6.3.3
+      vite-plugin-dts: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - rollup
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - yaml
 
   '@blossom-carousel/core@0.0.6(rollup@4.40.0)(typescript@5.8.3)':
     dependencies:
