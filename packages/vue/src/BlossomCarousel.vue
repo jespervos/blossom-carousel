@@ -17,6 +17,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  load: {
+    type: String,
+    default: "conditional",
+  },
 });
 
 const root = shallowRef(null);
@@ -27,7 +31,10 @@ onMounted(async () => {
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
   ).matches;
-  if (!hasMouse) return;
+
+  // don't load if the user has no mouse.
+  // overwritten by props.load: 'always'
+  if (!hasMouse && props.load !== "always") return;
 
   const { Blossom } = await import("@blossom-carousel/core");
 
