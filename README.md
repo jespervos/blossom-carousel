@@ -1,40 +1,104 @@
+> ⚠️ Work in progress ⚠️
+>
+> Full package and documentation will be available soon.
+
 # Blossom Carousel
 
 Native-first carousel enhanced with drag support for pointer devices.
 
-## examples
+<p>
+<a href="https://www.npmjs.com/package/embla-carousel"><img src="https://img.shields.io/npm/v/@blossom-carousel/core.svg?color=%23c1a8e2"></a>
+<a href="https://bundlephobia.com/result?p=embla-carousel@latest"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
+</p>
 
-- Simple
+## Why Blossom?
 
-  - minimal overscroll container with drag support
+- **Native scrolling**: Full performance and accessibility.
+- **No abstraction**: use all native web API's.
+- **Configure with CSS**: Works with native scroll-snap, position sticky and scroll-driven animations.
+- **0kb on touch devices**: Blossom only loads when a pointer device is detected.
+- **Works with major frameworks**: Components for React, Vue, Svelte and Web Components.
 
-- variable widths
+## Installation
 
-  - using inline-block; white-space: none;
+<details>
+<summary>
 
-- css grid
+### React
 
-  - grid-auto-flow: column; grid-auto-columns: 300px;
+</summary>
 
-- multiple rows
+[React Docs](./packages/react)
 
-  - css grid with multiple rows
+```bash
+npm install @blossom-carousel/react
+```
 
-- Snapping
+</details>
 
-  - with center snapping on each card
+<details>
+<summary>
 
-- Grouping
+### Vue
 
-  - snap on every 3rd slide :nth-child(3n + 2) { scroll-snap-align: center }
+</summary>
 
-- Sticky
+[Vue Docs](./packages/vue)
 
-  - Using position sticky
+```bash
+npm install @blossom-carousel/vue
+```
 
-- Coverflow
+</details>
 
-  - Using scroll-timeline
+<details>
+<summary>
 
-- Hover
-  - padding-block: 4rem; margin-block: -4rem; to give space for scaling
+### Svelte
+
+</summary>
+
+[Svelte Docs](./packages/svelte)
+
+```bash
+npm install @blossom-carousel/svelte
+```
+
+</details>
+
+<details>
+<summary>
+
+### Web Component
+
+</summary>
+
+[Web Component Docs](./packages/web)
+
+```bash
+npm install @blossom-carousel/web
+```
+
+</details>
+
+## Examples
+
+> ### [All Examples](https://www.blossom-carousel.com/examples)
+>
+> > [Simple](https://www.blossom-carousel.com/examples/simple)
+> >
+> > [Variable widths](https://www.blossom-carousel.com/examples/variable-widths)
+> >
+> > [CSS Grid](https://www.blossom-carousel.com/examples/css-grid)
+> >
+> > [Multiple rows](https://www.blossom-carousel.com/examples/multiple-rows)
+> >
+> > [Snapping](https://www.blossom-carousel.com/examples/snapping)
+> >
+> > [Grouping](https://www.blossom-carousel.com/examples/grouping)
+> >
+> > [Sticky](https://www.blossom-carousel.com/examples/sticky)
+> >
+> > [Coverflow](https://www.blossom-carousel.com/examples/coverflow)
+> >
+> > [Hover](https://www.blossom-carousel.com/examples/hover)

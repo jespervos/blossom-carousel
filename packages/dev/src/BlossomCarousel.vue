@@ -20,9 +20,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  lazy: {
-    type: Boolean,
-    default: false,
+  load: {
+    type: String,
+    default: "conditional",
   },
 });
 
@@ -34,11 +34,14 @@ onMounted(async () => {
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
   ).matches;
-  if (hasMouse) return;
 
-  const { Blossom } = await import("@blossom-carousel/core");
+  // don't load if the user has no mouse.
+  // overwritten by props.load: 'always'
+  if (!hasMouse && props.load !== "always") return;
 
-  blossom = Blossom(root.value, { repeat: props.repeat });
+  const { Blossom } = await import("../../core/src/index");
+
+  blossom = Blossom(root.value);
   blossom.init();
 });
 onBeforeUnmount(() => {

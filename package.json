@@ -15,12 +15,18 @@
   "homepage": "https://www.blossom-carousel.com",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm --filter @blossom-carousel/dev dev",
+    "dev:vue": "pnpm --filter @blossom-carousel/vue dev",
+    "dev:react": "pnpm --filter @blossom-carousel/react dev",
+    "dev:svelte": "pnpm --filter @blossom-carousel/svelte dev",
+    "dev:web": "pnpm --filter @blossom-carousel/web dev"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
     "turbo": "^2.5.0"
-  }
+  },
+  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }
