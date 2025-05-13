@@ -6,15 +6,16 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
-      fileName: "blossom-carousel-web",
+      fileName: (format) => `blossom-carousel-web.${format}.js`,
     },
     rollupOptions: {
-      external: ["@blossom-carousel/core"],
-      output: {
-        globals: {
-          "@blossom-carousel/core": "BlossomCarouselCore",
-        },
-      },
+      external: ["./style.css"],
+      // external: ["@blossom-carousel/core"],
+      // output: {
+      //   globals: {
+      //     "@blossom-carousel/core": "BlossomCarouselCore",
+      //   },
+      // },
     },
   },
 });
