@@ -69,8 +69,8 @@ importers:
   packages/svelte:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.6
-        version: 0.0.6(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.0.11
+        version: 0.0.11(rollup@4.40.0)(typescript@5.8.3)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.0.0
@@ -107,8 +107,8 @@ importers:
   packages/web:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.0.6
-        version: 0.0.6(typescript@5.8.3)
+        specifier: ^0.0.11
+        version: 0.0.11(typescript@5.8.3)
     devDependencies:
       typescript:
         specifier: ^5.0.0
@@ -204,9 +204,6 @@ packages:
 
   '@blossom-carousel/core@0.0.11':
     resolution: {integrity: sha512-0Drxpe/dUsU0Xtd6aA/3vYrBATq4aYN/gaUPTi/18I5YbBPrwYmdzrardG3YxWO/qDpxQEL4JGVQ+dWW/tKTdg==}
-
-  '@blossom-carousel/core@0.0.6':
-    resolution: {integrity: sha512-xjZgOZgxhnHqy3/xESf1IWGXREIDkKc9OlNZBY4Qy0sUw6f/Cebj/tNIcEqf+PlJnameVGa8pZi+3BoygRVikw==}
 
   '@blossom-carousel/core@0.0.9':
     resolution: {integrity: sha512-qqPCtxxgcyKrWHL1c5ga48J7+1dK0OnT3muqYLLI/jK137kkJybA6T0c74SwPIF2iIOJ7mv+/eiUDq2OzgOB1Q==}
@@ -1933,27 +1930,7 @@ snapshots:
       - typescript
       - yaml
 
-  '@blossom-carousel/core@0.0.6(rollup@4.40.0)(typescript@5.8.3)':
-    dependencies:
-      vite: 6.3.3
-      vite-plugin-dts: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
-    transitivePeerDependencies:
-      - '@types/node'
-      - jiti
-      - less
-      - lightningcss
-      - rollup
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - typescript
-      - yaml
-
-  '@blossom-carousel/core@0.0.6(typescript@5.8.3)':
+  '@blossom-carousel/core@0.0.11(typescript@5.8.3)':
     dependencies:
       vite: 6.3.3
       vite-plugin-dts: 4.5.3(typescript@5.8.3)(vite@6.3.3)
