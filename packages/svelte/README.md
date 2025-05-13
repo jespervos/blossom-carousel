@@ -1,39 +1,25 @@
-# Blossom Carousel
+# Blossom Svelte
 
-A native-scroll-first carousel enhanced with drag support for Vue.
+A native-scroll-first carousel for Svelte.
 
 ## Installation
 
-`npm install @blossom-carousel/vue`
+`npm install @blossom-carousel/svelte`
 
-#### Vue
-
-```javascript
-import { BlossomCarousel } from "@blossom-carousel/vue";
-import "@blossom-carousel/core/style.css";
-
-const app = createApp({});
-app.component("BlossomCarousel", BlossomCarousel);
-```
-
-#### Nuxt
-
-Install globally `plugins/blossom-carousel.client.js`
+#### Svelte
 
 ```javascript
-import { BlossomCarousel } from "@blossom-carousel/vue";
+import BlossomCarousel from "@blossom-carousel/svelte";
 import "@blossom-carousel/core/style.css";
-
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component("BlossomCarousel", BlossomCarousel);
-});
 ```
 
 ## Usage
 
 ```html
 <BlossomCarousel>
-  <div v-for="i in 12">Slide {{ i }}</div>
+  {#each Array(12).fill(0).map((_, i) => i + 1) as num}
+  <div key="{num}">{num}</div>
+  {/each}
 </BlossomCarousel>
 ```
 
@@ -43,7 +29,9 @@ Define the HTMLElement of the carousel root.
 
 ```html
 <BlossomCarousel as="ul">
-  <li v-for="i in 12">Slide {{ i }}</li>
+  {#each Array(12).fill(0).map((_, i) => i + 1) as num}
+  <li key="{num}">{num}</li>
+  {/each}
 </BlossomCarousel>
 ```
 

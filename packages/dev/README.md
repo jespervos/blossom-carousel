@@ -37,7 +37,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 </BlossomCarousel>
 ```
 
-### as
+#### as
 
 Define the HTMLElement of the carousel root.
 
@@ -60,12 +60,12 @@ Renders as
 
 ## Examples
 
-- [Simple](https://www.blossom-carousel.com/examples/simple)
-- [Variable widths](https://www.blossom-carousel.com/examples/variable-widths)
-- [CSS Grid](https://www.blossom-carousel.com/examples/css-grid)
-- [Multiple rows](https://www.blossom-carousel.com/examples/multiple-rows)
-- [Snapping](https://www.blossom-carousel.com/examples/snapping)
-- [Grouping](https://www.blossom-carousel.com/examples/grouping)
-- [Sticky](https://www.blossom-carousel.com/examples/sticky)
-- [Coverflow](https://www.blossom-carousel.com/examples/coverflow)
-- [Hover](https://www.blossom-carousel.com/examples/hover)
+[Simple](https://www.blossom-carousel.com/examples/simple)
+[Variable widths](https://www.blossom-carousel.com/examples/variable-widths)
+[CSS Grid](https://www.blossom-carousel.com/examples/css-grid)
+[Multiple rows](https://www.blossom-carousel.com/examples/multiple-rows)
+[Snapping](https://www.blossom-carousel.com/examples/snapping)
+[Grouping](https://www.blossom-carousel.com/examples/grouping)
+[Sticky](https://www.blossom-carousel.com/examples/sticky)
+[Coverflow](https://www.blossom-carousel.com/examples/coverflow)
+[Hover](https://www.blossom-carousel.com/examples/hover)

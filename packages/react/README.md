@@ -1,39 +1,42 @@
 # Blossom Carousel
 
-A native-scroll-first carousel enhanced with drag support for Vue.
+A native-scroll-first carousel enhanced with drag support for React.
 
 ## Installation
 
-`npm install @blossom-carousel/vue`
+`npm install @blossom-carousel/react`
 
-#### Vue
+#### React
 
-```javascript
-import { BlossomCarousel } from "@blossom-carousel/vue";
+```jsx
+import { BlossomCarousel } from "@blossom-carousel/react";
 import "@blossom-carousel/core/style.css";
 
-const app = createApp({});
-app.component("BlossomCarousel", BlossomCarousel);
+function App() {
+  return <BlossomCarousel>{/* slides */}</BlossomCarousel>;
+}
 ```
 
-#### Nuxt
+#### Next.js
 
-Install globally `plugins/blossom-carousel.client.js`
+Add the import to your page or component:
 
-```javascript
-import { BlossomCarousel } from "@blossom-carousel/vue";
+```jsx
+import { BlossomCarousel } from "@blossom-carousel/react";
 import "@blossom-carousel/core/style.css";
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component("BlossomCarousel", BlossomCarousel);
-});
+export default function Page() {
+  return <BlossomCarousel>{/* slides */}</BlossomCarousel>;
+}
 ```
 
 ## Usage
 
-```html
+```jsx
 <BlossomCarousel>
-  <div v-for="i in 12">Slide {{ i }}</div>
+  {Array.from({ length: 12 }, (_, i) => (
+    <div>{i}</div>
+  ))}
 </BlossomCarousel>
 ```
 
@@ -41,9 +44,11 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 Define the HTMLElement of the carousel root.
 
-```html
+```jsx
 <BlossomCarousel as="ul">
-  <li v-for="i in 12">Slide {{ i }}</li>
+  {Array.from({ length: 12 }, (_, i) => (
+    <div>{i}</div>
+  ))}
 </BlossomCarousel>
 ```
 
