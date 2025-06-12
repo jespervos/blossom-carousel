@@ -30,7 +30,8 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 }
 
 .carousel {
-  padding-inline: 0;
+  /* padding-inline: 10rem; */
+  /* scroll-padding-inline: 10rem; */
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
   scroll-snap-type: x mandatory;
@@ -42,30 +43,27 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 300px;
-  grid-gap: 1rem;
+  /* grid-gap: 1rem; */
 }
 
 .slide {
   aspect-ratio: 3/4;
-  scroll-snap-align: start;
-  background-color: #404040;
+  scroll-snap-align: center;
+  /* background-color: #404040;
   border-radius: 1rem;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
+  border: 1px solid red;
 }
 
-/* .carousel {
+.carousel {
   perspective: 1000px;
 }
 
 .slide {
   transform-style: preserve-3d;
   container-type: scroll-state;
-
-  &:not(:first-child) {
-    margin-left: -30px;
-  }
 
   > p {
     width: 100%;
@@ -92,5 +90,5 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   to {
     transform: rotateY(70deg) translateZ(-100px) scale(0.75);
   }
-} */
+}
 </style>

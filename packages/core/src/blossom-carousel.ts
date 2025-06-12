@@ -65,8 +65,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let scrollerWidth = 300;
   let scrollerScrollHeight = 300;
   let scrollerHeight = 300;
-  let scrollPaddingLeft = 0;
-  let scrollPaddingRight = 0;
+  const padding = { left: 0, right: 0 };
+  const scrollPadding = { left: 0, right: 0 };
   let snapPoints: number[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -133,8 +133,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       !hasTouch &&
       scrollerScrollHeight > scrollerHeight &&
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
-    scrollPaddingRight = parseInt(styles.paddingRight) || 0;
-    scrollPaddingLeft = parseInt(styles.paddingLeft) || 0;
+    padding.right = parseInt(styles.paddingRight) || 0;
+    padding.left = parseInt(styles.paddingLeft) || 0;
+    scrollPadding.left = parseInt(styles.scrollPaddingLeft) || 0;
+    scrollPadding.right = parseInt(styles.scrollPaddingRight) || 0;
     end = scrollerScrollWidth - scrollerWidth - 4;
 
     snapPoints = !hasSnap ? [] : findSnapPoints(scroller);
@@ -173,15 +175,17 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     traverseDOM(scroller);
 
     // precompute snap point for all slides
-    const scrollerLeft = scroller.offsetLeft;
+    const scrollerRect = scroller.getBoundingClientRect();
     let snapPoints = points.map(({ el, align }, i) => {
-      const { offsetLeft, clientWidth } = el as HTMLElement;
-      const left = offsetLeft - scrollerLeft;
+      const elementRect = (el as HTMLElement).getBoundingClientRect();
+      const clientWidth = (el as HTMLElement).clientWidth;
+      const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
+
       switch (align) {
         case "start":
-          return left;
+          return left - scrollPadding.left;
         case "end":
-          return left + clientWidth - scrollerWidth + scrollPaddingRight;
+          return left + clientWidth - scrollerWidth + scrollPadding.right;
         case "center":
           return left + clientWidth * 0.5 - scrollerWidth / 2;
         default:
@@ -315,9 +319,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (!scroller) return;
 
     const scrollLeft = x ?? scroller.scrollLeft;
-    const distanceToStartEdge = scrollPaddingLeft - scrollLeft;
+    const distanceToStartEdge = padding.left - scrollLeft;
     const distanceToEndEdge =
-      scrollLeft - (scrollerScrollWidth - scrollerWidth - scrollPaddingRight);
+      scrollLeft - (scrollerScrollWidth - scrollerWidth - padding.right);
     const slides = Array.from(scroller.children) as HTMLElement[];
 
     /**
