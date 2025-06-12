@@ -59,7 +59,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   );
 
   let end = 300;
-
   let raf: number | null = null;
   let isDragging = false;
   let scrollerScrollWidth = 300;
@@ -174,32 +173,29 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     traverseDOM(scroller);
 
     // precompute snap point for all slides
-    const scrollerLeft = scroller.offsetLeft;
-    let snapPoints = points.map(({ el, align }) => {
+    let snapPoints = points.map(({ el, align }, i) => {
       const { offsetLeft, clientWidth } = el as HTMLElement;
-      const left = offsetLeft - scrollerLeft;
       switch (align) {
         case "start":
-          return left;
+          return offsetLeft;
         case "end":
-          return left + clientWidth - scrollerWidth + scrollPaddingRight;
+          return offsetLeft + clientWidth - scrollerWidth + scrollPaddingRight;
         case "center":
-          return left + clientWidth * 0.5 - scrollerWidth / 2;
+          return offsetLeft + clientWidth * 0.5 - scrollerWidth / 2;
         default:
           return null;
       }
     });
 
     // Filter out duplicates (i.e. in case of multiple rows)
-    snapPoints = snapPoints.filter(
-      (snapPoint): snapPoint is number => snapPoint !== null
-    );
-    snapPoints = snapPoints.reduce((acc: number[], curr: any) => {
-      if (acc[acc.length - 1] !== curr) {
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
+    snapPoints = snapPoints
+      .filter((snapPoint): snapPoint is number => snapPoint !== null)
+      .reduce((acc: number[], curr: any) => {
+        if (acc[acc.length - 1] !== curr) {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
 
     return snapPoints as number[];
   }
@@ -278,7 +274,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     isDragging = false;
 
     if (distanceMovedSincePointerDown.x <= 10) return;
-
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
@@ -294,16 +289,17 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function onKeydown(e: KeyboardEvent): void {
-    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key))
       setIsTicking(false);
-    }
   }
 
   function dragSnap(): void {
     //TODO: add support for vertical snapping
-
-    let slideX = snapSelect({ axis: "x" });
-    slideX = clamp(slideX, 0, scrollerScrollWidth - scrollerWidth);
+    const slideX = clamp(
+      snapSelect({ axis: "x" }),
+      0,
+      scrollerScrollWidth - scrollerWidth
+    );
     const distance = slideX - target.x;
     const force = distance * (1 - FRICTION) * (1 / FRICTION);
     velocity.x = force;
@@ -317,7 +313,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (!scroller) return;
 
     const scrollLeft = x ?? scroller.scrollLeft;
-
     const distanceToStartEdge = scrollPaddingLeft - scrollLeft;
     const distanceToEndEdge =
       scrollLeft - (scrollerScrollWidth - scrollerWidth - scrollPaddingRight);
@@ -348,17 +343,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (isDragging) return;
 
     // loop
-    if (scrollLeft > end) {
-      scroller.scrollTo({
-        left: 4,
-        behavior: "instant" as ScrollBehavior,
-      });
-    } else if (scrollLeft < 4) {
-      scroller.scrollTo({
-        left: end,
-        behavior: "instant" as ScrollBehavior,
-      });
-    }
+    const left = scrollLeft > end ? 4 : scrollLeft < 4 ? end : null;
+    if (!left) return;
+    scroller.scrollTo({
+      left,
+      behavior: "instant" as ScrollBehavior,
+    });
   }
 
   /******************
@@ -442,27 +432,34 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     lastTick = t;
   }
 
-  let x = 0;
+  let rubberBandOffset = 0;
   function applyRubberBanding(left: number): void {
     if (!scroller) return;
 
     //TODO: add support for vertical rubber banding
     const edge = scrollerScrollWidth - scrollerWidth;
 
-    if (left < 0 || left > edge) {
-      if (isDragging) {
-        if (left < 0) {
-          x = map(left, 0, -500, 0, 100);
-        } else if (left > edge) {
-          x = map(left, edge, edge + 500, 0, -100);
-        }
-      } else {
-        x = damp(x, 0, DAMPING, frameDelta);
-      }
-
-      scroller.style.transform = `translateX(${round(x, 3)}px)`;
-      dispatchOverscrollEvent(x);
+    let targetOffset = 0;
+    if (left < 0) {
+      targetOffset = isDragging ? left * -0.2 : 0;
+    } else if (left > edge) {
+      targetOffset = isDragging ? (left - edge) * -0.2 : 0;
     }
+    rubberBandOffset = damp(
+      rubberBandOffset,
+      targetOffset,
+      isDragging ? 0.8 : DAMPING,
+      frameDelta
+    );
+
+    if (Math.abs(rubberBandOffset) > 0.01) {
+      scroller.style.transform = `translateX(${round(rubberBandOffset, 3)}px)`;
+      dispatchOverscrollEvent(rubberBandOffset);
+      return;
+    }
+
+    scroller.style.transform = "";
+    rubberBandOffset = 0;
   }
 
   function dispatchOverscrollEvent(left: number): void {
@@ -487,13 +484,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function snapSelect({ axis = "x" }: AxisOption): number {
     const restingX = project({ axis });
-    let nearestSnapPoint = clamp(restingX, 0, end);
-    if (snapPoints.length) {
-      nearestSnapPoint = snapPoints.reduce((prev, curr) =>
-        Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
-      );
-    }
-    return nearestSnapPoint;
+    return snapPoints.length
+      ? snapPoints.reduce((prev, curr) =>
+          Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
+        )
+      : clamp(restingX, 0, end);
   }
 
   function preventGlobalClick(): void {
@@ -512,18 +507,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function damp(x: number, y: number, t: number, delta: number): number {
     return lerp(x, y, 1 - Math.exp(Math.log(1 - t) * (delta / (1000 / 60))));
-  }
-
-  function map(
-    value: number,
-    minA: number,
-    maxA: number,
-    minB: number,
-    maxB: number,
-    clamped: boolean = false
-  ): number {
-    if (clamped) value = Math.min(maxA, Math.max(minA, value));
-    return ((value - minA) / (maxA - minA)) * (maxB - minB) + minB;
   }
 
   function clamp(value: number, min: number, max: number): number {

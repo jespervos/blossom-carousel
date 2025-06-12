@@ -5,11 +5,13 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 <template>
   <div class="page">
     <h1>Blossom Dev</h1>
-    <BlossomCarousel class="carousel" as="ul">
-      <li v-for="i in 12" :key="`slide${i}`" class="slide">
-        {{ i }}
-      </li>
-    </BlossomCarousel>
+    <div class="wrapper">
+      <BlossomCarousel class="carousel" as="ul">
+        <li v-for="i in 12" :key="`slide${i}`" class="slide">
+          <p>{{ i }}</p>
+        </li>
+      </BlossomCarousel>
+    </div>
   </div>
 </template>
 
@@ -21,6 +23,10 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+
+.wrapper {
+  max-width: 1000px;
 }
 
 .carousel {
@@ -39,14 +45,46 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 }
 
 .slide {
-  /* width: 300px; */
   aspect-ratio: 3/4;
-  border-radius: 1rem;
-  background-color: #404040;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  /* margin-right: 1rem; */
   scroll-snap-align: center;
+}
+
+.carousel {
+  perspective: 1000px;
+}
+
+.slide {
+  transform-style: preserve-3d;
+  container-type: scroll-state;
+
+  &:not(:first-child) {
+    margin-left: -30px;
+  }
+
+  > p {
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #404040;
+    transform-style: preserve-3d;
+    animation: carousel linear both;
+    animation-timeline: view(x);
+    animation-range: cover;
+  }
+}
+
+@keyframes carousel {
+  0% {
+    transform: rotateY(-70deg) translateZ(-100px) scale(0.75);
+  }
+  50% {
+    transform: none;
+  }
+  to {
+    transform: rotateY(70deg) translateZ(-100px) scale(0.75);
+  }
 }
 </style>

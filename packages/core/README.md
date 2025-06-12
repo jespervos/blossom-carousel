@@ -11,12 +11,11 @@ A native-scroll-first carousel for the web.
 
 ## Examples
 
-- [Simple](https://www.blossom-carousel.com/examples/simple)
-- [Variable widths](https://www.blossom-carousel.com/examples/variable-widths)
-- [CSS Grid](https://www.blossom-carousel.com/examples/css-grid)
-- [Multiple rows](https://www.blossom-carousel.com/examples/multiple-rows)
-- [Snapping](https://www.blossom-carousel.com/examples/snapping)
-- [Grouping](https://www.blossom-carousel.com/examples/grouping)
-- [Sticky](https://www.blossom-carousel.com/examples/sticky)
-- [Coverflow](https://www.blossom-carousel.com/examples/coverflow)
-- [Hover](https://www.blossom-carousel.com/examples/hover)
+- [Simple](https://www.blossom-carousel.com/docs/examples#simple)
+- [Variable widths](https://www.blossom-carousel.com/docs/examples#variable-widths)
+- [CSS Grid](https://www.blossom-carousel.com/docs/examples#css-grid)
+- [Multiple rows](https://www.blossom-carousel.com/docs/examples#multiple-rows)
+- [Snapping](https://www.blossom-carousel.com/docs/examples#snapping)
+- [Grouping](https://www.blossom-carousel.com/docs/examples#grouping)
+- [Sticky](https://www.blossom-carousel.com/docs/examples#sticky)
+- [Coverflow](https://www.blossom-carousel.com/docs/examples#cover-flow)

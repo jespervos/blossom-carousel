@@ -3,7 +3,8 @@
   import { Blossom } from '@blossom-carousel/core';
 
   export let as = 'div';
-  export let repeat = false;
+  // export let repeat = false;
+  let repeat = false;
   let root;
   let blossom;
 

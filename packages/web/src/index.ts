@@ -14,7 +14,7 @@ export class BlossomCarousel extends HTMLElement {
 
   connectedCallback(): void {
     this.carouselInstance = Blossom(this, {
-      repeat: this.hasAttribute("repeat"),
+      repeat: false, // this.hasAttribute("repeat"),
     });
     this.carouselInstance.init();
   }

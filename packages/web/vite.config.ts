@@ -1,5 +1,8 @@
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
-import { resolve } from "path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   build: {
@@ -9,8 +12,7 @@ export default defineConfig({
       fileName: (format) => `blossom-carousel-web.${format}.js`,
     },
     rollupOptions: {
-      external: ["./style.css"],
-      // external: ["@blossom-carousel/core"],
+      // external: ["./style.css"],
       // output: {
       //   globals: {
       //     "@blossom-carousel/core": "BlossomCarouselCore",

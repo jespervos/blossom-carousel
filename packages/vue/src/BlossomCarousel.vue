@@ -13,10 +13,10 @@ const props = defineProps({
     type: String,
     default: "div",
   },
-  repeat: {
-    type: Boolean,
-    default: false,
-  },
+  // repeat: {
+  //   type: Boolean,
+  //   default: false,
+  // },
   load: {
     type: String,
     default: "conditional",

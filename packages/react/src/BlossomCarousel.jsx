@@ -4,19 +4,21 @@ import "@blossom-carousel/core/style.css";
 
 const BlossomCarousel = ({
   as: Component = "div",
-  repeat = false,
+  // repeat = false,
   children,
   ...rest
 }) => {
   const rootRef = useRef(null);
 
   useEffect(() => {
-    const blossom = Blossom(rootRef.current, { repeat });
+    // const blossom = Blossom(rootRef.current, { repeat });
+    const blossom = Blossom(rootRef.current);
     blossom.init();
     return () => {
       blossom.destroy();
     };
-  }, [repeat]);
+  });
+  // }, [repeat]);
 
   return (
     <Component ref={rootRef} blossom-carousel="true" {...rest}>
