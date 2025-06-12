@@ -173,15 +173,17 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     traverseDOM(scroller);
 
     // precompute snap point for all slides
+    const scrollerLeft = scroller.offsetLeft;
     let snapPoints = points.map(({ el, align }, i) => {
       const { offsetLeft, clientWidth } = el as HTMLElement;
+      const left = offsetLeft - scrollerLeft;
       switch (align) {
         case "start":
-          return offsetLeft;
+          return left;
         case "end":
-          return offsetLeft + clientWidth - scrollerWidth + scrollPaddingRight;
+          return left + clientWidth - scrollerWidth + scrollPaddingRight;
         case "center":
-          return offsetLeft + clientWidth * 0.5 - scrollerWidth / 2;
+          return left + clientWidth * 0.5 - scrollerWidth / 2;
         default:
           return null;
       }

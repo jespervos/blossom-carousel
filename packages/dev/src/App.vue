@@ -25,13 +25,14 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   flex-direction: column;
 }
 
-/* .wrapper {
+.wrapper {
   max-width: 1000px;
-} */
+}
 
 .carousel {
-  padding-inline: 1rem;
-  scroll-padding-inline: 1rem;
+  padding-inline: 0;
+  /* padding-inline: 1rem; */
+  /* scroll-padding-inline: 1rem; */
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
 
@@ -46,7 +47,12 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 
 .slide {
   aspect-ratio: 3/4;
-  scroll-snap-align: center;
+  scroll-snap-align: start;
+  background-color: #404040;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* .carousel {
