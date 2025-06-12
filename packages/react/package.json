@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/react",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for React.",
@@ -55,7 +55,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blossom-carousel/core": "^0.0.9"
+    "@blossom-carousel/core": "^0.1.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",

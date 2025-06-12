@@ -25,9 +25,9 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   flex-direction: column;
 }
 
-.wrapper {
+/* .wrapper {
   max-width: 1000px;
-}
+} */
 
 .carousel {
   padding-inline: 1rem;
@@ -49,7 +49,7 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   scroll-snap-align: center;
 }
 
-.carousel {
+/* .carousel {
   perspective: 1000px;
 }
 
@@ -86,5 +86,5 @@ import BlossomCarousel from "./BlossomCarousel.vue";
   to {
     transform: rotateY(70deg) translateZ(-100px) scale(0.75);
   }
-}
+} */
 </style>
