@@ -7,8 +7,8 @@
 Native-first carousel enhanced with drag support for pointer devices.
 
 <p>
-<a href="https://www.npmjs.com/package/embla-carousel"><img src="https://img.shields.io/npm/v/@blossom-carousel/core.svg?color=%23c1a8e2"></a>
-<a href="https://bundlephobia.com/result?p=embla-carousel@latest"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
+<a href="https://www.npmjs.com/package/@blossom-carousel/core"><img src="https://img.shields.io/npm/v/@blossom-carousel/core.svg?color=%23c1a8e2"></a>
+<a href="https://bundlephobia.com/package/@blossom-carousel/core@0.1.2"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
 </p>
 
 ## Why Blossom?
