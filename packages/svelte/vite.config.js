@@ -5,7 +5,12 @@ import path from "path";
 
 export default defineConfig({
   plugins: [
-    svelte(),
+    svelte({
+      compilerOptions: {
+        // Ensure proper component compilation for Svelte 5
+        generate: "dom",
+      },
+    }),
     dts({
       insertTypesEntry: true,
       include: ["src/**/*"],
@@ -17,13 +22,21 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
       fileName: "blossom-carousel-svelte",
-      formats: ["es", "cjs"],
+      formats: ["es", "umd"], // ES modules and UMD for broader compatibility
     },
     rollupOptions: {
-      external: ["svelte", "@blossom-carousel/core"],
+      external: [
+        "svelte",
+        "svelte/internal",
+        "svelte/store",
+        "@blossom-carousel/core",
+        /^svelte\//, // Match any svelte/* imports
+      ],
       output: {
+        preserveModules: false,
+        exports: "named",
         globals: {
-          svelte: "Svelte",
+          svelte: "svelte",
           "@blossom-carousel/core": "BlossomCarouselCore",
         },
       },
