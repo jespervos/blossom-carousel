@@ -1,2 +1,2 @@
-import BlossomCarousel from "./BlossomCarousel.svelte";
-export default BlossomCarousel;
+export { default as BlossomCarousel } from "./BlossomCarousel.svelte";
+export type { BlossomCarouselProps } from "./BlossomCarousel.svelte.d.ts";
