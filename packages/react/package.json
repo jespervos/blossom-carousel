@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/react",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for React.",
@@ -36,15 +36,15 @@
   "files": [
     "dist"
   ],
-  "main": "dist/blossom-carousel-vue.umd.cjs",
-  "module": "dist/blossom-carousel-vue.js",
+  "main": "dist/blossom-carousel-react.umd.cjs",
+  "module": "dist/blossom-carousel-react.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/blossom-carousel-vue.js",
-      "require": "./dist/blossom-carousel-vue.umd.cjs"
+      "import": "./dist/blossom-carousel-react.js",
+      "require": "./dist/blossom-carousel-react.umd.cjs"
     },
-    "./style.css": "./dist/blossom-carousel-vue.css"
+    "./style.css": "./dist/blossom-carousel-react.css"
   },
   "publishConfig": {
     "access": "public"

@@ -12,11 +12,19 @@ export default defineConfig({
       fileName: "blossom-carousel-react",
     },
     rollupOptions: {
-      external: ["react", "react-dom", "@blossom-carousel/core"],
+      external: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@blossom-carousel/core",
+      ],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
+          "react/jsx-runtime": "React",
+          "react/jsx-dev-runtime": "React",
           "@blossom-carousel/core": "BlossomCarouselCore",
         },
       },
