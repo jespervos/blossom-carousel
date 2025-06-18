@@ -212,6 +212,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       return;
     }
 
+    if (isDragging || !scroller) return;
+
     if (scroller.scrollLeft < 0) {
       const left = scroller.scrollLeft * -1;
       dispatchOverscrollEvent(left);
@@ -287,11 +289,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     preventGlobalClick();
   }
 
-  function onWheel(): void {
-    setIsTicking(false);
-    if (isDragging || !scroller) return;
-    if (hasOverflow.x) virtualScroll.x = scroller.scrollLeft;
-    if (hasOverflow.y) virtualScroll.y = scroller.scrollTop;
+  function onWheel(e): void {
+    if (e.deltaX > e.deltaY) {
+      setIsTicking(false);
+      if (isDragging || !scroller) return;
+      if (hasOverflow.x) virtualScroll.x = scroller.scrollLeft;
+      if (hasOverflow.y) virtualScroll.y = scroller.scrollTop;
+    }
   }
 
   function onKeydown(e: KeyboardEvent): void {
@@ -459,8 +463,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     );
 
     if (Math.abs(rubberBandOffset) > 0.01) {
+      const evt = dispatchOverscrollEvent(rubberBandOffset);
+      if (evt.defaultPrevented) return;
       scroller.style.transform = `translateX(${round(rubberBandOffset, 3)}px)`;
-      dispatchOverscrollEvent(rubberBandOffset);
       return;
     }
 
@@ -468,12 +473,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     rubberBandOffset = 0;
   }
 
-  function dispatchOverscrollEvent(left: number): void {
+  function dispatchOverscrollEvent(
+    left: number
+  ): CustomEvent<{ left: number }> {
     const overscrollEvent = new CustomEvent("overscroll", {
       bubbles: true,
+      cancelable: true,
       detail: { left },
     });
     scroller?.dispatchEvent(overscrollEvent);
+    return overscrollEvent;
   }
 
   /******************************
