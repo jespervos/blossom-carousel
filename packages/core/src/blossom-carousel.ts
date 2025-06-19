@@ -289,7 +289,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     preventGlobalClick();
   }
 
-  function onWheel(e): void {
+  function onWheel(e: WheelEvent): void {
     if (e.deltaX > e.deltaY) {
       setIsTicking(false);
       if (isDragging || !scroller) return;
