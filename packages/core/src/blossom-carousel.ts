@@ -73,6 +73,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let hasSnap = false;
 
   function init() {
+    scroller?.setAttribute("blossom-carousel", "true");
     links = scroller?.querySelectorAll("a[href]") || null;
     links?.forEach((el) => {
       el.addEventListener("click", onLinkClick);
@@ -98,6 +99,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function destroy() {
+    scroller.removeAttribute("blossom-carousel");
     resizeObserver?.disconnect();
     if (raf) cancelAnimationFrame(raf);
 
