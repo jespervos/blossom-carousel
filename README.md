@@ -1,7 +1,3 @@
-> ⚠️ Work in progress ⚠️
->
-> Full package and documentation will be available soon.
-
 # Blossom Carousel
 
 Native-first carousel enhanced with drag support for pointer devices.
