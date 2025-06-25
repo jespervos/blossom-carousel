@@ -41,6 +41,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/blossom-carousel-web.js",
       "require": "./dist/blossom-carousel-web.umd.cjs"
     },
