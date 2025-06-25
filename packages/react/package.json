@@ -42,7 +42,8 @@
   "exports": {
     ".": {
       "import": "./dist/blossom-carousel-react.js",
-      "require": "./dist/blossom-carousel-react.umd.cjs"
+      "require": "./dist/blossom-carousel-react.umd.cjs",
+      "types": "./dist/index.d.ts"
     },
     "./style.css": "./dist/blossom-carousel-react.css"
   },
