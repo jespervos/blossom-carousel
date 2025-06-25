@@ -14,10 +14,11 @@ const BlossomCarousel = ({
     // const blossom = Blossom(rootRef.current, { repeat });
     const blossom = Blossom(rootRef.current);
     blossom.init();
+
     return () => {
       blossom.destroy();
     };
-  });
+  }, []);
   // }, [repeat]);
 
   return (
