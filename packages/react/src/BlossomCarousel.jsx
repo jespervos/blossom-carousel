@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { Blossom } from "@blossom-carousel/core";
 import "@blossom-carousel/core/style.css";
 
@@ -10,14 +10,15 @@ const BlossomCarousel = ({
 }) => {
   const rootRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // const blossom = Blossom(rootRef.current, { repeat });
     const blossom = Blossom(rootRef.current);
     blossom.init();
+
     return () => {
       blossom.destroy();
     };
-  });
+  }, []);
   // }, [repeat]);
 
   return (
