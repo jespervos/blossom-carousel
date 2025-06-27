@@ -21,6 +21,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/blossom-carousel-core.js",
       "require": "./dist/blossom-carousel-core.umd.cjs"
     },
