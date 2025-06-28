@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/react",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for React.",
@@ -65,6 +65,6 @@
     "vite-plugin-dts": "^4.5.3"
   },
   "dependencies": {
-    "@blossom-carousel/core": "^0.1.3"
+    "@blossom-carousel/core": "^0.1.5"
   }
 }
