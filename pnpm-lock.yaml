@@ -47,8 +47,8 @@ importers:
   packages/react:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.1.5
-        version: 0.1.5(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.1.6
+        version: 0.1.6(rollup@4.40.0)(typescript@5.8.3)
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -85,14 +85,14 @@ importers:
         version: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@4.5.13)
     optionalDependencies:
       '@blossom-carousel/core':
-        specifier: ^0.1.5
-        version: 0.1.5(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.1.6
+        version: 0.1.6(rollup@4.40.0)(typescript@5.8.3)
 
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.1.5
-        version: 0.1.5(rollup@4.40.0)(typescript@5.8.3)
+        specifier: ^0.1.6
+        version: 0.1.6(rollup@4.40.0)(typescript@5.8.3)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -110,8 +110,8 @@ importers:
   packages/web:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^0.1.5
-        version: 0.1.5(typescript@5.8.3)
+        specifier: ^0.1.6
+        version: 0.1.6(typescript@5.8.3)
     devDependencies:
       typescript:
         specifier: ^5.0.0
@@ -205,8 +205,8 @@ packages:
     resolution: {integrity: sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==}
     engines: {node: '>=6.9.0'}
 
-  '@blossom-carousel/core@0.1.5':
-    resolution: {integrity: sha512-rnqXlfvK2mJWQDpUFAvVDIvWcY5bVuXAHH4A+J9DyoN6fUosBRSqmOPAfVWZ22cMNxsKp/qtehbHDE6rt92dNw==}
+  '@blossom-carousel/core@0.1.6':
+    resolution: {integrity: sha512-1uwE4eBQklsE6tT5b7S040mJb06gge4pjvXQZWA8i9MKGyu+Rl5cCvg4QgiOd022z+ZWW/QVvQ3O2eHTBlUqMQ==}
 
   '@esbuild/aix-ppc64@0.25.3':
     resolution: {integrity: sha512-W8bFfPA8DowP8l//sxjJLSLkD8iEjMc7cBVyP+u4cEv9sM7mdUCkgsj+t0n/BWPFtv7WWCN5Yzj0N6FJNUUqBQ==}
@@ -1942,7 +1942,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@blossom-carousel/core@0.1.5(rollup@4.40.0)(typescript@5.8.3)':
+  '@blossom-carousel/core@0.1.6(rollup@4.40.0)(typescript@5.8.3)':
     dependencies:
       vite: 6.3.3
       vite-plugin-dts: 4.5.3(rollup@4.40.0)(typescript@5.8.3)(vite@6.3.3)
@@ -1962,7 +1962,7 @@ snapshots:
       - typescript
       - yaml
 
-  '@blossom-carousel/core@0.1.5(typescript@5.8.3)':
+  '@blossom-carousel/core@0.1.6(typescript@5.8.3)':
     dependencies:
       vite: 6.3.3
       vite-plugin-dts: 4.5.3(typescript@5.8.3)(vite@6.3.3)

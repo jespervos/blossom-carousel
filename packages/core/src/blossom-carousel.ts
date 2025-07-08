@@ -357,6 +357,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     // loop
     const left = scrollLeft > end ? 4 : scrollLeft < 4 ? end : null;
     if (!left) return;
+    __scrollingInternally = true;
     scroller.scrollTo({
       left,
       behavior: "instant" as ScrollBehavior,
@@ -429,6 +430,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       }
     }
 
+    __scrollingInternally = true;
     scroller.scrollTo({
       left: virtualScroll.x,
       top: virtualScroll.y,
@@ -486,6 +488,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller?.dispatchEvent(overscrollEvent);
     return overscrollEvent;
   }
+
+  /******************************
+   ********* METHODS **************
+   ******************************/
+
+  let __scrollingInternally = false;
+
+  const scrollTo = scroller.scrollTo.bind(scroller);
+  scroller.scrollTo = function (options) {
+    const internal = __scrollingInternally === true;
+    if (!internal) setIsTicking(false);
+    __scrollingInternally = false;
+    scrollTo(options);
+  };
+
+  const scrollBy = scroller.scrollBy.bind(scroller);
+  scroller.scrollBy = function (options) {
+    const internal = __scrollingInternally === true;
+    if (!internal) setIsTicking(false);
+    __scrollingInternally = false;
+    scrollBy(options);
+  };
 
   /******************************
    ********* UTILS **************
