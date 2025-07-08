@@ -2,6 +2,54 @@
 
 A native-scroll-first carousel for the web.
 
+## Installation
+
+Add the blossom-carousel package to your project.
+
+```bash
+npm install @blossom-carousel/core
+```
+
+Then, create a Blossom instance and initialize it.
+
+```js
+import { Blossom } from "@blossom-carousel/core";
+import "@blossom-carousel/core/style.css";
+
+const element = document.querySelector("#my-carousel-element");
+// prepare the Blossom carousel
+const blossom = Blossom(element);
+// initialize whenever you want
+blossom.init();
+```
+
+## Lazy loading
+
+Load Blossom only when needed.
+
+```js
+const hasMouse = window.matchMedia(
+  "(hover: hover) and (pointer: fine)"
+).matches;
+
+// We don't need Blossom's engine on touch devices
+if (!hasMouse) return;
+
+const { Blossom } = await import("@blossom-carousel/core");
+
+const element = document.querySelector("#my-carousel-element");
+const blossom = Blossom(element);
+blossom.init();
+```
+
+### Destroy
+
+Destroy the Blossom instance when you no longer need it to free up resources.
+
+```js
+blossom.destroy();
+```
+
 ### Get started in your favorite framework:
 
 - [React](https://www.npmjs.com/package/@blossom-carousel/react)
