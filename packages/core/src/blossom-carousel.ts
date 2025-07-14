@@ -292,7 +292,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function onWheel(e: WheelEvent): void {
-    if (e.deltaX > e.deltaY) {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       setIsTicking(false);
       if (isDragging || !scroller) return;
       if (hasOverflow.x) virtualScroll.x = scroller.scrollLeft;
