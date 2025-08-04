@@ -1,2 +1,2 @@
-import BlossomCarousel from "./BlossomCarousel.jsx";
+import BlossomCarousel from "./BlossomCarousel";
 export { BlossomCarousel };
