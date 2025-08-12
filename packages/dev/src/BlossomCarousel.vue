@@ -9,7 +9,7 @@ import { onMounted, onBeforeUnmount, shallowRef } from "vue";
 // import { Blossom } from "../../core/dist/blossom-carousel-core.js";
 // import "../../core/dist/blossom-carousel-core.css";
 // import { Blossom } from "../../core/src/index";
-import "../../core/src/style.css";
+// import "../../core/src/style.css";
 
 const props = defineProps({
   as: {
@@ -41,7 +41,7 @@ onMounted(async () => {
 
   const { Blossom } = await import("../../core/src/index");
 
-  blossom = Blossom(root.value);
+  blossom = Blossom(root.value, { repeat: props.repeat });
   blossom.init();
 });
 onBeforeUnmount(() => {

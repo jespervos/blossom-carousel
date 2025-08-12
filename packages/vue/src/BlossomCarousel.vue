@@ -6,7 +6,6 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, shallowRef } from "vue";
-import "@blossom-carousel/core/style.css";
 
 const props = defineProps({
   as: {

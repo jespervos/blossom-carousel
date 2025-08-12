@@ -1,19 +1,17 @@
 import { useRef } from "react";
 import BlossomCarousel from "./BlossomCarousel";
-
+import "@blossom-carousel/core/style.css";
 
 export default function App() {
-
-  const carouselRef = useRef<HTMLUListElement>(null)
+  const carouselRef = useRef<HTMLUListElement>(null);
 
   const handleClick = (next: boolean) => () => {
-    if (!carouselRef.current) return
-    const slideWidth = carouselRef.current?.children?.[0]?.getBoundingClientRect?.()?.width
-    if (isNaN(slideWidth)) return
-    carouselRef.current.scrollBy({ left: slideWidth * (next ? 1 : -1) })
-  }
-
-
+    if (!carouselRef.current) return;
+    const slideWidth =
+      carouselRef.current?.children?.[0]?.getBoundingClientRect?.()?.width;
+    if (isNaN(slideWidth)) return;
+    carouselRef.current.scrollBy({ left: slideWidth * (next ? 1 : -1) });
+  };
 
   return (
     <div className="page">

@@ -1,36 +1,106 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import BlossomCarousel from "./BlossomCarousel.vue";
+import "../../core/src/style.css";
 
 const blossom = ref(null);
-const slides = ref([]);
-function onOverScroll(event) {
-  event.preventDefault();
-  const offset = event.detail.left / blossom.value?.el.clientWidth;
-  slides.value.forEach((el, i) => {
-    const rotate = -70 * offset * Math.min(i + 1, slides.value.length + 1 - i);
-    const translateX = event.detail.left;
-    const translateZ =
-      i === 0
-        ? 100 * offset
-        : -100 * offset * Math.min(i, slides.value.length - i);
-    const scale =
-      i === 0 || i === slides.value.length - 1
-        ? 1 + 0.2 * offset
-        : 1 - 0.2 * offset * Math.min(i, slides.value.length - i);
-    el.style.transform = `translateX(${translateX}px) rotateY(${rotate}deg)  translateZ(${translateZ}px) scale(${scale})`;
-  });
+// const slides = ref([]);
+// function onOverScroll(event) {
+//   event.preventDefault();
+//   const offset = event.detail.left / blossom.value?.el.clientWidth;
+//   slides.value.forEach((el, i) => {
+//     const rotate = -70 * offset * Math.min(i + 1, slides.value.length + 1 - i);
+//     const translateX = event.detail.left;
+//     const translateZ =
+//       i === 0
+//         ? 100 * offset
+//         : -100 * offset * Math.min(i, slides.value.length - i);
+//     const scale =
+//       i === 0 || i === slides.value.length - 1
+//         ? 1 + 0.2 * offset
+//         : 1 - 0.2 * offset * Math.min(i, slides.value.length - i);
+//     el.style.transform = `translateX(${translateX}px) rotateY(${rotate}deg)  translateZ(${translateZ}px) scale(${scale})`;
+//   });
+// }
+// onMounted(() => {
+//   blossom.value?.el?.addEventListener("overscroll", onOverScroll);
+// });
+// onBeforeUnmount(() => {
+//   blossom.value?.el?.removeEventListener("overscroll", onOverScroll);
+// });
+function add() {
+  const slide = document.createElement("li");
+  slide.className = "slide";
+  slide.innerHTML = `<p>${Math.floor(Math.random() * 100)}</p>`;
+  blossom.value?.el?.appendChild(slide);
 }
-onMounted(() => {
-  blossom.value?.el?.addEventListener("overscroll", onOverScroll);
-});
-onBeforeUnmount(() => {
-  blossom.value?.el?.removeEventListener("overscroll", onOverScroll);
-});
+function remove() {
+  const slides = blossom.value?.el?.querySelectorAll(".slide");
+  if (slides.length > 0) {
+    blossom.value?.el?.removeChild(slides[slides.length - 1]);
+  }
+}
 
-function onClick(offset) {
-  blossom.value?.el.scrollBy({ left: offset, behavior: "smooth" });
-}
+const getCurrentSlide = () => {
+  if (!blossom.value) return null;
+
+  const carousel = blossom.value.$el;
+  const slides = carousel.children;
+  const carouselRect = carousel.getBoundingClientRect();
+  const carouselLeft = carouselRect.left;
+
+  let closestSlide = null;
+  let closestDistance = Infinity;
+
+  for (let i = 0; i < slides.length; i++) {
+    const slide = slides[i];
+    const slideRect = slide.getBoundingClientRect();
+    const distance = Math.abs(slideRect.left - carouselLeft);
+
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestSlide = { element: slide, index: i };
+    }
+  }
+
+  return closestSlide;
+};
+
+const prev = () => {
+  const currentSlide = getCurrentSlide();
+  if (!currentSlide || !blossom.value) return;
+
+  const carousel = blossom.value.$el;
+  const slides = carousel.children;
+  const prevIndex = currentSlide.index - 1;
+
+  if (prevIndex >= 0) {
+    const prevSlide = slides[prevIndex];
+    prevSlide.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+  }
+};
+
+const next = () => {
+  const currentSlide = getCurrentSlide();
+  if (!currentSlide || !blossom.value) return;
+
+  const carousel = blossom.value.$el;
+  const slides = carousel.children;
+  const nextIndex = currentSlide.index + 1;
+
+  if (nextIndex < slides.length) {
+    const nextSlide = slides[nextIndex];
+    nextSlide.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+  }
+};
 </script>
 
 <template>
@@ -44,13 +114,17 @@ function onClick(offset) {
       </BlossomCarousel>
     </div>
     <div class="controls">
-      <button @click="onClick(400)">prev</button>
-      <button @click="onClick(800)">next</button>
+      <button @click="add">add slide</button>
+      <button @click="remove">remove slide</button>
+    </div>
+    <div class="controls">
+      <button @click="prev">prev slide</button>
+      <button @click="next">next slide</button>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style>
 .page {
   height: 100vh;
   width: 100%;
@@ -69,19 +143,22 @@ function onClick(offset) {
   /* scroll-padding-inline: 10rem; */
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
-  scroll-snap-type: x mandatory;
-  scroll-snap-stop: always;
+
+  /* scroll-snap-type: x mandatory;
+  scroll-snap-stop: always; */
 
   padding-block: 4rem;
   margin-block: -4rem;
 
-  display: grid;
+  /* display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 300px;
-  grid-gap: 1rem;
+  grid-gap: 1rem; */
 }
 
 .slide {
+  width: 300px;
+  margin-right: 1rem;
   aspect-ratio: 3/4;
   scroll-snap-align: center;
   background-color: #404040;

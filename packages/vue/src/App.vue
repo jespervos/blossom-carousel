@@ -1,5 +1,6 @@
 <script setup>
 import BlossomCarousel from "./BlossomCarousel.vue";
+import "@blossom-carousel/core/style.css";
 </script>
 
 <template>
