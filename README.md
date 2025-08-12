@@ -4,21 +4,23 @@
 
 <p>
 <a href="https://www.npmjs.com/package/@blossom-carousel/core"><img src="https://img.shields.io/npm/v/@blossom-carousel/core.svg?color=%23c1a8e2"></a>
-<a href="https://bundlephobia.com/package/@blossom-carousel/core@0.1.2"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
+<a href="https://bundlephobia.com/package/@blossom-carousel/core"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
 </p>
 
 The native-first carousel enhanced with drag support.
 
-[www.blossom-carousel.com](http://www.blossom-carousel.com)
+➥ [www.blossom-carousel.com](http://www.blossom-carousel.com)
 
 ## Why Blossom?
 
-- **Native scrolling**: Full performance and accessibility.
-- **Dragging**: Custom physics-based dragging for all pointer types.
-- **No abstraction**: use all native web API's.
-- **Configure with CSS**: Works with native scroll-snap, position sticky and scroll-driven animations.
-- **0kb on touch devices**: Blossom only loads when a fine pointer device is detected.
-- **Works with major frameworks**: Components for React, Vue, Svelte and Web Components.
+<ul style="list-style: none; padding: 0;">
+<li>🥇 <strong>Native scrolling</strong>: Full performance and accessibility.</li>
+<li>🚀 <strong>Dragging</strong>: Custom physics-based dragging for all pointer types.</li>
+<li>✨ <strong>No abstraction</strong>: use all native web API's.</li>
+<li>💡 <strong>Configure with CSS</strong>: Works with native scroll-snap, position sticky and scroll-driven animations.</li>
+<li>🪶 <strong>0kb on touch devices</strong>: Blossom only loads when a fine pointer device is detected.</li>
+<li>🧱 <strong>Works with major frameworks</strong>: Components for React, Vue, Svelte and Web Components.</li>
+</ul>
 
 ## Installation
 
