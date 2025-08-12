@@ -70,7 +70,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let snapPoints: number[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
+  let mutationObserver: MutationObserver | null = null;
   let hasSnap = false;
+  let restoreScrollMethods: () => void;
 
   function init() {
     scroller?.setAttribute("blossom-carousel", "true");
@@ -84,6 +86,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(scroller);
 
+    mutationObserver = new MutationObserver(onMutation);
+    mutationObserver.observe(scroller, {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+
     const hasMouse = window.matchMedia(
       "(hover: hover) and (pointer: fine)"
     ).matches;
@@ -96,11 +105,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
+
+    restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
+      if (target === scroller || scroller.contains(target)) setIsTicking(false);
+    });
   }
 
   function destroy() {
     scroller.removeAttribute("blossom-carousel");
     resizeObserver?.disconnect();
+    mutationObserver?.disconnect();
     if (raf) cancelAnimationFrame(raf);
 
     window.removeEventListener("keydown", onKeydown);
@@ -109,6 +123,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     links?.forEach((el) => {
       el.removeEventListener("click", onLinkClick);
     });
+
+    restoreScrollMethods?.();
   }
 
   function onLinkClick(e: MouseEvent): void {
@@ -144,6 +160,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     snapPoints = !hasSnap ? [] : findSnapPoints(scroller);
 
     if (options?.repeat) onRepeat(null, null);
+  }
+
+  function onMutation(): void {
+    onResize();
   }
 
   function findSnapPoints(scroller: HTMLElement): number[] {
@@ -510,6 +530,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     __scrollingInternally = false;
     scrollBy(options);
   };
+
+  function interceptScrollIntoViewCalls(
+    onExternalScroll: (target: Element, method: string, args: any[]) => void
+  ) {
+    const stopFns: Array<() => void> = [];
+
+    // Patch scrollIntoView for all elements
+    const originalScrollIntoView = Element.prototype.scrollIntoView;
+    if (originalScrollIntoView) {
+      Element.prototype.scrollIntoView = function (
+        arg?: boolean | ScrollIntoViewOptions
+      ): void {
+        onExternalScroll(this, "scrollIntoView", [arg]);
+        return originalScrollIntoView.call(this, arg);
+      };
+      stopFns.push(() => {
+        Element.prototype.scrollIntoView = originalScrollIntoView;
+      });
+    }
+
+    return () => stopFns.forEach((fn) => fn());
+  }
 
   /******************************
    ********* UTILS **************
