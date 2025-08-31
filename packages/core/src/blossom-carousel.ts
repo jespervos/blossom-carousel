@@ -65,14 +65,15 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let scrollerWidth = 300;
   let scrollerScrollHeight = 300;
   let scrollerHeight = 300;
-  const padding = { left: 0, right: 0 };
-  const scrollPadding = { left: 0, right: 0 };
+  const padding = { start: 0, end: 0 };
+  const scrollPadding = { start: 0, end: 0 };
   let snapPoints: number[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let hasSnap = false;
   let restoreScrollMethods: () => void;
+  let dir = 1;
 
   function init() {
     scroller?.setAttribute("blossom-carousel", "true");
@@ -96,6 +97,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     const hasMouse = window.matchMedia(
       "(hover: hover) and (pointer: fine)"
     ).matches;
+
+    dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
 
     const { scrollSnapType } = window.getComputedStyle(scroller);
     hasSnap = scrollSnapType !== "none";
@@ -151,11 +154,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       !hasTouch &&
       scrollerScrollHeight > scrollerHeight &&
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
-    padding.right = parseInt(styles.paddingRight) || 0;
-    padding.left = parseInt(styles.paddingLeft) || 0;
-    scrollPadding.left = parseInt(styles.scrollPaddingLeft) || 0;
-    scrollPadding.right = parseInt(styles.scrollPaddingRight) || 0;
-    end = scrollerScrollWidth - scrollerWidth - 4;
+    padding.end = parseInt(styles.paddingInlineEnd) || 0;
+    padding.start = parseInt(styles.paddingInlineStart) || 0;
+    scrollPadding.start = parseInt(styles.scrollPaddingInlineStart) || 0;
+    scrollPadding.end = parseInt(styles.scrollPaddingInlineEnd) || 0;
+    dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
+    end = (scrollerScrollWidth - scrollerWidth - 4) * dir;
 
     snapPoints = !hasSnap ? [] : findSnapPoints(scroller);
 
@@ -205,9 +209,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
       switch (align) {
         case "start":
-          return left - scrollPadding.left;
+          return left - scrollPadding.start;
         case "end":
-          return left + clientWidth - scrollerWidth + scrollPadding.right;
+          return left + clientWidth - scrollerWidth + scrollPadding.end;
         case "center":
           return left + clientWidth * 0.5 - scrollerWidth / 2;
         default:
@@ -236,12 +240,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (isDragging || !scroller) return;
 
-    if (scroller.scrollLeft < 0) {
-      const left = scroller.scrollLeft * -1;
+    const scrollStart = scroller.scrollLeft;
+
+    if (scrollStart < 0) {
+      const left = scrollStart * -1;
       dispatchOverscrollEvent(left);
-    } else if (scroller.scrollLeft > scrollerScrollWidth - scrollerWidth) {
-      const left =
-        scroller.scrollLeft * -1 + scrollerScrollWidth - scrollerWidth;
+    } else if (scrollStart > scrollerScrollWidth - scrollerWidth) {
+      const left = scrollStart * -1 + scrollerScrollWidth - scrollerWidth;
       dispatchOverscrollEvent(left);
     }
   }
@@ -329,8 +334,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     //TODO: add support for vertical snapping
     const slideX = clamp(
       snapSelect({ axis: "x" }),
-      0,
-      scrollerScrollWidth - scrollerWidth
+      Math.min((scrollerScrollWidth - scrollerWidth) * dir, 0),
+      Math.max((scrollerScrollWidth - scrollerWidth) * dir, 0)
     );
     const distance = slideX - target.x;
     const force = distance * (1 - FRICTION) * (1 / FRICTION);
@@ -344,10 +349,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function onRepeat(_: null | undefined, x: number | null): void {
     if (!scroller) return;
 
-    const scrollLeft = x ?? scroller.scrollLeft;
-    const distanceToStartEdge = padding.left - scrollLeft;
+    const scrollStart = x ?? scroller.scrollLeft;
+    const distanceToStartEdge = padding.start - scrollStart;
     const distanceToEndEdge =
-      scrollLeft - (scrollerScrollWidth - scrollerWidth - padding.right);
+      scrollStart - (scrollerScrollWidth - scrollerWidth - padding.end);
     const slides = Array.from(scroller.children) as HTMLElement[];
 
     /**
@@ -375,7 +380,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (isDragging) return;
 
     // loop
-    const left = scrollLeft > end ? 4 : scrollLeft < 4 ? end : null;
+    const left = scrollStart > end ? 4 : scrollStart < 4 ? end : null;
     if (!left) return;
     __scrollingInternally = true;
     scroller.scrollTo({
@@ -471,12 +476,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (!scroller) return;
 
     //TODO: add support for vertical rubber banding
-    const edge = scrollerScrollWidth - scrollerWidth;
+    const edge = end;
 
     let targetOffset = 0;
-    if (left < 0) {
+    if (left * dir <= 0) {
       targetOffset = isDragging ? left * -0.2 : 0;
-    } else if (left > edge) {
+    } else if (left * dir > edge * dir) {
       targetOffset = isDragging ? (left - edge) * -0.2 : 0;
     }
     rubberBandOffset = damp(
@@ -571,7 +576,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       ? snapPoints.reduce((prev, curr) =>
           Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
         )
-      : clamp(restingX, 0, end);
+      : clamp(restingX, Math.min(end, 0), Math.max(end, 0));
   }
 
   function preventGlobalClick(): void {

@@ -144,8 +144,8 @@ const next = () => {
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
 
-  /* scroll-snap-type: x mandatory;
-  scroll-snap-stop: always; */
+  scroll-snap-type: x mandatory;
+  scroll-snap-stop: always;
 
   padding-block: 4rem;
   margin-block: -4rem;

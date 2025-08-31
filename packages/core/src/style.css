@@ -10,6 +10,10 @@
   max-inline-size: 100vw;
   box-sizing: border-box;
 
+  &:is(ul) {
+    padding-inline-start: 0;
+  }
+
   /* hide scrollbar */
   scrollbar-width: none;
   &::-webkit-scrollbar {
