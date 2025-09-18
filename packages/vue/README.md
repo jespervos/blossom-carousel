@@ -18,7 +18,7 @@ app.component("BlossomCarousel", BlossomCarousel);
 
 #### Nuxt
 
-Install globally `plugins/blossom-carousel.client.js`
+Install globally `plugins/blossom-carousel.js`
 
 ```javascript
 import { BlossomCarousel } from "@blossom-carousel/vue";
