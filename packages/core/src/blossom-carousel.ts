@@ -67,7 +67,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let scrollerHeight = 300;
   const padding = { start: 0, end: 0 };
   const scrollPadding = { start: 0, end: 0 };
+	let margin = 0;
   let snapPoints: number[] = [];
+  let slides: HTMLElement[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
@@ -77,6 +79,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function init() {
     scroller?.setAttribute("blossom-carousel", "true");
+    slides = Array.from(scroller.children) as HTMLElement[];
+
     links = scroller?.querySelectorAll("a[href]") || null;
     links?.forEach((el) => {
       el.addEventListener("click", onLinkClick);
@@ -160,6 +164,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scrollPadding.end = parseInt(styles.scrollPaddingInlineEnd) || 0;
     dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
     end = (scrollerScrollWidth - scrollerWidth - 4) * dir;
+    margin = parseInt(styles.gap) || parseInt(styles.columnGap) || 0;
 
     snapPoints = !hasSnap ? [] : findSnapPoints(scroller);
 
@@ -171,7 +176,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function findSnapPoints(scroller: HTMLElement): number[] {
-    let points: { align: string; el: HTMLElement | Element }[] = [];
+    const points: { align: string; el: HTMLElement | Element }[] = [];
 
     let cycles = 0;
     const traverseDOM = (node: HTMLElement | Element) => {
@@ -194,7 +199,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       // traverse all children
       const children = node.children;
       if (children.length === 0) return;
-      for (let child of children) {
+      for (const child of children) {
         traverseDOM(child);
       }
     };
@@ -347,23 +352,20 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
    *********************/
 
   function onRepeat(_: null | undefined, x: number | null): void {
-    if (!scroller) return;
+		if (!scroller) return;
 
     const scrollStart = x ?? scroller.scrollLeft;
     const distanceToStartEdge = padding.start - scrollStart;
-    const distanceToEndEdge =
-      scrollStart - (scrollerScrollWidth - scrollerWidth - padding.end);
-    const slides = Array.from(scroller.children) as HTMLElement[];
+    const distanceToEndEdge = scrollStart - (scrollerScrollWidth - scrollerWidth - padding.end);
 
-    /**
-     * TODO: compute amount of slides to offset
-     */
+		/**
+		 * TODO: compute amount of slides to offset
+		*/
 
     // offset end slides to start
     let ows = 0;
     for (let i = slides.length - 1; i >= slides.length / 2; i--) {
-      const offsetX =
-        ows > distanceToStartEdge ? 0 : -(scrollerScrollWidth - scrollerWidth);
+			const offsetX = ows > distanceToStartEdge ? 0 : -(scrollerScrollWidth - scrollerWidth) - margin;
       ows += slides[i].clientWidth;
       slides[i].style.translate = `${offsetX}px 0`;
     }
@@ -371,8 +373,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     // offset start slides to end
     let owe = 0;
     for (let i = 0; i < slides.length / 2; i++) {
-      const offsetX =
-        owe > distanceToEndEdge ? 0 : scrollerScrollWidth - scrollerWidth;
+      const offsetX = owe > distanceToEndEdge ? 0 : scrollerScrollWidth - scrollerWidth + margin;
       owe += slides[i].clientWidth;
       slides[i].style.translate = `${offsetX}px 0`;
     }
