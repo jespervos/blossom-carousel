@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blossom Carousel - Alpine.js</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <h1>Blossom Carousel - Alpine.js</h1>
+
+      <ul x-data="carousel()" class="carousel">
+        <li class="slide">Slide 1</li>
+        <li class="slide">Slide 2</li>
+        <li class="slide">Slide 3</li>
+        <li class="slide">Slide 4</li>
+        <li class="slide">Slide 5</li>
+        <li class="slide">Slide 6</li>
+        <li class="slide">Slide 7</li>
+        <li class="slide">Slide 8</li>
+        <li class="slide">Slide 9</li>
+        <li class="slide">Slide 10</li>
+        <li class="slide">Slide 11</li>
+        <li class="slide">Slide 12</li>
+      </ul>
+    </div>
+
+    <script type="module">
+      import Alpine from 'alpinejs'
+      import blossomCarousel from './src/index.ts'
+
+      Alpine.plugin(blossomCarousel)
+      Alpine.start()
+    </script>
+  </body>
+</html>

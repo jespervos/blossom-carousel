@@ -8,7 +8,7 @@ interface HasOverflow {
   y: boolean;
 }
 
-interface CarouselOptions {
+export interface CarouselOptions {
   repeat?: boolean;
 }
 

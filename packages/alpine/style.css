@@ -1,0 +1,47 @@
+@import "@blossom-carousel/core/style.css";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+	overflow: clip;
+}
+
+.carousel {
+	display: flex;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.slide {
+	flex-shrink: 0;
+  width: 300px;
+  aspect-ratio: 3/4;
+  border-radius: 1rem;
+  background-color: #404040;
+  scroll-snap-align: center;
+	padding: 1rem;
+	display: block;
+}
