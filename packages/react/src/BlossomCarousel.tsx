@@ -14,11 +14,12 @@ const BlossomCarousel = forwardRef(
     {
       children,
       as: Component = "div",
+      repeat,
       ...props
     }: {
       children?: ReactNode | Array<ReactNode>;
       as?: ElementType;
-
+      repeat?: boolean;
       [key: string]: unknown;
     },
     parentRef:
@@ -31,7 +32,7 @@ const BlossomCarousel = forwardRef(
     useEffect(() => {
       if (!localRef.current) return;
 
-      const blossom = Blossom(localRef.current, {});
+      const blossom = Blossom(localRef.current, { repeat });
 
       blossom.init();
 

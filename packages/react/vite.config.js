@@ -1,10 +1,15 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
-import path from "path";
+import path from "node:path";
 
 export default defineConfig({
   plugins: [react(), dts()],
+  resolve: {
+    alias: {
+      "@blossom-carousel/core": path.resolve(__dirname, "../core/src"),
+    },
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),

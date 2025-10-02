@@ -16,7 +16,7 @@ export default function App() {
   return (
     <div className="page">
       <h1>Blossom in React</h1>
-      <BlossomCarousel ref={carouselRef} as="ul" className="carousel">
+      <BlossomCarousel ref={carouselRef} as="ul" className="carousel" repeat>
         {Array.from({ length: 12 }, (_, i) => (
           <li key={`slide${i + 1}`} className="slide">
             {i + 1}
