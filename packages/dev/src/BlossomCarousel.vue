@@ -34,8 +34,8 @@ let blossom;
 
 defineExpose({
   el: root,
-  next: (inline) => blossom?.next(inline),
-  prev: (inline) => blossom?.prev(inline),
+  next: () => blossom?.next(),
+  prev: () => blossom?.prev(),
   currentIndex: () => blossom?.currentIndex(),
 });
 

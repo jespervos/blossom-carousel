@@ -44,11 +44,11 @@ function remove() {
 }
 
 const prev = () => {
-  blossom.value?.prev();
+  blossom.value?.prev('center');
 };
 
 const next = () => {
-  blossom.value?.next();
+  blossom.value?.next('center');
 };
 
 const handleIndexChange = (index) => {
@@ -90,20 +90,16 @@ const handleIndexChange = (index) => {
 
 .wrapper {
   /* max-width: 1000px; */
+	overflow: clip;
 }
 
 .carousel {
-  /* padding-inline: 10rem; */
-  /* scroll-padding-inline: 10rem; */
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
 
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
 	scroll-padding: 1rem;
-
-  padding-block: 4rem;
-  margin-block: -4rem;
 
   /* display: grid;
   grid-auto-flow: column;
@@ -124,7 +120,7 @@ const handleIndexChange = (index) => {
   /* border: 1px solid red; */
 
 	&:nth-child(2n+1) {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
 		background-color: #606060;
   }
 }

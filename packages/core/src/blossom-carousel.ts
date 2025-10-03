@@ -94,6 +94,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 	let margin = 0;
   let snapPoints: number[] = [];
   let snapElements: HTMLElement[] = [];
+  let snapAlignments: ScrollLogicalPosition[] = [];
   let slides: HTMLElement[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -191,9 +192,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     end = (scrollerScrollWidth - scrollerWidth - 4) * dir;
     margin = parseInt(styles.gap) || parseInt(styles.columnGap) || 0;
 
-    const result = !hasSnap ? { points: [], elements: [] } : findSnapPoints(scroller);
+    const result = !hasSnap
+      ? { points: [], elements: [], alignments: [] }
+      : findSnapPoints(scroller);
     snapPoints = result.points;
     snapElements = result.elements;
+    snapAlignments = result.alignments;
 
     if (options?.repeat) onRepeat(null, null);
   }
@@ -202,7 +206,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     onResize();
   }
 
-  function findSnapPoints(scroller: HTMLElement): { points: number[]; elements: HTMLElement[] } {
+  function findSnapPoints(scroller: HTMLElement): {
+    points: number[];
+    elements: HTMLElement[];
+    alignments: ScrollLogicalPosition[];
+  } {
     const points: { align: string; el: HTMLElement | Element }[] = [];
 
     let cycles = 0;
@@ -240,6 +248,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
 
       let position: number | null = null;
+      let computedAlign: ScrollLogicalPosition = align as ScrollLogicalPosition;
+
       switch (align) {
         case "start":
           position = left - scrollPadding.start;
@@ -252,23 +262,24 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
           break;
       }
 
-      return { position, element: el as HTMLElement };
+      return { position, element: el as HTMLElement, align: computedAlign };
     });
 
     // Filter out duplicates (i.e. in case of multiple rows)
-    const filteredData: { position: number; element: HTMLElement }[] = [];
+    const filteredData: { position: number; element: HTMLElement; align: ScrollLogicalPosition }[] = [];
     const seenPositions = new Set<number>();
 
     for (const item of snapData) {
       if (item.position !== null && !seenPositions.has(item.position)) {
         seenPositions.add(item.position);
-        filteredData.push({ position: item.position, element: item.element });
+        filteredData.push({ position: item.position, element: item.element, align: item.align });
       }
     }
 
     return {
       points: filteredData.map(d => d.position),
       elements: filteredData.map(d => d.element),
+      alignments: filteredData.map(d => d.align),
     };
   }
 
@@ -691,27 +702,29 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     };
   }
 
-  function next(inline: ScrollLogicalPosition = "start"): void {
+  function next(inline?: ScrollLogicalPosition): void {
     if (snapElements.length <= 1) return;
 
     const nextIndex = Math.min(currentIndex.value + 1, snapPoints.length - 1);
+    const alignment = inline ?? snapAlignments[nextIndex] ?? "start";
 
 		snapElements[nextIndex].scrollIntoView({
       behavior: "smooth",
       block: "nearest",
-      inline,
+      inline: alignment,
     });
   }
 
-  function prev(inline: ScrollLogicalPosition = "start"): void {
+  function prev(inline?: ScrollLogicalPosition): void {
     if (snapElements.length <= 1) return;
 
     const prevIndex = Math.max(currentIndex.value - 1, 0);
+    const alignment = inline ?? snapAlignments[prevIndex] ?? "start";
 
     snapElements[prevIndex].scrollIntoView({
       behavior: "smooth",
       block: "nearest",
-      inline,
+      inline: alignment,
     });
   }
 
