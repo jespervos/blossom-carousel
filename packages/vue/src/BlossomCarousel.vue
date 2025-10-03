@@ -23,9 +23,14 @@ const props = defineProps({
 });
 
 const root = shallowRef(null);
-defineExpose({ el: root });
 
 let blossom = null;
+defineExpose({
+  el: root,
+  next: (inline) => blossom?.next(inline),
+  prev: (inline) => blossom?.prev(inline),
+});
+
 onMounted(async () => {
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
@@ -40,6 +45,7 @@ onMounted(async () => {
   blossom = Blossom(root.value);
   blossom.init();
 });
+
 onBeforeUnmount(() => {
   blossom?.destroy();
 });

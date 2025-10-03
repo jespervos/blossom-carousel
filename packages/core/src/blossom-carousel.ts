@@ -69,6 +69,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   const scrollPadding = { start: 0, end: 0 };
 	let margin = 0;
   let snapPoints: number[] = [];
+  let snapElements: HTMLElement[] = [];
   let slides: HTMLElement[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -166,7 +167,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     end = (scrollerScrollWidth - scrollerWidth - 4) * dir;
     margin = parseInt(styles.gap) || parseInt(styles.columnGap) || 0;
 
-    snapPoints = !hasSnap ? [] : findSnapPoints(scroller);
+    const result = !hasSnap ? { points: [], elements: [] } : findSnapPoints(scroller);
+    snapPoints = result.points;
+    snapElements = result.elements;
 
     if (options?.repeat) onRepeat(null, null);
   }
@@ -175,7 +178,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     onResize();
   }
 
-  function findSnapPoints(scroller: HTMLElement): number[] {
+  function findSnapPoints(scroller: HTMLElement): { points: number[]; elements: HTMLElement[] } {
     const points: { align: string; el: HTMLElement | Element }[] = [];
 
     let cycles = 0;
@@ -207,34 +210,42 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     // precompute snap point for all slides
     const scrollerRect = scroller.getBoundingClientRect();
-    let snapPoints = points.map(({ el, align }, i) => {
+    const snapData = points.map(({ el, align }, i) => {
       const elementRect = (el as HTMLElement).getBoundingClientRect();
       const clientWidth = (el as HTMLElement).clientWidth;
       const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
 
+      let position: number | null = null;
       switch (align) {
         case "start":
-          return left - scrollPadding.start;
+          position = left - scrollPadding.start;
+          break;
         case "end":
-          return left + clientWidth - scrollerWidth + scrollPadding.end;
+          position = left + clientWidth - scrollerWidth + scrollPadding.end;
+          break;
         case "center":
-          return left + clientWidth * 0.5 - scrollerWidth / 2;
-        default:
-          return null;
+          position = left + clientWidth * 0.5 - scrollerWidth / 2;
+          break;
       }
+
+      return { position, element: el as HTMLElement };
     });
 
     // Filter out duplicates (i.e. in case of multiple rows)
-    snapPoints = snapPoints
-      .filter((snapPoint): snapPoint is number => snapPoint !== null)
-      .reduce((acc: number[], curr: any) => {
-        if (acc[acc.length - 1] !== curr) {
-          acc.push(curr);
-        }
-        return acc;
-      }, []);
+    const filteredData: { position: number; element: HTMLElement }[] = [];
+    const seenPositions = new Set<number>();
 
-    return snapPoints as number[];
+    for (const item of snapData) {
+      if (item.position !== null && !seenPositions.has(item.position)) {
+        seenPositions.add(item.position);
+        filteredData.push({ position: item.position, element: item.element });
+      }
+    }
+
+    return {
+      points: filteredData.map(d => d.position),
+      elements: filteredData.map(d => d.element),
+    };
   }
 
   function onScroll() {
@@ -429,6 +440,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (hasOverflow.x) {
       velocity.x *= FRICTION;
+
+			console.log('blossom-carousel.ts')
       if (!isDragging) {
         target.x += velocity.x;
         virtualScroll.x = damp(virtualScroll.x, target.x, DAMPING, frameDelta);
@@ -613,10 +626,65 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     return Math.round(value * multiplier) / multiplier;
   }
 
+  /******************************
+   ********* NAVIGATION *********
+   ******************************/
+
+  function getCurrentSnapIndex(): number {
+    if (!snapPoints.length) return 0;
+
+    const currentScroll = scroller.scrollLeft;
+    let closestIndex = 0;
+    let closestDistance = Math.abs(snapPoints[0] - currentScroll);
+
+    for (let i = 1; i < snapPoints.length; i++) {
+      const distance = Math.abs(snapPoints[i] - currentScroll);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = i;
+      }
+    }
+
+    return closestIndex;
+  }
+
+  function next(inline: ScrollLogicalPosition = "start"): void {
+    if (!snapPoints.length || !snapElements.length) return;
+
+    const currentIndex = getCurrentSnapIndex();
+    const nextIndex = Math.min(currentIndex + 1, snapPoints.length - 1);
+
+    if (nextIndex === currentIndex && !options?.repeat) return;
+
+		console.log('blossom-carousel.ts', currentIndex, nextIndex, snapElements, snapElements[nextIndex])
+    snapElements[nextIndex].scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline,
+    });
+  }
+
+  function prev(inline: ScrollLogicalPosition = "start"): void {
+    if (!snapPoints.length || !snapElements.length) return;
+
+    const currentIndex = getCurrentSnapIndex();
+    const prevIndex = Math.max(currentIndex - 1, 0);
+
+    if (prevIndex === currentIndex && !options?.repeat) return;
+
+    snapElements[prevIndex].scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline,
+    });
+  }
+
   return {
     snap,
     hasOverflow,
     init,
     destroy,
+    next,
+    prev,
   };
 };

@@ -34,6 +34,7 @@ function add() {
   slide.innerHTML = `<p>${Math.floor(Math.random() * 100)}</p>`;
   blossom.value?.el?.appendChild(slide);
 }
+
 function remove() {
   const slides = blossom.value?.el?.querySelectorAll(".slide");
   if (slides.length > 0) {
@@ -41,66 +42,13 @@ function remove() {
   }
 }
 
-const getCurrentSlide = () => {
-  if (!blossom.value) return null;
-
-  const carousel = blossom.value.$el;
-  const slides = carousel.children;
-  const carouselRect = carousel.getBoundingClientRect();
-  const carouselLeft = carouselRect.left;
-
-  let closestSlide = null;
-  let closestDistance = Infinity;
-
-  for (let i = 0; i < slides.length; i++) {
-    const slide = slides[i];
-    const slideRect = slide.getBoundingClientRect();
-    const distance = Math.abs(slideRect.left - carouselLeft);
-
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestSlide = { element: slide, index: i };
-    }
-  }
-
-  return closestSlide;
-};
-
 const prev = () => {
-  const currentSlide = getCurrentSlide();
-  if (!currentSlide || !blossom.value) return;
-
-  const carousel = blossom.value.$el;
-  const slides = carousel.children;
-  const prevIndex = currentSlide.index - 1;
-
-  if (prevIndex >= 0) {
-    const prevSlide = slides[prevIndex];
-    prevSlide.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "start",
-    });
-  }
-};
+  blossom.value?.prev();
+}
 
 const next = () => {
-  const currentSlide = getCurrentSlide();
-  if (!currentSlide || !blossom.value) return;
-
-  const carousel = blossom.value.$el;
-  const slides = carousel.children;
-  const nextIndex = currentSlide.index + 1;
-
-  if (nextIndex < slides.length) {
-    const nextSlide = slides[nextIndex];
-    nextSlide.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "start",
-    });
-  }
-};
+  blossom.value?.next();
+}
 </script>
 
 <template>
@@ -146,6 +94,7 @@ const next = () => {
 
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
+	scroll-padding: 1rem;
 
   padding-block: 4rem;
   margin-block: -4rem;
@@ -160,13 +109,18 @@ const next = () => {
   width: 300px;
   margin-right: 1rem;
   aspect-ratio: 3/4;
-  scroll-snap-align: center;
   background-color: #404040;
   border-radius: 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  scroll-snap-align: start;
   /* border: 1px solid red; */
+
+	/* &:nth-child(3n+1) {
+    scroll-snap-align: start;
+		background-color: #606060;
+  } */
 }
 
 /* .carousel {
