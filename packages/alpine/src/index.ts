@@ -6,8 +6,11 @@ export default function blossomCarousel(Alpine: Alpine) {
     blossom: null as ReturnType<typeof Blossom> | null,
 
     init() {
+      // Find the carousel element (first child with class 'carousel')
+      const carouselEl = this.$refs.carousel || this.$el;
+
       // Set the blossom-carousel attribute
-      this.$el.setAttribute("blossom-carousel", "true");
+      carouselEl.setAttribute("blossom-carousel", "true");
 
       // Check if should load based on media query
       const hasMouse = window.matchMedia(
@@ -19,12 +22,20 @@ export default function blossomCarousel(Alpine: Alpine) {
         return;
       }
 
-      this.blossom = Blossom(this.$el, options);
+      this.blossom = Blossom(carouselEl, options);
       this.blossom.init();
     },
 
     destroy() {
       this.blossom?.destroy();
+    },
+
+    next() {
+      this.blossom?.next();
+    },
+
+    prev() {
+      this.blossom?.prev();
     },
   }));
 }
