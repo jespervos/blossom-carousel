@@ -4,6 +4,7 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 import "../../core/src/style.css";
 
 const blossom = ref(null);
+const currentSlideIndex = ref(0);
 // const slides = ref([]);
 // function onOverScroll(event) {
 //   event.preventDefault();
@@ -44,18 +45,23 @@ function remove() {
 
 const prev = () => {
   blossom.value?.prev();
-}
+};
 
 const next = () => {
   blossom.value?.next();
-}
+};
+
+const handleIndexChange = (index) => {
+	currentSlideIndex.value = index;
+};
 </script>
 
 <template>
   <div class="page">
     <h1>Blossom Dev</h1>
+    <p>Current Slide: {{ currentSlideIndex + 1 }}</p>
     <div class="wrapper">
-      <BlossomCarousel ref="blossom" class="carousel" as="ul">
+      <BlossomCarousel ref="blossom" class="carousel" as="ul" :on-index-change="handleIndexChange">
         <li v-for="i in 12" ref="slides" :key="`slide${i}`" class="slide">
           <p>{{ i }}</p>
         </li>
@@ -114,13 +120,13 @@ const next = () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  scroll-snap-align: start;
+  /* scroll-snap-align: start; */
   /* border: 1px solid red; */
 
-	/* &:nth-child(3n+1) {
+	&:nth-child(2n+1) {
     scroll-snap-align: start;
 		background-color: #606060;
-  } */
+  }
 }
 
 /* .carousel {

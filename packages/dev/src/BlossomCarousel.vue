@@ -24,16 +24,21 @@ const props = defineProps({
     type: String,
     default: "conditional",
   },
+	onIndexChange: {
+		type: Function,
+	},
 });
 
 const root = shallowRef(null);
+let blossom;
+
 defineExpose({
   el: root,
   next: (inline) => blossom?.next(inline),
   prev: (inline) => blossom?.prev(inline),
+  currentIndex: () => blossom?.currentIndex(),
 });
 
-let blossom = null;
 onMounted(async () => {
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
@@ -47,7 +52,11 @@ onMounted(async () => {
 
   blossom = Blossom(root.value, { repeat: props.repeat });
   blossom.init();
+
+	// listeners
+	props.onIndexChange && blossom.onIndexChange(props.onIndexChange)
 });
+
 onBeforeUnmount(() => {
   blossom?.destroy();
 });

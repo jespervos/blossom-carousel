@@ -12,6 +12,11 @@ interface CarouselOptions {
   repeat?: boolean;
 }
 
+interface CurrentIndex {
+  value: number;
+  onChange: ((index: number) => void) | null;
+}
+
 export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let snap = <boolean>true;
   const pointerStart: Point = { x: 0, y: 0 };
@@ -51,6 +56,25 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
           scroller.removeAttribute("has-overflow");
           scroller.removeEventListener("pointerdown", onPointerDown);
           scroller.removeEventListener("wheel", onWheel);
+        }
+
+        return true;
+      },
+    }
+  );
+
+  const currentIndex: CurrentIndex = new Proxy(
+    { value: 0, onChange: null },
+    {
+      set(target, prop: keyof CurrentIndex, value) {
+        const old = target[prop];
+        if (old === value) return true;
+
+        target[prop] = value;
+
+        // Trigger callback when value changes
+        if (prop === "value" && target.onChange) {
+          target.onChange(value as number);
         }
 
         return true;
@@ -251,6 +275,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function onScroll() {
     if (options?.repeat) {
       onRepeat(null, null);
+      updateCurrentIndex();
       return;
     }
 
@@ -265,6 +290,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       const left = scrollStart * -1 + scrollerScrollWidth - scrollerWidth;
       dispatchOverscrollEvent(left);
     }
+
+    updateCurrentIndex();
   }
 
   /*********************
@@ -440,8 +467,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (hasOverflow.x) {
       velocity.x *= FRICTION;
-
-			console.log('blossom-carousel.ts')
       if (!isDragging) {
         target.x += velocity.x;
         virtualScroll.x = damp(virtualScroll.x, target.x, DAMPING, frameDelta);
@@ -481,6 +506,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     } else {
       onRepeat(null, virtualScroll.x);
     }
+
+    updateCurrentIndex();
 
     lastTick = t;
   }
@@ -569,7 +596,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       });
     }
 
-    return () => stopFns.forEach((fn) => fn());
+    return () => stopFns.forEach((fn) => {fn()});
   }
 
   /******************************
@@ -648,16 +675,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     return closestIndex;
   }
 
+	function updateCurrentIndex(): void {
+    const newIndex = getCurrentSnapIndex();
+    if (currentIndex.value !== newIndex) {
+      currentIndex.value = newIndex;
+    }
+  }
+
+  function onIndexChange(callback: (index: number) => void): () => void {
+		currentIndex.onChange = callback;
+    callback(currentIndex.value);
+
+		return () => {
+      currentIndex.onChange = null;
+    };
+  }
+
   function next(inline: ScrollLogicalPosition = "start"): void {
-    if (!snapPoints.length || !snapElements.length) return;
+    if (snapElements.length <= 1) return;
 
-    const currentIndex = getCurrentSnapIndex();
-    const nextIndex = Math.min(currentIndex + 1, snapPoints.length - 1);
+    const nextIndex = Math.min(currentIndex.value + 1, snapPoints.length - 1);
 
-    if (nextIndex === currentIndex && !options?.repeat) return;
-
-		console.log('blossom-carousel.ts', currentIndex, nextIndex, snapElements, snapElements[nextIndex])
-    snapElements[nextIndex].scrollIntoView({
+		snapElements[nextIndex].scrollIntoView({
       behavior: "smooth",
       block: "nearest",
       inline,
@@ -665,12 +704,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function prev(inline: ScrollLogicalPosition = "start"): void {
-    if (!snapPoints.length || !snapElements.length) return;
+    if (snapElements.length <= 1) return;
 
-    const currentIndex = getCurrentSnapIndex();
-    const prevIndex = Math.max(currentIndex - 1, 0);
-
-    if (prevIndex === currentIndex && !options?.repeat) return;
+    const prevIndex = Math.max(currentIndex.value - 1, 0);
 
     snapElements[prevIndex].scrollIntoView({
       behavior: "smooth",
@@ -682,6 +718,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   return {
     snap,
     hasOverflow,
+    currentIndex: () => currentIndex.value,
+    onIndexChange,
     init,
     destroy,
     next,

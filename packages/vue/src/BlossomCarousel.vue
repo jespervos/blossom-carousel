@@ -12,25 +12,28 @@ const props = defineProps({
     type: String,
     default: "div",
   },
-  // repeat: {
-  //   type: Boolean,
-  //   default: false,
-  // },
+  repeat: {
+    type: Boolean,
+    default: false,
+  },
   load: {
     type: String,
     default: "conditional",
   },
+	onIndexChange: {
+		type: Function,
+	},
 });
 
 const root = shallowRef(null);
+let blossom;
 
-let blossom = null;
 defineExpose({
   el: root,
   next: (inline) => blossom?.next(inline),
   prev: (inline) => blossom?.prev(inline),
+  currentIndex: () => blossom?.currentIndex(),
 });
-
 onMounted(async () => {
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
