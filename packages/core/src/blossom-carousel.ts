@@ -95,6 +95,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let snapPoints: number[] = [];
   let snapElements: HTMLElement[] = [];
   let snapAlignments: ScrollLogicalPosition[] = [];
+  let virtualSnapPoints: number[] = [];
   let slides: HTMLElement[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -248,8 +249,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
 
       let position: number | null = null;
-      let computedAlign: ScrollLogicalPosition = align as ScrollLogicalPosition;
-
       switch (align) {
         case "start":
           position = left - scrollPadding.start;
@@ -262,7 +261,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
           break;
       }
 
-      return { position, element: el as HTMLElement, align: computedAlign };
+      return { position, element: el as HTMLElement, align };
     });
 
     // Filter out duplicates (i.e. in case of multiple rows)
@@ -393,6 +392,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     );
     const distance = slideX - target.x;
     const force = distance * (1 - FRICTION) * (1 / FRICTION);
+		console.log('blossom-carousel.ts', slideX, target.x, force)
     velocity.x = force;
   }
 
@@ -417,6 +417,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 			const offsetX = ows > distanceToStartEdge ? 0 : -(scrollerScrollWidth - scrollerWidth) - margin;
       ows += slides[i].clientWidth;
       slides[i].style.translate = `${offsetX}px 0`;
+
+      // Update virtual snap point for this slide
+      const snapIndex = snapElements.indexOf(slides[i]);
+      if (snapIndex !== -1) {
+        virtualSnapPoints[snapIndex] = snapPoints[snapIndex] + offsetX;
+      }
     }
 
     // offset start slides to end
@@ -425,6 +431,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       const offsetX = owe > distanceToEndEdge ? 0 : scrollerScrollWidth - scrollerWidth + margin;
       owe += slides[i].clientWidth;
       slides[i].style.translate = `${offsetX}px 0`;
+
+      // Update virtual snap point for this slide
+      const snapIndex = snapElements.indexOf(slides[i]);
+      if (snapIndex !== -1) {
+        virtualSnapPoints[snapIndex] = snapPoints[snapIndex] + offsetX;
+      }
     }
 
     if (isDragging) return;
@@ -624,8 +636,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function snapSelect({ axis = "x" }: AxisOption): number {
     const restingX = project({ axis });
-    return snapPoints.length
-      ? snapPoints.reduce((prev, curr) =>
+    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    return points.length
+      ? points.reduce((prev, curr) =>
           Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
         )
       : clamp(restingX, Math.min(end, 0), Math.max(end, 0));
@@ -669,14 +682,15 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
    ******************************/
 
   function getCurrentSnapIndex(): number {
-    if (!snapPoints.length) return 0;
+    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    if (!points.length) return 0;
 
     const currentScroll = scroller.scrollLeft;
     let closestIndex = 0;
-    let closestDistance = Math.abs(snapPoints[0] - currentScroll);
+    let closestDistance = Math.abs(points[0] - currentScroll);
 
-    for (let i = 1; i < snapPoints.length; i++) {
-      const distance = Math.abs(snapPoints[i] - currentScroll);
+    for (let i = 1; i < points.length; i++) {
+      const distance = Math.abs(points[i] - currentScroll);
       if (distance < closestDistance) {
         closestDistance = distance;
         closestIndex = i;
@@ -702,29 +716,35 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     };
   }
 
-  function next(inline?: ScrollLogicalPosition): void {
+  function next(): void {
     if (snapElements.length <= 1) return;
 
-    const nextIndex = Math.min(currentIndex.value + 1, snapPoints.length - 1);
-    const alignment = inline ?? snapAlignments[nextIndex] ?? "start";
+    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    const nextIndex = options?.repeat
+      ? (currentIndex.value + 1) % points.length
+      : Math.min(currentIndex.value + 1, points.length - 1);
+    const inline = snapAlignments[nextIndex] ?? "start";
 
 		snapElements[nextIndex].scrollIntoView({
       behavior: "smooth",
       block: "nearest",
-      inline: alignment,
+      inline,
     });
   }
 
-  function prev(inline?: ScrollLogicalPosition): void {
+  function prev(): void {
     if (snapElements.length <= 1) return;
 
-    const prevIndex = Math.max(currentIndex.value - 1, 0);
-    const alignment = inline ?? snapAlignments[prevIndex] ?? "start";
+    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    const prevIndex = options?.repeat
+      ? (currentIndex.value - 1 + points.length) % points.length
+      : Math.max(currentIndex.value - 1, 0);
+    const inline = snapAlignments[prevIndex] ?? "start";
 
     snapElements[prevIndex].scrollIntoView({
       behavior: "smooth",
       block: "nearest",
-      inline: alignment,
+      inline,
     });
   }
 

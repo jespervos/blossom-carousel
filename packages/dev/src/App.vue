@@ -44,11 +44,11 @@ function remove() {
 }
 
 const prev = () => {
-  blossom.value?.prev('center');
+  blossom.value?.prev();
 };
 
 const next = () => {
-  blossom.value?.next('center');
+  blossom.value?.next();
 };
 
 const handleIndexChange = (index) => {
@@ -61,7 +61,7 @@ const handleIndexChange = (index) => {
     <h1>Blossom Dev</h1>
     <p>Current Slide: {{ currentSlideIndex + 1 }}</p>
     <div class="wrapper">
-      <BlossomCarousel ref="blossom" class="carousel" as="ul" :on-index-change="handleIndexChange">
+      <BlossomCarousel ref="blossom" class="carousel" as="ul" :on-index-change="handleIndexChange" repeat>
         <li v-for="i in 12" ref="slides" :key="`slide${i}`" class="slide">
           <p>{{ i }}</p>
         </li>
@@ -119,7 +119,7 @@ const handleIndexChange = (index) => {
   /* scroll-snap-align: start; */
   /* border: 1px solid red; */
 
-	&:nth-child(2n+1) {
+	&:nth-child(4n+1) {
     scroll-snap-align: center;
 		background-color: #606060;
   }
