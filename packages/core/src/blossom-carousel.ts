@@ -318,12 +318,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (hasOverflow.x) {
       virtualScroll.x = scroller.scrollLeft;
+      target.x = scroller.scrollLeft;
       pointerStart.x = e.clientX;
       velocity.x = 0;
     }
 
     if (hasOverflow.y) {
       virtualScroll.y = scroller.scrollTop;
+      target.y = scroller.scrollTop;
       pointerStart.y = e.clientY;
       velocity.y = 0;
     }
