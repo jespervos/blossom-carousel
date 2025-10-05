@@ -8,6 +8,11 @@ interface HasOverflow {
   y: boolean;
 }
 
+interface SnapPoint {
+  target: HTMLElement | null;
+  x: number;
+}
+
 interface CarouselOptions {
   repeat?: boolean;
 }
@@ -67,13 +72,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let scrollerHeight = 300;
   const padding = { start: 0, end: 0 };
   const scrollPadding = { start: 0, end: 0 };
-  let snapPoints: number[] = [];
+  let snapPoints: SnapPoint[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let hasSnap = false;
   let restoreScrollMethods: () => void;
   let dir = 1;
+  let activeSnapPoint: SnapPoint = { target: null, x: 0 };
 
   function init() {
     scroller?.setAttribute("blossom-carousel", "true");
@@ -170,7 +176,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     onResize();
   }
 
-  function findSnapPoints(scroller: HTMLElement): number[] {
+  function findSnapPoints(scroller: HTMLElement): SnapPoint[] {
     let points: { align: string; el: HTMLElement | Element }[] = [];
 
     let cycles = 0;
@@ -209,27 +215,33 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
       switch (align) {
         case "start":
-          return left - scrollPadding.start;
+          return { target: el as HTMLElement, x: left - scrollPadding.start };
         case "end":
-          return left + clientWidth - scrollerWidth + scrollPadding.end;
+          return {
+            target: el as HTMLElement,
+            x: left + clientWidth - scrollerWidth + scrollPadding.end,
+          };
         case "center":
-          return left + clientWidth * 0.5 - scrollerWidth / 2;
+          return {
+            target: el as HTMLElement,
+            x: left + clientWidth * 0.5 - scrollerWidth / 2,
+          };
         default:
           return null;
       }
     });
 
     // Filter out duplicates (i.e. in case of multiple rows)
-    snapPoints = snapPoints
-      .filter((snapPoint): snapPoint is number => snapPoint !== null)
-      .reduce((acc: number[], curr: any) => {
-        if (acc[acc.length - 1] !== curr) {
+    const filteredSnapPoints = snapPoints
+      .filter((snapPoint): snapPoint is SnapPoint => snapPoint !== null)
+      .reduce((acc: SnapPoint[], curr: SnapPoint) => {
+        if (acc.length === 0 || acc[acc.length - 1].x !== curr.x) {
           acc.push(curr);
         }
         return acc;
       }, []);
 
-    return snapPoints as number[];
+    return filteredSnapPoints;
   }
 
   function onScroll() {
@@ -332,8 +344,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function dragSnap(): void {
     //TODO: add support for vertical snapping
+    const newSnapPoint = snapSelect({ axis: "x" });
+    if (newSnapPoint.x !== activeSnapPoint.x) {
+      dispatchScrollSnapChangingEvent(newSnapPoint);
+    }
+    activeSnapPoint = newSnapPoint;
     const slideX = clamp(
-      snapSelect({ axis: "x" }),
+      newSnapPoint.x,
       Math.min((scrollerScrollWidth - scrollerWidth) * dir, 0),
       Math.max((scrollerScrollWidth - scrollerWidth) * dir, 0)
     );
@@ -393,28 +410,43 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
    ***** Ticker *****
    ******************/
 
+  function onScrollEnd(e: Event) {
+    if (isTicking) {
+      e.stopPropagation();
+    }
+  }
+
   const FRICTION = 0.72;
   const DAMPING = 0.12;
   let isTicking = false;
+
   function setIsTicking(bool: boolean): void {
     if (!scroller) return;
 
+    // start ticker
     if (bool && !isTicking) {
       lastTick = performance.now();
       if (hasOverflow.x) target.x = scroller.scrollLeft;
       if (hasOverflow.y) target.y = scroller.scrollTop;
 
+      scroller.addEventListener("scrollend", onScrollEnd, {
+        capture: true,
+        passive: false,
+      });
+
       if (!raf) {
         raf = requestAnimationFrame(tick);
       }
-    } else if (!bool) {
+    }
+    // stop ticker
+    else if (!bool) {
       if (raf) cancelAnimationFrame(raf);
       raf = null;
+      scroller.removeEventListener("scrollend", onScrollEnd);
     }
 
     isTicking = bool;
     snap = !bool;
-
     scroller.setAttribute("has-snap", snap ? "true" : "false");
   }
 
@@ -461,6 +493,24 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       top: virtualScroll.y,
       behavior: "instant" as ScrollBehavior,
     });
+
+    if (isDragging) {
+      if (hasSnap) {
+        const newSnapPoint = snapSelect({ axis: "x" });
+        if (newSnapPoint.x !== activeSnapPoint.x) {
+          activeSnapPoint = newSnapPoint;
+          dispatchScrollSnapChangingEvent(newSnapPoint);
+        }
+      }
+    }
+
+    if (!isDragging && round(velocity.x, 8) === 0) {
+      setIsTicking(false);
+      dispatchScrollEndEvent();
+      if (hasSnap) {
+        dispatchScrollSnapChangeEvent();
+      }
+    }
 
     if (!options?.repeat) {
       applyRubberBanding(round(virtualScroll.x, 2));
@@ -512,6 +562,41 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     });
     scroller?.dispatchEvent(overscrollEvent);
     return overscrollEvent;
+  }
+
+  const scrollEndEvent = new Event("scrollend", {
+    bubbles: true,
+    cancelable: true,
+  });
+  function dispatchScrollEndEvent(): Event {
+    scroller?.dispatchEvent(scrollEndEvent);
+    return scrollEndEvent;
+  }
+
+  function dispatchScrollSnapChangeEvent(): Event {
+    const scrollSnapChangeEvent = new CustomEvent("scrollsnapchange", {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        snapTargetInline: activeSnapPoint.target,
+        snapTargetBlock: activeSnapPoint.target,
+      },
+    });
+    scroller?.dispatchEvent(scrollSnapChangeEvent);
+    return scrollSnapChangeEvent;
+  }
+
+  function dispatchScrollSnapChangingEvent(snapPoint: SnapPoint): Event {
+    const scrollSnapChangingEvent = new CustomEvent("scrollsnapchanging", {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        snapTargetInline: (snapPoint || activeSnapPoint).target,
+        snapTargetBlock: (snapPoint || activeSnapPoint).target,
+      },
+    });
+    scroller?.dispatchEvent(scrollSnapChangingEvent);
+    return scrollSnapChangingEvent;
   }
 
   /******************************
@@ -570,13 +655,18 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     return target[axis] + velocity[axis] / (1 - FRICTION);
   }
 
-  function snapSelect({ axis = "x" }: AxisOption): number {
+  function snapSelect({ axis = "x" }: AxisOption): SnapPoint {
     const restingX = project({ axis });
     return snapPoints.length
       ? snapPoints.reduce((prev, curr) =>
-          Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
+          Math.abs(curr.x - restingX) < Math.abs(prev.x - restingX)
+            ? curr
+            : prev
         )
-      : clamp(restingX, Math.min(end, 0), Math.max(end, 0));
+      : {
+          target: null,
+          x: clamp(restingX, Math.min(end, 0), Math.max(end, 0)),
+        };
   }
 
   function preventGlobalClick(): void {

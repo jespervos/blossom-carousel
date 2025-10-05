@@ -74,3 +74,4 @@ npm install @blossom-carousel/core
 - [Grouping](https://www.blossom-carousel.com/docs/examples#grouping)
 - [Sticky](https://www.blossom-carousel.com/docs/examples#sticky)
 - [Coverflow](https://www.blossom-carousel.com/docs/examples#cover-flow)
+- [Right to Left](https://blossom-carousel.com/docs/examples#right-to-left)
