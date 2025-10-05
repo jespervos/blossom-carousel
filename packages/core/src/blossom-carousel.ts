@@ -367,6 +367,18 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
+    // Sync virtual and target to actual scroll before calculating snap
+    if (scroller) {
+      if (hasOverflow.x) {
+        virtualScroll.x = scroller.scrollLeft;
+        target.x = virtualScroll.x;
+      }
+      if (hasOverflow.y) {
+        virtualScroll.y = scroller.scrollTop;
+        target.y = virtualScroll.y;
+      }
+    }
+
 		dragSnap();
     preventGlobalClick();
   }
@@ -391,11 +403,26 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
 		// When repeating, ensure translations are updated so nearest prev/next exist
 		if (options?.repeat) {
-			onRepeat(null, virtualScroll.x);
+			// Align virtual snap points around the projected resting position
+			const projected = project({ axis: "x" });
+			onRepeat(null, projected);
 		}
 
 		if(options?.repeat && snapElements.length > 0) {
-			slideX = snapSelect({ axis: "x" })
+			// Strict single-step: choose prev/next from the current index
+			const n = snapPoints.length;
+			if (n >= 2) {
+				const ci = currentIndex.value % n;
+				const step = (velocity.x * dir) >= 0 ? 1 : -1;
+				const targetIdx = (ci + step + n) % n;
+				const base = snapPoints[targetIdx];
+				const restingX = project({ axis: "x" });
+				const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+				const k = loopWidth > 0 ? Math.round((restingX - base) / loopWidth) : 0;
+				slideX = base + k * loopWidth;
+			} else {
+				slideX = snapSelect({ axis: "x" });
+			}
 		} else if(!options?.repeat && !snapElements.length) {
 			slideX = clamp(
 			  snapSelect({ axis: "x" }),
@@ -404,9 +431,20 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 			)
 		}
 
-		if(!slideX) return
+		if (slideX === undefined || Number.isNaN(slideX)) return
 
-		const distance = slideX - target.x;
+		// Use the actual current scroll position to compute snap distance
+		target.x = virtualScroll.x;
+		let distance = slideX - virtualScroll.x;
+		// For repeat, choose the shortest path across loop boundaries
+		if (options?.repeat) {
+			const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+			if (loopWidth > 0) {
+				// Wrap distance into [-loopWidth/2, loopWidth/2]
+				distance = distance - Math.round(distance / loopWidth) * loopWidth;
+			}
+		}
+		console.log('blossom-carousel.ts=======>', distance, target.x)
 		const force = distance * (1 - FRICTION) * (1 / FRICTION);
 		velocity.x = force;
   }
@@ -422,31 +460,36 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 		const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
 		if (loopWidth === 0) return;
 
-		// Translate each slide to the nearest cycle relative to the current scroll
-		for (let i = 0; i < slides.length; i++) {
-			const snapIndex = snapElements.indexOf(slides[i]);
-			// If the slide has an associated snap point, compute its nearest cycle
-			if (snapIndex !== -1) {
-				const basePoint = snapPoints[snapIndex] ?? 0;
-				const raw = (scrollLeft - basePoint) / loopWidth;
-				const k = Math.round(raw + (velocity.x >= 0 ? 0.001 : -0.001));
-				// console.log('blossom-carousel.ts:432', k, scrollerWidth,scrollLeft - basePoint);
-				const offsetX = k * loopWidth;
-				slides[i].style.translate = `${offsetX}px 0`;
-				virtualSnapPoints[snapIndex] = basePoint + offsetX;
-			} else {
-				// Non-snap slides follow the same cycle as their previous sibling
-				// to keep visual grouping consistent.
-				const prev = i > 0 ? slides[i - 1] : null;
-				let prevTranslate = 0;
-				if (prev) {
-					const style = prev.style.translate || "0px 0";
-					const match = style.match(/(-?\d+)px/);
-					prevTranslate = match ? parseInt(match[1], 10) : 0;
-				}
-				slides[i].style.translate = `${prevTranslate}px 0`;
-			}
+		// Compute offsets for snapped elements first to produce a dense virtualSnapPoints
+		const newVirtual: number[] = new Array(snapPoints.length);
+		const elementOffset = new Map<HTMLElement, number>();
+		for (let i = 0; i < snapElements.length; i++) {
+			const el = snapElements[i];
+			const basePoint = snapPoints[i] ?? 0;
+			const raw = (scrollLeft - basePoint) / loopWidth;
+			const k = Math.round(raw + (velocity.x >= 0 ? 0.001 : -0.001));
+			const offsetX = k * loopWidth;
+			el.style.translate = `${offsetX}px 0`;
+			elementOffset.set(el, offsetX);
+			newVirtual[i] = basePoint + offsetX;
 		}
+
+		// Translate non-snap slides to the nearest previous snapped slide's cycle
+		for (let i = 0; i < slides.length; i++) {
+			const el = slides[i];
+			if (elementOffset.has(el)) continue;
+			let prevTranslate = 0;
+			for (let j = i - 1; j >= 0; j--) {
+				const prevEl = slides[j];
+				const val = elementOffset.get(prevEl);
+				if (val !== undefined) { prevTranslate = val; break; }
+			}
+			el.style.translate = `${prevTranslate}px 0`;
+		}
+
+		// Replace contents of virtualSnapPoints with the dense array
+		virtualSnapPoints.length = 0;
+		for (let i = 0; i < newVirtual.length; i++) virtualSnapPoints.push(newVirtual[i]);
   }
 
   /******************
@@ -638,8 +681,23 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function snapSelect({ axis = "x" }: AxisOption): number {
     const restingX = project({ axis });
-    const points = virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
-    return points.reduce((prev, curr) =>
+    const basePoints = virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    if (!basePoints.length) return 0;
+
+    let candidates = basePoints;
+    if (options?.repeat) {
+      const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+      if (loopWidth > 0) {
+        const withNeighbors: number[] = [];
+        for (let i = 0; i < basePoints.length; i++) {
+          const p = basePoints[i];
+          withNeighbors.push(p - loopWidth, p, p + loopWidth);
+        }
+        candidates = withNeighbors;
+      }
+    }
+
+    return candidates.reduce((prev, curr) =>
 			Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
 		)
   }
@@ -685,10 +743,34 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
     if (!points.length) return 0;
 
+    // In repeat mode, step the index at most by 1 using midpoint thresholds
+    if (options?.repeat && virtualSnapPoints.length) {
+      const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+      if (loopWidth > 0) {
+        const currentScroll = scroller.scrollLeft;
+        const n = points.length;
+        const ci = Math.min(Math.max(currentIndex.value, 0), n - 1);
+        const pi = (ci - 1 + n) % n;
+        const ni = (ci + 1) % n;
+
+        const normalize = (p: number) => p + Math.round((currentScroll - p) / loopWidth) * loopWidth;
+        const prevP = normalize(points[pi]);
+        const currP = normalize(points[ci]);
+        const nextP = normalize(points[ni]);
+
+        const midPrev = (prevP + currP) / 2;
+        const midNext = (currP + nextP) / 2;
+
+        if (currentScroll < midPrev) return pi;
+        if (currentScroll > midNext) return ni;
+        return ci;
+      }
+    }
+
+    // Fallback: choose nearest
     const currentScroll = scroller.scrollLeft;
     let closestIndex = 0;
     let closestDistance = Math.abs(points[0] - currentScroll);
-
     for (let i = 1; i < points.length; i++) {
       const distance = Math.abs(points[i] - currentScroll);
       if (distance < closestDistance) {
@@ -696,7 +778,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         closestIndex = i;
       }
     }
-
     return closestIndex;
   }
 
