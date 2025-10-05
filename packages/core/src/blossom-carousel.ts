@@ -389,6 +389,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     //TODO: add support for vertical snapping
 		let slideX: number | undefined;
 
+		// When repeating, ensure translations are updated so nearest prev/next exist
+		if (options?.repeat) {
+			onRepeat(null, virtualScroll.x);
+		}
+
 		if(options?.repeat && snapElements.length > 0) {
 			slideX = snapSelect({ axis: "x" })
 		} else if(!options?.repeat && !snapElements.length) {
@@ -413,54 +418,35 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function onRepeat(_: null | undefined, x: number | null): void {
 		if (!scroller) return;
 
-    const scrollStart = x ?? scroller.scrollLeft;
-    const distanceToStartEdge = padding.start - scrollStart;
-    const distanceToEndEdge = scrollStart - (scrollerScrollWidth - scrollerWidth - padding.end);
+		const scrollLeft = x ?? scroller.scrollLeft;
+		const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+		if (loopWidth === 0) return;
 
-		/**
-		 * TODO: compute amount of slides to offset
-		*/
-
-    // offset end slides to start
-    let ows = 0;
-    for (let i = slides.length - 1; i >= slides.length / 2; i--) {
-			const offsetX = ows > distanceToStartEdge ? 0 : -(scrollerScrollWidth - scrollerWidth + gap);
-      ows += slides[i].clientWidth;
-      slides[i].style.translate = `${offsetX}px 0`;
-
-      // Update virtual snap point for this slide
-      const snapIndex = snapElements.indexOf(slides[i]);
-      if (snapIndex !== -1) {
-        virtualSnapPoints[snapIndex] = snapPoints[snapIndex] + offsetX;
-      }
-    }
-
-    // offset start slides to end
-    let owe = 0;
-    for (let i = 0; i < slides.length / 2; i++) {
-      const offsetX = owe > distanceToEndEdge ? 0 : scrollerScrollWidth - scrollerWidth + gap;
-      owe += slides[i].clientWidth;
-      slides[i].style.translate = `${offsetX}px 0`;
-
-      // Update virtual snap point for this slide
-      const snapIndex = snapElements.indexOf(slides[i]);
-      if (snapIndex !== -1) {
-        virtualSnapPoints[snapIndex] = snapPoints[snapIndex] + offsetX;
-      }
-    }
-
-    // if (isDragging) return;
-
-    // loop
-    // const left = scrollStart > end ? securityMargin
-		// 	: scrollStart < securityMargin ? end
-		// 	: null;
-    // if (!left) return;
-    // __scrollingInternally = true;
-    // scroller.scrollTo({
-    //   left,
-    //   behavior: "instant" as ScrollBehavior,
-    // });
+		// Translate each slide to the nearest cycle relative to the current scroll
+		for (let i = 0; i < slides.length; i++) {
+			const snapIndex = snapElements.indexOf(slides[i]);
+			// If the slide has an associated snap point, compute its nearest cycle
+			if (snapIndex !== -1) {
+				const basePoint = snapPoints[snapIndex] ?? 0;
+				const raw = (scrollLeft - basePoint) / loopWidth;
+				const k = Math.round(raw + (velocity.x >= 0 ? 0.001 : -0.001));
+				// console.log('blossom-carousel.ts:432', k, scrollerWidth,scrollLeft - basePoint);
+				const offsetX = k * loopWidth;
+				slides[i].style.translate = `${offsetX}px 0`;
+				virtualSnapPoints[snapIndex] = basePoint + offsetX;
+			} else {
+				// Non-snap slides follow the same cycle as their previous sibling
+				// to keep visual grouping consistent.
+				const prev = i > 0 ? slides[i - 1] : null;
+				let prevTranslate = 0;
+				if (prev) {
+					const style = prev.style.translate || "0px 0";
+					const match = style.match(/(-?\d+)px/);
+					prevTranslate = match ? parseInt(match[1], 10) : 0;
+				}
+				slides[i].style.translate = `${prevTranslate}px 0`;
+			}
+		}
   }
 
   /******************
@@ -523,10 +509,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     if (options?.repeat) {
+      const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
       if (virtualScroll.x > end) {
-        virtualScroll.x = target.x = securityMargin;
+        virtualScroll.x -= loopWidth;
+        target.x -= loopWidth;
       } else if (virtualScroll.x < securityMargin) {
-        virtualScroll.x = target.x = end;
+        virtualScroll.x += loopWidth;
+        target.x += loopWidth;
       }
 		}
 
@@ -625,7 +614,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         arg?: boolean | ScrollIntoViewOptions
       ): void {
         onExternalScroll(this, "scrollIntoView", [arg]);
-        return originalScrollIntoView.call(this, arg);
+        originalScrollIntoView.call(this, arg);
       };
       stopFns.push(() => {
         Element.prototype.scrollIntoView = originalScrollIntoView;
