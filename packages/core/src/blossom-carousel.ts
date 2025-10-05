@@ -89,13 +89,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let scrollerWidth = 300;
   let scrollerScrollHeight = 300;
   let scrollerHeight = 300;
+  const securityMargin = 0;
   const padding = { start: 0, end: 0 };
   const scrollPadding = { start: 0, end: 0 };
-	let margin = 0;
+	let gap = 0;
   let snapPoints: number[] = [];
   let snapElements: HTMLElement[] = [];
   let snapAlignments: ScrollLogicalPosition[] = [];
-  let virtualSnapPoints: number[] = [];
+  const virtualSnapPoints: number[] = [];
   let slides: HTMLElement[] = [];
   let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -190,8 +191,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scrollPadding.start = parseInt(styles.scrollPaddingInlineStart) || 0;
     scrollPadding.end = parseInt(styles.scrollPaddingInlineEnd) || 0;
     dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
-    end = (scrollerScrollWidth - scrollerWidth - 4) * dir;
-    margin = parseInt(styles.gap) || parseInt(styles.columnGap) || 0;
+    gap = parseInt(styles.gap) || parseInt(styles.columnGap) || 0;
+    end = (scrollerScrollWidth - scrollerWidth - securityMargin + gap) * dir;
 
     const result = !hasSnap
       ? { points: [], elements: [], alignments: [] }
@@ -284,7 +285,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function onScroll() {
     if (options?.repeat) {
-      onRepeat(null, null);
       updateCurrentIndex();
       return;
     }
@@ -367,7 +367,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    dragSnap();
+		dragSnap();
     preventGlobalClick();
   }
 
@@ -387,15 +387,23 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function dragSnap(): void {
     //TODO: add support for vertical snapping
-    const slideX = clamp(
-      snapSelect({ axis: "x" }),
-      Math.min((scrollerScrollWidth - scrollerWidth) * dir, 0),
-      Math.max((scrollerScrollWidth - scrollerWidth) * dir, 0)
-    );
-    const distance = slideX - target.x;
-    const force = distance * (1 - FRICTION) * (1 / FRICTION);
-		console.log('blossom-carousel.ts', slideX, target.x, force)
-    velocity.x = force;
+		let slideX: number | undefined;
+
+		if(options?.repeat && snapElements.length > 0) {
+			slideX = snapSelect({ axis: "x" })
+		} else if(!options?.repeat && !snapElements.length) {
+			slideX = clamp(
+			  snapSelect({ axis: "x" }),
+			  Math.min((scrollerScrollWidth - scrollerWidth) * dir, 0),
+			  Math.max((scrollerScrollWidth - scrollerWidth) * dir, 0)
+			)
+		}
+
+		if(!slideX) return
+
+		const distance = slideX - target.x;
+		const force = distance * (1 - FRICTION) * (1 / FRICTION);
+		velocity.x = force;
   }
 
   /*********************
@@ -416,7 +424,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     // offset end slides to start
     let ows = 0;
     for (let i = slides.length - 1; i >= slides.length / 2; i--) {
-			const offsetX = ows > distanceToStartEdge ? 0 : -(scrollerScrollWidth - scrollerWidth) - margin;
+			const offsetX = ows > distanceToStartEdge ? 0 : -(scrollerScrollWidth - scrollerWidth + gap);
       ows += slides[i].clientWidth;
       slides[i].style.translate = `${offsetX}px 0`;
 
@@ -430,7 +438,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     // offset start slides to end
     let owe = 0;
     for (let i = 0; i < slides.length / 2; i++) {
-      const offsetX = owe > distanceToEndEdge ? 0 : scrollerScrollWidth - scrollerWidth + margin;
+      const offsetX = owe > distanceToEndEdge ? 0 : scrollerScrollWidth - scrollerWidth + gap;
       owe += slides[i].clientWidth;
       slides[i].style.translate = `${offsetX}px 0`;
 
@@ -441,24 +449,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       }
     }
 
-    if (isDragging) return;
+    // if (isDragging) return;
 
     // loop
-    const left = scrollStart > end ? 4 : scrollStart < 4 ? end : null;
-    if (!left) return;
-    __scrollingInternally = true;
-    scroller.scrollTo({
-      left,
-      behavior: "instant" as ScrollBehavior,
-    });
+    // const left = scrollStart > end ? securityMargin
+		// 	: scrollStart < securityMargin ? end
+		// 	: null;
+    // if (!left) return;
+    // __scrollingInternally = true;
+    // scroller.scrollTo({
+    //   left,
+    //   behavior: "instant" as ScrollBehavior,
+    // });
   }
 
   /******************
    ***** Ticker *****
    ******************/
 
-  const FRICTION = 0.72;
-  const DAMPING = 0.12;
+  const FRICTION = 0.94;
+  // const FRICTION = 0.72;
+  const DAMPING = 0.20;
+  // const DAMPING = 0.12;
   let isTicking = false;
   function setIsTicking(bool: boolean): void {
     if (!scroller) return;
@@ -512,25 +524,24 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (options?.repeat) {
       if (virtualScroll.x > end) {
-        virtualScroll.x = target.x = 4;
-      }
-      if (virtualScroll.x < 4) {
+        virtualScroll.x = target.x = securityMargin;
+      } else if (virtualScroll.x < securityMargin) {
         virtualScroll.x = target.x = end;
       }
+		}
+
+    if (options?.repeat) {
+			onRepeat(null, virtualScroll.x);
+    } else {
+      applyRubberBanding(round(virtualScroll.x, 2));
     }
 
-    __scrollingInternally = true;
+		__scrollingInternally = true;
     scroller.scrollTo({
       left: virtualScroll.x,
       top: virtualScroll.y,
       behavior: "instant" as ScrollBehavior,
     });
-
-    if (!options?.repeat) {
-      applyRubberBanding(round(virtualScroll.x, 2));
-    } else {
-      onRepeat(null, virtualScroll.x);
-    }
 
     updateCurrentIndex();
 
@@ -638,12 +649,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function snapSelect({ axis = "x" }: AxisOption): number {
     const restingX = project({ axis });
-    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
-    return points.length
-      ? points.reduce((prev, curr) =>
-          Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
-        )
-      : clamp(restingX, Math.min(end, 0), Math.max(end, 0));
+    const points = virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    return points.reduce((prev, curr) =>
+			Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
+		)
   }
 
   function preventGlobalClick(): void {
