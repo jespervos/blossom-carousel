@@ -99,17 +99,17 @@ const handleIndexChange = (index) => {
 
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
-	scroll-padding: 1rem;
+	padding-inline: 0;
 
-  /* display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 300px;
-  grid-gap: 1rem; */
+	/* padding-inline: 3rem; */
+
+	display: flex;
+	gap: 1rem;
 }
 
 .slide {
+	flex-shrink: 0;
   width: 300px;
-  margin-right: 1rem;
   aspect-ratio: 3/4;
   background-color: #404040;
   border-radius: 1rem;
