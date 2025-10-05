@@ -284,12 +284,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function onScroll() {
-    if (options?.repeat) {
+		if (isDragging || !scroller) return;
+
+		if (options?.repeat) {
+			console.log('onScroll', scroller.scrollLeft);
+			onRepeat(null, scroller.scrollLeft);
       updateCurrentIndex();
       return;
     }
-
-    if (isDragging || !scroller) return;
 
     const scrollStart = scroller.scrollLeft;
 
@@ -389,25 +391,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     //TODO: add support for vertical snapping
 		let slideX: number | undefined;
 
-		// When repeating, ensure translations are updated so nearest prev/next exist
-		// if (options?.repeat) {
-		// 	// Align virtual snap points around the projected resting position
-		// 	const projected = project({ axis: "x" });
-		// 	onRepeat(null, projected);
-		// }
-
 		if(options?.repeat && snapElements.length > 0) {
-			// Strict single-step: choose prev/next from the current index
+			// Strict single-step using helpers
 			const n = snapPoints.length;
 			if (n >= 2) {
-				const ci = currentIndex.value % n;
-				const step = (velocity.x * dir) >= 0 ? 1 : -1;
+				const ci = ((currentIndex.value % n) + n) % n;
+				const step: 1 | -1 = (velocity.x * dir) >= 0 ? 1 : -1;
 				const targetIdx = (ci + step + n) % n;
-				const base = snapPoints[targetIdx];
-				const restingX = project({ axis: "x" });
-				const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
-				const k = loopWidth > 0 ? Math.round((restingX - base) / loopWidth) : 0;
-				slideX = base + k * loopWidth;
+				slideX = computeRepeatSlideX(targetIdx, step);
 			} else {
 				slideX = snapSelect({ axis: "x" });
 			}
@@ -421,19 +412,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
 		if (slideX === undefined) return
 
-		// Use the actual current scroll position to compute snap distance
-		target.x = virtualScroll.x;
-		let distance = slideX - virtualScroll.x;
-		// For repeat, choose the shortest path across loop boundaries
-		if (options?.repeat) {
-			const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
-			if (loopWidth > 0) {
-				// Wrap distance into [-loopWidth/2, loopWidth/2]
-				distance = distance - Math.round(distance / loopWidth) * loopWidth;
-			}
-		}
-		const force = distance * (1 - FRICTION) * (1 / FRICTION);
-		velocity.x = force;
+		animateToSlideX(slideX);
   }
 
   /*********************
@@ -617,7 +596,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let __scrollingInternally = false;
 
   const scrollTo = scroller.scrollTo.bind(scroller);
-  scroller.scrollTo = function (options) {
+  scroller.scrollTo = (options) => {
     const internal = __scrollingInternally === true;
     if (!internal) setIsTicking(false);
     __scrollingInternally = false;
@@ -625,7 +604,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   };
 
   const scrollBy = scroller.scrollBy.bind(scroller);
-  scroller.scrollBy = function (options) {
+  scroller.scrollBy = (options) => {
     const internal = __scrollingInternally === true;
     if (!internal) setIsTicking(false);
     __scrollingInternally = false;
@@ -707,6 +686,51 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     return Math.round(value * multiplier) / multiplier;
   }
 
+	/******************************
+	 ********* REPEAT UTILS *********
+	 ******************************/
+
+	function getLoopWidth(): number {
+		return scrollerScrollWidth - scrollerWidth + gap;
+	}
+
+	function normalizeToCycle(point: number, reference: number): number {
+		const w = getLoopWidth();
+		if (w <= 0) return point;
+		const k = Math.round((reference - point) / w);
+		return point + k * w;
+	}
+
+	function animateToSlideX(slideX: number, enforceDir?: 1 | -1): void {
+		if (slideX === undefined || Number.isNaN(slideX)) return;
+		setIsTicking(true);
+		target.x = virtualScroll.x;
+		let distance = slideX - virtualScroll.x;
+		if (options?.repeat) {
+			const w = getLoopWidth();
+			if (w > 0) {
+				// shortest path wrapping
+				distance = distance - Math.round(distance / w) * w;
+				// optionally enforce intended direction (for prev/next)
+				if (enforceDir === 1 && (distance * dir) <= 0) distance += w * dir;
+				if (enforceDir === -1 && (distance * dir) >= 0) distance -= w * dir;
+			}
+		}
+		const force = distance * (1 - FRICTION) * (1 / FRICTION);
+		velocity.x = force;
+	}
+
+	function computeRepeatSlideX(targetIndex: number, directionSign: 1 | -1): number {
+		const base = snapPoints[targetIndex] ?? 0;
+		const candidate = normalizeToCycle(base, virtualScroll.x);
+		const w = getLoopWidth();
+		if (w <= 0) return candidate;
+		const delta = candidate - virtualScroll.x;
+		if (directionSign === 1 && (delta * dir) <= 0) return candidate + w * dir;
+		if (directionSign === -1 && (delta * dir) >= 0) return candidate - w * dir;
+		return candidate;
+	}
+
   /******************************
    ********* NAVIGATION *********
    ******************************/
@@ -749,33 +773,53 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function next(): void {
     if (snapElements.length <= 1) return;
 
-    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    const points = snapPoints;
     const nextIndex = options?.repeat
       ? (currentIndex.value + 1) % points.length
       : Math.min(currentIndex.value + 1, points.length - 1);
-    const inline = snapAlignments[nextIndex] ?? "start";
 
-		snapElements[nextIndex].scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline,
-    });
+    let slideX: number | undefined;
+    if (options?.repeat && points.length >= 2) {
+      const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+      const base = points[nextIndex];
+      const k = loopWidth > 0 ? Math.round((virtualScroll.x - base) / loopWidth) : 0;
+      let candidate = base + k * loopWidth;
+      const delta = candidate - virtualScroll.x;
+      if ((delta * dir) <= 0) candidate += loopWidth * dir;
+      slideX = candidate;
+    } else {
+      const min = Math.min((scrollerScrollWidth - scrollerWidth) * dir, 0);
+      const max = Math.max((scrollerScrollWidth - scrollerWidth) * dir, 0);
+      slideX = clamp(points[nextIndex], min, max);
+    }
+
+    animateToSlideX(slideX, 1);
   }
 
   function prev(): void {
     if (snapElements.length <= 1) return;
 
-    const points = options?.repeat && virtualSnapPoints.length ? virtualSnapPoints : snapPoints;
+    const points = snapPoints;
     const prevIndex = options?.repeat
       ? (currentIndex.value - 1 + points.length) % points.length
       : Math.max(currentIndex.value - 1, 0);
-    const inline = snapAlignments[prevIndex] ?? "start";
 
-    snapElements[prevIndex].scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline,
-    });
+    let slideX: number | undefined;
+    if (options?.repeat && points.length >= 2) {
+      const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+      const base = points[prevIndex];
+      const k = loopWidth > 0 ? Math.round((virtualScroll.x - base) / loopWidth) : 0;
+      let candidate = base + k * loopWidth;
+      const delta = candidate - virtualScroll.x;
+      if ((delta * dir) >= 0) candidate -= loopWidth * dir;
+      slideX = candidate;
+    } else {
+      const min = Math.min((scrollerScrollWidth - scrollerWidth) * dir, 0);
+      const max = Math.max((scrollerScrollWidth - scrollerWidth) * dir, 0);
+      slideX = clamp(points[prevIndex], min, max);
+    }
+
+    animateToSlideX(slideX, -1);
   }
 
   return {
