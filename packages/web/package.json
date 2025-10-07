@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/web",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for the web.",
@@ -60,6 +60,6 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
-    "@blossom-carousel/core": "^0.1.9"
+    "@blossom-carousel/core": "^0.2.0"
   }
 }

@@ -5,6 +5,8 @@
 
 set -e  # Exit on any error
 
+echo "let's gooo"
+
 VERSION_TYPE="${1:-patch}"
 
 if [[ ! "$VERSION_TYPE" =~ ^(patch|minor|major)$ ]]; then
