@@ -20,6 +20,7 @@ The native-first carousel enhanced with drag support.
 <li>💡 <strong>Configure with CSS</strong>: Works with native scroll-snap, position sticky and scroll-driven animations.</li>
 <li>🪶 <strong>0kb on touch devices</strong>: Blossom only loads when a fine pointer device is detected.</li>
 <li>🧱 <strong>Works with major frameworks</strong>: Components for React, Vue, Svelte and Web Components.</li>
+<li>🚧 <strong>Experimental cyclical scrolling</strong>: Allows the carousel to infinitely loop.</li>
 </ul>
 
 ## Installation

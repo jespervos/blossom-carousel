@@ -14,10 +14,12 @@ const BlossomCarousel = forwardRef(
     {
       children,
       as: Component = "div",
+      repeat = false,
       ...props
     }: {
       children?: ReactNode | Array<ReactNode>;
       as?: ElementType;
+      repeat?: boolean;
 
       [key: string]: unknown;
     },
@@ -31,14 +33,14 @@ const BlossomCarousel = forwardRef(
     useEffect(() => {
       if (!localRef.current) return;
 
-      const blossom = Blossom(localRef.current, {});
+      const blossom = Blossom(localRef.current, { repeat });
 
       blossom.init();
 
       return () => {
         blossom.destroy();
       };
-    }, []);
+    }, [repeat]);
 
     useImperativeHandle<HTMLElement | null, HTMLElement | null>(
       parentRef,

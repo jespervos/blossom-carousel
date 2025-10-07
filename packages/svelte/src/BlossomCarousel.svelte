@@ -21,7 +21,6 @@
       blossom = Blossom(root, { repeat });
       blossom.init();
     }
-
   });
 
   onDestroy(() => {

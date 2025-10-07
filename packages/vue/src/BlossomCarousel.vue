@@ -12,10 +12,10 @@ const props = defineProps({
     type: String,
     default: "div",
   },
-  // repeat: {
-  //   type: Boolean,
-  //   default: false,
-  // },
+  repeat: {
+    type: Boolean,
+    default: false,
+  },
   load: {
     type: String,
     default: "conditional",
@@ -37,7 +37,7 @@ onMounted(async () => {
 
   const { Blossom } = await import("@blossom-carousel/core");
 
-  blossom = Blossom(root.value);
+  blossom = Blossom(root.value, { repeat: props.repeat });
   blossom.init();
 });
 onBeforeUnmount(() => {

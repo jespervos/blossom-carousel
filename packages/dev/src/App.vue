@@ -123,14 +123,15 @@ const next = () => {
   <div class="page">
     <h1>Blossom Dev</h1>
     <div class="wrapper">
-      <BlossomCarousel ref="blossom" class="carousel" as="ul">
+      <BlossomCarousel ref="blossom" class="carousel" as="ul" :repeat="true">
         <li
-          v-for="i in 12"
+          v-for="i in 24"
           ref="slides"
           :key="`slide${i}`"
           class="slide"
           :snapped="snappedSlide == i"
           :snapping="snappingSlide == i"
+          :style="{ width: `${Math.random() * 400 + 100}px` }"
         >
           <p>{{ i }}</p>
         </li>
@@ -162,13 +163,13 @@ const next = () => {
 }
 
 .carousel {
-  padding-inline: calc(50vw - 150px) !important;
-  scroll-padding-inline: calc(50vw - 150px);
+  /* padding-inline: calc(50vw - 150px) !important; */
+  /* scroll-padding-inline: calc(50vw - 150px); */
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
 
-  scroll-snap-type: x mandatory;
-  scroll-snap-stop: always;
+  /* scroll-snap-type: x mandatory;
+  scroll-snap-stop: always; */
 
   padding-block: 4rem;
   margin-block: -4rem;
@@ -181,8 +182,9 @@ const next = () => {
 
 .slide {
   width: 300px;
+  height: 400px;
   margin-right: 1rem;
-  aspect-ratio: 3/4;
+  /* aspect-ratio: 3/4; */
   scroll-snap-align: center;
   background-color: #404040;
   border-radius: 1rem;
