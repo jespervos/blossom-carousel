@@ -24,6 +24,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+	overflow: clip;
 }
 
 .carousel {
@@ -35,9 +36,6 @@ body {
   scroll-padding-inline: 1rem;
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
-
-  padding-block: 4rem;
-  margin-block: -4rem;
 }
 
 .slide {

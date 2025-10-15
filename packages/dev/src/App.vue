@@ -62,7 +62,10 @@ const handleIndexChange = (index) => {
     <p>Current Slide: {{ currentSlideIndex + 1 }}</p>
     <div class="wrapper">
       <BlossomCarousel ref="blossom" class="carousel" as="ul" :on-index-change="handleIndexChange" repeat>
-        <li v-for="i in 12" ref="slides" :key="`slide${i}`" class="slide">
+				<li v-for="i in 4" ref="slides" :key="`slide${i}`" class="slide" data-repeat="true">
+					<p>{{ i }}</p>
+				</li>
+        <li v-for="i in 12" ref="slides" :key="`slide${i+4}`" class="slide">
           <p>{{ i }}</p>
         </li>
       </BlossomCarousel>

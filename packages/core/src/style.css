@@ -15,32 +15,16 @@
   } */
 
   /* hide scrollbar */
-  scrollbar-width: none;
+  /* scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
-  }
+  } */
 
   &[has-repeat="true"] {
     scroll-padding-inline: 50% !important;
     padding-inline: 50% !important;
   }
 
-  &[has-snap="true"] {
-    scroll-snap-type: var(--snap-type) !important;
-  }
-
-  &[has-overflow="true"] {
-    cursor: grab;
-
-    &:active {
-      cursor: grabbing;
-
-      /* disable snapping when dragging */
-      @media (pointer: fine) {
-        scroll-snap-type: none !important;
-      }
-    }
-  }
 
   & > * {
     display: inline-block;

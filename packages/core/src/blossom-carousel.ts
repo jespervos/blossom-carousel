@@ -116,16 +116,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     window.addEventListener("keydown", onKeydown);
     scroller.addEventListener("scroll", onScroll);
 
-    resizeObserver = new ResizeObserver(onResize);
-    resizeObserver.observe(scroller);
-
-    mutationObserver = new MutationObserver(onMutation);
-    mutationObserver.observe(scroller, {
-      attributes: false,
-      childList: true,
-      subtree: false,
-    });
-
     const hasMouse = window.matchMedia(
       "(hover: hover) and (pointer: fine)"
     ).matches;
@@ -144,6 +134,24 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
       if (target === scroller || scroller.contains(target)) setIsTicking(false);
     });
+
+		resizeObserver = new ResizeObserver(onResize);
+    // If scroller width matches parent width, observe parent for resize events
+    // (ResizeObserver may not fire on elements sized by their containers)
+    const parent = scroller.parentElement;
+    if (parent && scroller.clientWidth === parent.clientWidth) {
+      resizeObserver.observe(parent);
+    } else {
+      resizeObserver.observe(scroller);
+    }
+
+    mutationObserver = new MutationObserver(onMutation);
+    mutationObserver.observe(scroller, {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    });
+
   }
 
   function destroy() {
@@ -186,8 +194,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       !hasTouch &&
       scrollerScrollHeight > scrollerHeight &&
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
+		padding.start = parseInt(styles.paddingInlineStart) || 0;
     padding.end = parseInt(styles.paddingInlineEnd) || 0;
-    padding.start = parseInt(styles.paddingInlineStart) || 0;
     scrollPadding.start = parseInt(styles.scrollPaddingInlineStart) || 0;
     scrollPadding.end = parseInt(styles.scrollPaddingInlineEnd) || 0;
     dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
@@ -195,13 +203,15 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     end = (scrollerScrollWidth - scrollerWidth - securityMargin + gap) * dir;
 
     const result = !hasSnap
-      ? { points: [], elements: [], alignments: [] }
+      ? { points: [], elements: [], alignments: [], sizes: [] }
       : findSnapPoints(scroller);
     snapPoints = result.points;
     snapElements = result.elements;
     snapAlignments = result.alignments;
 
-    if (options?.repeat) onRepeat(null, null);
+		// animateToSlideX(snapPoints[currentIndex.value]);
+		scroller.scrollTo({ left: snapPoints[currentIndex.value], behavior: "instant" });
+    // if (options?.repeat) onRepeat(null, null);
   }
 
   function onMutation(): void {
@@ -244,7 +254,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     // precompute snap point for all slides
     const scrollerRect = scroller.getBoundingClientRect();
-    const snapData = points.map(({ el, align }, i) => {
+    const snapData = points.map(({ el, align }) => {
       const elementRect = (el as HTMLElement).getBoundingClientRect();
       const clientWidth = (el as HTMLElement).clientWidth;
       const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
@@ -287,7 +297,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 		if (isDragging || !scroller) return;
 
 		if (options?.repeat) {
-			console.log('onScroll', scroller.scrollLeft);
 			onRepeat(null, scroller.scrollLeft);
       updateCurrentIndex();
       return;
@@ -384,7 +393,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function onKeydown(e: KeyboardEvent): void {
     if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key))
-      setIsTicking(false);
+		setIsTicking(false);
   }
 
   function dragSnap(): void {
@@ -424,6 +433,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
 		const scrollLeft = x ?? scroller.scrollLeft;
 		const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
+		// console.log('blossom-carousel.ts', loopWidth)
 		if (loopWidth === 0) return;
 
 		// Compute offsets for snapped elements first to produce a dense virtualSnapPoints
@@ -432,7 +442,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 		for (let i = 0; i < snapElements.length; i++) {
 			const el = snapElements[i];
 			const basePoint = snapPoints[i] ?? 0;
-			const raw = (scrollLeft - basePoint) / loopWidth;
+			const alignement = snapAlignments[i] ?? 'start';
+			const dx = alignement === 'start' ? 0 : alignement === 'end' ? (scrollerWidth - el.clientWidth) / 2 : (-scrollerWidth + el.clientWidth) / 2;
+			const raw = (scrollLeft - basePoint + dx) / loopWidth;
 			const k = Math.round(raw + (velocity.x >= 0 ? 0.001 : -0.001));
 			const offsetX = k * loopWidth;
 			el.style.translate = `${offsetX}px 0`;
