@@ -102,6 +102,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let hasSnap = false;
+  let hasMouse = false;
   let restoreScrollMethods: () => void;
   let dir = 1;
 
@@ -116,7 +117,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     window.addEventListener("keydown", onKeydown);
     scroller.addEventListener("scroll", onScroll);
 
-    const hasMouse = window.matchMedia(
+    hasMouse = window.matchMedia(
       "(hover: hover) and (pointer: fine)"
     ).matches;
 
@@ -125,11 +126,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     const { scrollSnapType } = window.getComputedStyle(scroller);
     hasSnap = scrollSnapType !== "none";
     scroller.style.setProperty("--snap-type", scrollSnapType);
-    if (hasMouse) {
-      scroller.style["scroll-snap-type"] = "none";
-    }
-
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
+
+		if (hasMouse) {
+			scroller.style["scroll-snap-type"] = "none";
+		}
 
     restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
       if (target === scroller || scroller.contains(target)) setIsTicking(false);
@@ -151,7 +152,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       childList: true,
       subtree: false,
     });
-
   }
 
   function destroy() {
@@ -296,8 +296,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function onScroll() {
 		if (isDragging || !scroller) return;
 
+		if(!isTicking) {
+			virtualScroll.x = target.x = scroller.scrollLeft
+		}
+
 		if (options?.repeat) {
-			onRepeat(null, scroller.scrollLeft);
+			onRepeat();
       updateCurrentIndex();
       return;
     }
@@ -428,13 +432,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
    ***** WRAP *****
    *********************/
 
-  function onRepeat(_: null | undefined, x: number | null): void {
+  function onRepeat(): void {
 		if (!scroller) return;
 
-		const scrollLeft = x ?? scroller.scrollLeft;
 		const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
-		// console.log('blossom-carousel.ts', loopWidth)
 		if (loopWidth === 0) return;
+
+		if (virtualScroll.x >= end) {
+			virtualScroll.x -= loopWidth;
+			target.x -= loopWidth;
+			if(!isTicking) {
+				scroller.scrollTo({ left: virtualScroll.x, behavior: "instant" });
+			}
+		} else if (virtualScroll.x <= securityMargin) {
+			virtualScroll.x += loopWidth;
+			target.x += loopWidth;
+			if(!isTicking) {
+				scroller.scrollTo({ left: virtualScroll.x, behavior: "instant" });
+			}
+		}
+
+		// const scrollLeft = x ?? scroller.scrollLeft;
+		const scrollLeft = virtualScroll.x;
 
 		// Compute offsets for snapped elements first to produce a dense virtualSnapPoints
 		const newVirtual: number[] = new Array(snapPoints.length);
@@ -490,8 +509,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       if (!raf) {
         raf = requestAnimationFrame(tick);
       }
-    } else if (!bool) {
-      if (raf) cancelAnimationFrame(raf);
+    } else if (!bool && raf) {
+      cancelAnimationFrame(raf);
       raf = null;
     }
 
@@ -530,18 +549,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     if (options?.repeat) {
-      const loopWidth = scrollerScrollWidth - scrollerWidth + gap;
-      if (virtualScroll.x > end) {
-        virtualScroll.x -= loopWidth;
-        target.x -= loopWidth;
-      } else if (virtualScroll.x < securityMargin) {
-        virtualScroll.x += loopWidth;
-        target.x += loopWidth;
-      }
-		}
-
-    if (options?.repeat) {
-			onRepeat(null, virtualScroll.x);
+			onRepeat();
     } else {
       applyRubberBanding(round(virtualScroll.x, 2));
     }
