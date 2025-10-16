@@ -26,14 +26,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     { x: 0, y: 0 },
     {
       set(target, prop: keyof Point, value) {
-        const old = target[prop];
-        if (old === value) return true;
+				if (!nativeScroll) {
+					const old = target[prop];
+					if (old === value) return true;
 
-        target[prop] = value;
+					target[prop] = value;
 
-        if (target.x >= 10 || target.y >= 10) {
-          setIsTicking(true);
-        }
+					if (target.x >= 10 || target.y >= 10) {
+						setIsTicking(true);
+					}
+				}
 
         return true;
       },
@@ -101,12 +103,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let snapAlignments: ScrollLogicalPosition[] = [];
   const virtualSnapPoints: number[] = [];
   let slides: HTMLElement[] = [];
-  let links: NodeListOf<HTMLAnchorElement> | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let hasSnap = false;
   let hasMouse = false;
-	const hasTouch = "ontouchmove" in window;
+	let nativeScroll = true;
   let restoreScrollMethods: () => void;
   let dir = 1;
 
@@ -114,10 +115,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller?.setAttribute("blossom-carousel", "true");
     slides = Array.from(scroller.children) as HTMLElement[];
 
-    links = scroller?.querySelectorAll("a[href]") || null;
-    links?.forEach((el) => {
-      el.addEventListener("click", onLinkClick);
-    });
     window.addEventListener("keydown", onKeydown);
     scroller.addEventListener("scroll", onScroll);
 
@@ -132,9 +129,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       "(hover: hover) and (pointer: fine)"
     ).matches;
 
-		// if (hasMouse && options?.repeat) {
+		nativeScroll = !hasMouse && !options?.repeat;
+		if (!nativeScroll) {
 			scroller.style["scroll-snap-type"] = "none";
-		// }
+		}
 
     restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
       if (target === scroller || scroller.contains(target)) setIsTicking(false);
@@ -167,17 +165,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     window.removeEventListener("keydown", onKeydown);
     scroller.removeEventListener("scroll", onScroll);
 
-    links?.forEach((el) => {
-      el.removeEventListener("click", onLinkClick);
-    });
-
     restoreScrollMethods?.();
-  }
-
-  function onLinkClick(e: MouseEvent): void {
-    if (distanceMovedSincePointerDown.x > 10) {
-      e.preventDefault();
-    }
   }
 
   function onResize(): void {
@@ -220,7 +208,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     snapElements = result.elements;
     snapAlignments = result.alignments;
 
-		// animateToSlideX(snapPoints[currentIndex.value]);
 		target.x = virtualScroll.x = snapPoints[currentIndex.value];
 		scroller.scrollTo({ left: virtualScroll.x, behavior: "instant" });
 		if (options?.repeat) {
@@ -517,11 +504,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
    ***** Ticker *****
    ******************/
 
-  // const FRICTION = 0.94;
   const FRICTION = 0.72;
-  // const DAMPING = 0.20;
   const DAMPING = 0.12;
   let isTicking = false;
+
   function setIsTicking(bool: boolean): void {
     if (!scroller) return;
 
@@ -738,6 +724,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
 	function animateToSlideX(slideX: number, enforceDir?: 1 | -1): void {
 		if (slideX === undefined || Number.isNaN(slideX)) return;
+
 		setIsTicking(true);
 		target.x = virtualScroll.x;
 		let distance = slideX - virtualScroll.x;
@@ -808,10 +795,20 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function next(): void {
     if (snapElements.length <= 1) return;
 
-    const points = snapPoints;
+		const points = snapPoints;
     const nextIndex = options?.repeat
       ? (currentIndex.value + 1) % points.length
       : Math.min(currentIndex.value + 1, points.length - 1);
+
+		if (nativeScroll) {
+			const align = snapAlignments[nextIndex] ?? 'start';
+			(snapElements[nextIndex] as HTMLElement).scrollIntoView({
+				behavior: "smooth",
+				block: "nearest",
+				inline: align,
+			});
+			return;
+		}
 
     let slideX: number | undefined;
     if (options?.repeat && points.length >= 2) {
@@ -838,6 +835,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     const prevIndex = options?.repeat
       ? (currentIndex.value - 1 + points.length) % points.length
       : Math.max(currentIndex.value - 1, 0);
+
+		if (nativeScroll) {
+			const align = snapAlignments[prevIndex] ?? 'start';
+			(snapElements[prevIndex] as HTMLElement).scrollIntoView({
+				behavior: "smooth",
+				block: "nearest",
+				inline: align,
+			});
+			return;
+		}
 
     let slideX: number | undefined;
     if (options?.repeat && points.length >= 2) {
