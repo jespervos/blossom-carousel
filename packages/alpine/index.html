@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Blossom Carousel - Alpine.js</title>
+	<link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+	<div class="page">
+		<h1>Blossom Carousel - Alpine.js</h1>
+
+		<div x-data="carousel({ load: 'always' })" class="wrapper">
+			<p>Current slide: <span x-text="currentIndex + 1"></span></p>
+
+			<ul class="carousel" x-ref="carousel">
+				<li class="slide">1</li>
+				<li class="slide">2</li>
+				<li class="slide">3</li>
+				<li class="slide">4</li>
+				<li class="slide">5</li>
+				<li class="slide">6</li>
+				<li class="slide">7</li>
+				<li class="slide">8</li>
+				<li class="slide">9</li>
+				<li class="slide">10</li>
+				<li class="slide">11</li>
+				<li class="slide">12</li>
+			</ul>
+
+			<div class="controls">
+				<button @click="prev()">Previous</button>
+				<button @click="next()">Next</button>
+			</div>
+		</div>
+	</div>
+
+	<script type="module">
+		import Alpine from 'alpinejs'
+		import blossomCarousel from './src/index.ts'
+
+		Alpine.plugin(blossomCarousel)
+		Alpine.start()
+	</script>
+</body>
+
+</html>

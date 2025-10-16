@@ -20,7 +20,8 @@
     "dev:vue": "pnpm --filter @blossom-carousel/vue dev",
     "dev:react": "pnpm --filter @blossom-carousel/react dev",
     "dev:svelte": "pnpm --filter @blossom-carousel/svelte dev",
-    "dev:web": "pnpm --filter @blossom-carousel/web dev"
+    "dev:web": "pnpm --filter @blossom-carousel/web dev",
+    "dev:alpine": "pnpm --filter @blossom-carousel/alpine dev"
   },
   "workspaces": [
     "packages/*"

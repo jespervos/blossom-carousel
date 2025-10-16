@@ -1,0 +1,70 @@
+{
+  "name": "@blossom-carousel/alpine",
+  "version": "0.1.0",
+  "author": "Jesper Vos",
+  "license": "MIT",
+  "description": "A native-scroll-first carousel component for Alpine.js.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jespervos/blossom-carousel"
+  },
+  "bugs": {
+    "url": "https://github.com/jespervos/blossom-carousel/issues"
+  },
+  "homepage": "https://www.blossom-carousel.com",
+  "keywords": [
+    "blossom",
+    "carousel",
+    "slider",
+    "slideshow",
+    "scroll",
+    "scroller",
+    "drag",
+    "dragging",
+    "js",
+    "javascript",
+    "typescript",
+    "web",
+    "html",
+    "css",
+    "alpine",
+    "alpinejs"
+  ],
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/blossom-carousel-alpine.umd.cjs",
+  "module": "dist/blossom-carousel-alpine.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/blossom-carousel-alpine.js",
+      "require": "./dist/blossom-carousel-alpine.umd.cjs"
+    },
+    "./style.css": "./dist/blossom-carousel-alpine.css"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "alpinejs": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "@types/node": "^24.8.0",
+    "alpinejs": "^3.15.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.10",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "dependencies": {
+    "@blossom-carousel/core": "workspace:*"
+  }
+}

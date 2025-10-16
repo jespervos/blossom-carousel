@@ -1,0 +1,76 @@
+@import "@blossom-carousel/core/style.css";
+
+:root {
+	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+	background-color: #242424;
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	margin: 0;
+}
+
+.wrapper {
+	width: 100%;
+	text-align: center;
+}
+
+.page {
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	overflow: clip;
+	box-sizing: border-box;
+}
+
+.carousel {
+	display: flex;
+	gap: 1rem;
+	scroll-snap-type: x mandatory;
+	scroll-snap-stop: always;
+	width: 100%;
+	/* scroll-padding: 4rem; */
+	padding-inline: 50% !important;
+}
+
+.slide {
+	flex-shrink: 0;
+	width: 300px;
+	aspect-ratio: 3/4;
+	border-radius: 1rem;
+	background-color: #404040;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* scroll-snap-align: center; */
+
+	@media (max-width: 767px) {
+		scroll-snap-align: center;
+		background-color: #606060;
+	}
+
+	@media (min-width: 768px) {
+		&:nth-child(2n+1) {
+			scroll-snap-align: center;
+			background-color: #606060;
+		}
+	}
+}
+
+.controls {
+	display: flex;
+	justify-content: center;
+	gap: 0.5rem;
+}

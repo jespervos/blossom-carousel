@@ -13,6 +13,7 @@ export default function BlossomCarousel({
 	repeat,
 	onChange,
 	ref,
+	elementRef,
 	...props
 }: {
 	children?: ReactNode | Array<ReactNode>
@@ -20,6 +21,7 @@ export default function BlossomCarousel({
 	repeat?: boolean
 	onChange?: (event: CustomEvent<{ index: number }>) => void
 	ref?: Ref<BlossomCarouselRef | null>
+	elementRef?: Ref<HTMLElement | null>
 	[key: string]: unknown
 }) {
 	const localRef = useRef<HTMLElement>(null)
@@ -52,11 +54,15 @@ export default function BlossomCarousel({
 		}
 	}, [onChange])
 
-	useImperativeHandle(ref, () => ({
-		next: () => blossomRef.current?.next(),
-		prev: () => blossomRef.current?.prev(),
-		currentIndex: () => blossomRef.current?.currentIndex() ?? 0,
-	}), [])
+	useImperativeHandle(
+		ref,
+		() => ({
+			next: () => blossomRef.current?.next(),
+			prev: () => blossomRef.current?.prev(),
+			currentIndex: () => blossomRef.current?.currentIndex() ?? 0,
+		}),
+		[],
+	)
 
 	return (
 		<Component ref={localRef} blossom-carousel='true' {...props}>

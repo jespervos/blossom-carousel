@@ -2,10 +2,6 @@ import { useRef, useState } from 'react'
 import BlossomCarousel, { type BlossomCarouselRef } from './BlossomCarousel'
 import '@blossom-carousel/core/style.css'
 
-const Counter = ({ index }: { index: number }) => {
-	return <p>Current slide: {index + 1}</p>
-}
-
 export default function App() {
 	const carouselRef = useRef<BlossomCarouselRef>(null)
 	const [currentIndex, setCurrentIndex] = useState(0)
@@ -15,7 +11,6 @@ export default function App() {
 	}
 
 	const handleNext = () => {
-		console.log('App.tsx')
 		carouselRef.current?.next()
 	}
 
