@@ -1,59 +1,66 @@
-import { Blossom } from "@blossom-carousel/core";
-import {
-  ElementType,
-  forwardRef,
-  ReactNode,
-  RefObject,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from "react";
+import { Blossom } from '@blossom-carousel/core'
+import { type ElementType, type ReactNode, type Ref, useEffect, useImperativeHandle, useRef } from 'react'
 
-const BlossomCarousel = forwardRef(
-  (
-    {
-      children,
-      as: Component = "div",
-      repeat,
-      ...props
-    }: {
-      children?: ReactNode | Array<ReactNode>;
-      as?: ElementType;
-      repeat?: boolean;
-      [key: string]: unknown;
-    },
-    parentRef:
-      | RefObject<HTMLElement | null>
-      | null
-      | ((instance: HTMLElement | null) => void)
-  ) => {
-    const localRef = useRef<HTMLElement>(null);
+export interface BlossomCarouselRef {
+	next: () => void
+	prev: () => void
+	currentIndex: () => number
+}
 
-    useEffect(() => {
-      if (!localRef.current) return;
+export default function BlossomCarousel({
+	children,
+	as: Component = 'div',
+	repeat,
+	onChange,
+	ref,
+	...props
+}: {
+	children?: ReactNode | Array<ReactNode>
+	as?: ElementType
+	repeat?: boolean
+	onChange?: (event: CustomEvent<{ index: number }>) => void
+	ref?: Ref<BlossomCarouselRef | null>
+	[key: string]: unknown
+}) {
+	const localRef = useRef<HTMLElement>(null)
+	const blossomRef = useRef<ReturnType<typeof Blossom> | null>(null)
 
-      const blossom = Blossom(localRef.current, { repeat });
+	useEffect(() => {
+		if (!localRef.current) return
 
-      blossom.init();
+		const blossom = Blossom(localRef.current, { repeat })
+		blossomRef.current = blossom
+		blossom.init()
 
-      return () => {
-        blossom.destroy();
-      };
-    }, []);
+		return () => {
+			blossom.destroy()
+			blossomRef.current = null
+		}
+	}, [repeat])
 
-    useImperativeHandle<HTMLElement | null, HTMLElement | null>(
-      parentRef,
-      () => localRef.current
-    );
+	useEffect(() => {
+		if (!localRef.current || !onChange) return
 
-    return (
-      <Component ref={localRef} blossom-carousel="true" {...props}>
-        {children}
-      </Component>
-    );
-  }
-);
+		const handleChange = (e: Event) => {
+			onChange(e as CustomEvent<{ index: number }>)
+		}
 
-BlossomCarousel.displayName = "BlossomCarousel";
+		localRef.current.addEventListener('change', handleChange)
 
-export default BlossomCarousel;
+		return () => {
+			localRef.current?.removeEventListener('change', handleChange)
+		}
+	}, [onChange])
+
+	useImperativeHandle(ref, () => ({
+		next: () => blossomRef.current?.next(),
+		prev: () => blossomRef.current?.prev(),
+		currentIndex: () => blossomRef.current?.currentIndex() ?? 0,
+	}), [])
+
+	return (
+		<Component ref={localRef} blossom-carousel='true' {...props}>
+			{children}
+		</Component>
+	)
+}

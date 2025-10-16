@@ -24,9 +24,6 @@ const props = defineProps({
     type: String,
     default: "conditional",
   },
-	onIndexChange: {
-		type: Function,
-	},
 });
 
 const root = shallowRef(null);
@@ -52,9 +49,6 @@ onMounted(async () => {
 
   blossom = Blossom(root.value, { repeat: props.repeat });
   blossom.init();
-
-	// listeners
-	props.onIndexChange && blossom.onIndexChange(props.onIndexChange)
 });
 
 onBeforeUnmount(() => {

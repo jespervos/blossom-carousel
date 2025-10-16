@@ -28,7 +28,8 @@ const next = () => {
   blossom.value?.next();
 };
 
-const handleIndexChange = (index) => {
+const handleChange = ({detail}) => {
+	const index = detail.index;
 	currentSlideIndex.value = index;
 };
 </script>
@@ -38,7 +39,7 @@ const handleIndexChange = (index) => {
     <h1>Blossom Dev</h1>
     <p>Current Slide: {{ currentSlideIndex + 1 }}</p>
     <div class="wrapper">
-			<BlossomCarousel ref="blossom" class="blossom" as="ul" :on-index-change="handleIndexChange">
+			<BlossomCarousel ref="blossom" class="blossom" as="ul" @change="handleChange">
 				<li v-for="i in 12" ref="slides" :key="`slide${i}`" class="slide">
 					<a href="https://www.google.com" target="_blank">
 						<p>{{ i }}</p>

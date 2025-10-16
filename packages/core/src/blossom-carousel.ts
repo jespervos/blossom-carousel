@@ -77,9 +77,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
 				;(target as any)[prop] = value
 
-				// Trigger callback when value changes
-				if (prop === 'value' && target.onChange) {
-					target.onChange(value as number)
+				// Dispatch custom event when value changes
+				if (prop === 'value') {
+					const event = new CustomEvent('change', {
+						bubbles: true,
+						detail: { index: value },
+					})
+					scroller?.dispatchEvent(event)
 				}
 
 				return true
@@ -780,15 +784,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 		}
 	}
 
-	function onIndexChange(callback: (index: number) => void): () => void {
-		currentIndex.onChange = callback
-		callback(currentIndex.value)
-
-		return () => {
-			currentIndex.onChange = null
-		}
-	}
-
 	function navigate(direction: 1 | -1): void {
 		if (snapElements.length <= 1) return
 
@@ -836,13 +831,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 	}
 
 	return {
+		init,
 		snap,
 		hasOverflow,
 		currentIndex: () => currentIndex.value,
-		onIndexChange,
-		init,
-		destroy,
 		next,
 		prev,
+		destroy,
 	}
 }

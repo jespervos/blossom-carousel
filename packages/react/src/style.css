@@ -1,50 +1,50 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+	background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  margin: 0;
+	margin: 0;
 }
 
 .page {
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
 	overflow: clip;
 }
 
 .carousel {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 300px;
-  gap: 1rem;
-  padding-inline: 1rem;
-  scroll-padding-inline: 1rem;
-  scroll-snap-type: x mandatory;
-  scroll-snap-stop: always;
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 300px;
+	gap: 1rem;
+	padding-inline: 1rem;
+	scroll-padding-inline: 1rem;
+	scroll-snap-type: x mandatory;
+	scroll-snap-stop: always;
 }
 
 .slide {
-  width: 100%;
-  aspect-ratio: 3/4;
-  border-radius: 1rem;
-  background-color: #404040;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  scroll-snap-align: center;
+	width: 100%;
+	aspect-ratio: 3/4;
+	border-radius: 1rem;
+	background-color: #404040;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	scroll-snap-align: center;
 }

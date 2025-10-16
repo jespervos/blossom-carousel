@@ -20,9 +20,6 @@ const props = defineProps({
     type: String,
     default: "conditional",
   },
-	onIndexChange: {
-		type: Function,
-	},
 });
 
 const root = shallowRef(null);
@@ -45,7 +42,7 @@ onMounted(async () => {
 
   const { Blossom } = await import("@blossom-carousel/core");
 
-  blossom = Blossom(root.value);
+  blossom = Blossom(root.value, { repeat: props.repeat });
   blossom.init();
 });
 
