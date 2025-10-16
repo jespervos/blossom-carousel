@@ -63,7 +63,9 @@ const handleIndexChange = (index) => {
     <div class="wrapper">
       <BlossomCarousel ref="blossom" class="carousel" as="ul" :on-index-change="handleIndexChange" repeat>
         <li v-for="i in 12" ref="slides" :key="`slide${i}`" class="slide">
-          <p>{{ i }}</p>
+					<a href="https://www.google.com" target="_blank">
+          	<p>{{ i }}</p>
+					</a>
         </li>
       </BlossomCarousel>
     </div>
@@ -119,10 +121,18 @@ const handleIndexChange = (index) => {
   /* scroll-snap-align: start; */
   /* border: 1px solid red; */
 
-	&:nth-child(3n+1) {
+	&:nth-child(1n+1) {
     scroll-snap-align: center;
 		background-color: #606060;
   }
+
+	a {
+		width: 100%;
+		height: 100%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 /* .carousel {

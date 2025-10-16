@@ -25,7 +25,6 @@
     padding-inline: 50% !important;
   }
 
-
   & > * {
     display: inline-block;
     white-space: initial;
@@ -38,4 +37,10 @@
     -webkit-touch-callout: none;
     user-select: none;
   }
+
+	&.blossom-dragging {
+		& > * {
+			pointer-events: none;
+		}
+	}
 }

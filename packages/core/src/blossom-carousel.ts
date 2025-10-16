@@ -346,17 +346,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     distanceMovedSincePointerDown.x = 0;
-    isDragging = true;
+		isDragging = true;
 
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup", onPointerUp, { passive: true });
   }
 
   function onPointerMove(e: PointerEvent): void {
-    e.preventDefault();
 
-    if (hasOverflow.x) {
-      const deltaX = pointerStart.x - e.clientX;
+		if (hasOverflow.x) {
+			const deltaX = pointerStart.x - e.clientX;
       target.x += deltaX;
       velocity.x += deltaX;
       pointerStart.x = e.clientX;
@@ -364,12 +363,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     if (hasOverflow.y) {
-      const deltaY = pointerStart.y - e.clientY;
+			const deltaY = pointerStart.y - e.clientY;
       target.y += deltaY;
       velocity.y += deltaY;
       pointerStart.y = e.clientY;
       distanceMovedSincePointerDown.y += Math.abs(deltaY);
     }
+
+		if(distanceMovedSincePointerDown.x > 2 || distanceMovedSincePointerDown.y > 2) scroller.classList.add("blossom-dragging");
   }
 
   function onPointerUp(): void {
@@ -377,13 +378,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     window.removeEventListener("pointerup", onPointerUp);
 
     isDragging = false;
+    scroller.classList.remove("blossom-dragging");
 
     if (distanceMovedSincePointerDown.x <= 10) return;
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
 		dragSnap();
-    preventGlobalClick();
   }
 
   function onWheel(e: WheelEvent): void {
@@ -671,16 +672,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     return points.reduce((prev, curr) =>
 			Math.abs(curr - restingX) < Math.abs(prev - restingX) ? curr : prev
 		)
-  }
-
-  function preventGlobalClick(): void {
-    const clickPreventHandler = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.removeEventListener("click", clickPreventHandler, true);
-    };
-    // Use capture phase to catch the event before it reaches the element
-    window.addEventListener("click", clickPreventHandler, true);
   }
 
   function lerp(x: number, y: number, t: number): number {

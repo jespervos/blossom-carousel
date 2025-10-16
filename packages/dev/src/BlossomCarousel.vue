@@ -46,7 +46,7 @@ onMounted(async () => {
 
   // don't load if the user has no mouse.
   // overwritten by props.load: 'always'
-  if (!hasMouse && props.load !== "always") return;
+  // if (!hasMouse && props.load !== "always") return;
 
   const { Blossom } = await import("../../core/src/index");
 
