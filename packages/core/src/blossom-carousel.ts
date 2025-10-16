@@ -39,6 +39,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       },
     }
   );
+
   const hasOverflow: HasOverflow = new Proxy(
     { x: false, y: false },
     {
@@ -50,10 +51,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
         if (target.x || target.y) {
           scroller.setAttribute("has-overflow", "true");
-          scroller.addEventListener("pointerdown", onPointerDown);
+          scroller.addEventListener("touchstart", onPointerDown, { passive: false });
+          scroller.addEventListener("pointerdown", onPointerDown, { passive: false });
           scroller.addEventListener("wheel", onWheel, { passive: false });
         } else {
-          scroller.removeAttribute("has-overflow");
+					scroller.removeAttribute("has-overflow");
+          scroller.removeEventListener("touchstart", onPointerDown);
           scroller.removeEventListener("pointerdown", onPointerDown);
           scroller.removeEventListener("wheel", onWheel);
         }
@@ -103,6 +106,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let mutationObserver: MutationObserver | null = null;
   let hasSnap = false;
   let hasMouse = false;
+	const hasTouch = "ontouchmove" in window;
   let restoreScrollMethods: () => void;
   let dir = 1;
 
@@ -117,10 +121,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     window.addEventListener("keydown", onKeydown);
     scroller.addEventListener("scroll", onScroll);
 
-    hasMouse = window.matchMedia(
-      "(hover: hover) and (pointer: fine)"
-    ).matches;
-
     dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
 
     const { scrollSnapType } = window.getComputedStyle(scroller);
@@ -128,9 +128,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller.style.setProperty("--snap-type", scrollSnapType);
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
 
-		if (hasMouse) {
+		hasMouse = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches;
+
+		// if (hasMouse && options?.repeat) {
 			scroller.style["scroll-snap-type"] = "none";
-		}
+		// }
 
     restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
       if (target === scroller || scroller.contains(target)) setIsTicking(false);
@@ -179,7 +183,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function onResize(): void {
     if (!scroller) return;
 
-    const hasTouch = "ontouchmove" in window;
+		setIsTicking(false);
+
+		// reset translates
+		for (let i = 0; i < snapElements.length; i++) {
+			const el = snapElements[i];
+			el.style.translate = '';
+		}
+
     scrollerScrollWidth = scroller.scrollWidth;
     scrollerWidth = scroller.clientWidth;
     scrollerScrollHeight = scroller.scrollHeight;
@@ -187,11 +198,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     const styles = window.getComputedStyle(scroller);
     hasOverflow.x =
-      !hasTouch &&
+      // !hasTouch &&
       scrollerScrollWidth > scrollerWidth &&
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-x"));
     hasOverflow.y =
-      !hasTouch &&
+      // !hasTouch &&
       scrollerScrollHeight > scrollerHeight &&
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
 		padding.start = parseInt(styles.paddingInlineStart) || 0;
@@ -210,8 +221,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     snapAlignments = result.alignments;
 
 		// animateToSlideX(snapPoints[currentIndex.value]);
-		scroller.scrollTo({ left: snapPoints[currentIndex.value], behavior: "instant" });
-    // if (options?.repeat) onRepeat(null, null);
+		target.x = virtualScroll.x = snapPoints[currentIndex.value];
+		scroller.scrollTo({ left: virtualScroll.x, behavior: "instant" });
+		if (options?.repeat) {
+			onRepeat();
+		}
   }
 
   function onMutation(): void {
@@ -328,20 +342,23 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     y: 0,
   };
 
-  function onPointerDown(e: PointerEvent): void {
+  function onPointerDown(e: PointerEvent | TouchEvent): void {
     if (!scroller) return;
+
+    const clientX = 'touches' in e ? e.touches[0]?.clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0]?.clientY : e.clientY;
 
     if (hasOverflow.x) {
       virtualScroll.x = scroller.scrollLeft;
       target.x = scroller.scrollLeft;
-      pointerStart.x = e.clientX;
+      pointerStart.x = clientX;
       velocity.x = 0;
     }
 
     if (hasOverflow.y) {
       virtualScroll.y = scroller.scrollTop;
       target.y = scroller.scrollTop;
-      pointerStart.y = e.clientY;
+      pointerStart.y = clientY;
       velocity.y = 0;
     }
 
@@ -349,24 +366,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 		isDragging = true;
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("touchmove", onPointerMove, { passive: true });
     window.addEventListener("pointerup", onPointerUp, { passive: true });
+    window.addEventListener("touchend", onPointerUp, { passive: true });
   }
 
-  function onPointerMove(e: PointerEvent): void {
+  function onPointerMove(e: PointerEvent | TouchEvent): void {
+    const clientX = 'touches' in e ? e.touches[0]?.clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0]?.clientY : e.clientY;
 
 		if (hasOverflow.x) {
-			const deltaX = pointerStart.x - e.clientX;
+			const deltaX = pointerStart.x - clientX;
       target.x += deltaX;
       velocity.x += deltaX;
-      pointerStart.x = e.clientX;
+      pointerStart.x = clientX;
       distanceMovedSincePointerDown.x += Math.abs(deltaX);
     }
 
     if (hasOverflow.y) {
-			const deltaY = pointerStart.y - e.clientY;
+			const deltaY = pointerStart.y - clientY;
       target.y += deltaY;
       velocity.y += deltaY;
-      pointerStart.y = e.clientY;
+      pointerStart.y = clientY;
       distanceMovedSincePointerDown.y += Math.abs(deltaY);
     }
 
@@ -375,7 +396,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function onPointerUp(): void {
     window.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("touchmove", onPointerMove);
     window.removeEventListener("pointerup", onPointerUp);
+    window.removeEventListener("touchend", onPointerUp);
 
     isDragging = false;
     scroller.classList.remove("blossom-dragging");
@@ -529,23 +552,24 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (!scroller) return;
 
+
     if (hasOverflow.x) {
-      velocity.x *= FRICTION;
+			velocity.x *= FRICTION;
       if (!isDragging) {
-        target.x += velocity.x;
+				target.x += velocity.x;
         virtualScroll.x = damp(virtualScroll.x, target.x, DAMPING, frameDelta);
       } else {
-        virtualScroll.x = damp(virtualScroll.x, target.x, FRICTION, frameDelta);
+				virtualScroll.x = damp(virtualScroll.x, target.x, FRICTION, frameDelta);
       }
     }
 
     if (hasOverflow.y) {
-      velocity.y *= FRICTION;
+			velocity.y *= FRICTION;
       if (!isDragging) {
-        target.y += velocity.y;
+				target.y += velocity.y;
         virtualScroll.y = damp(virtualScroll.y, target.y, DAMPING, frameDelta);
       } else {
-        virtualScroll.y = damp(virtualScroll.y, target.y, FRICTION, frameDelta);
+				virtualScroll.y = damp(virtualScroll.y, target.y, FRICTION, frameDelta);
       }
     }
 
