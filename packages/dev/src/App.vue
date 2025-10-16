@@ -130,7 +130,7 @@ const handleIndexChange = (index) => {
 	}
 }
 
-/* .carousel {
+/* .blossom {
   perspective: 1000px;
 }
 
@@ -138,19 +138,9 @@ const handleIndexChange = (index) => {
   transform-style: preserve-3d;
   container-type: scroll-state;
 
-  > p {
-    width: 100%;
-    height: 100%;
-    border-radius: 1rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #404040;
-    transform-style: preserve-3d;
-    animation: carousel linear both;
-    animation-timeline: view(x);
-    animation-range: cover;
-  }
+	animation: carousel linear both;
+	animation-timeline: view(x);
+	animation-range: cover;
 }
 
 @keyframes carousel {
