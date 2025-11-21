@@ -42,7 +42,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/blossom-carousel-web.js",
+      "import": "./dist/blossom-carousel-web.es.js",
       "require": "./dist/blossom-carousel-web.umd.cjs"
     },
     "./style.css": "./dist/blossom-carousel-web.css"
