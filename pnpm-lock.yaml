@@ -122,6 +122,9 @@ importers:
       vite:
         specifier: ^4.0.0
         version: 4.5.13
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(rollup@4.46.2)(typescript@5.8.3)(vite@4.5.13)
 
 packages:
 
@@ -2328,7 +2331,7 @@ snapshots:
       '@babel/traverse': 7.27.0
       '@babel/types': 7.27.0
       convert-source-map: 2.0.0
-      debug: 4.4.0
+      debug: 4.4.1
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -2415,7 +2418,7 @@ snapshots:
       '@babel/parser': 7.27.0
       '@babel/template': 7.27.0
       '@babel/types': 7.27.0
-      debug: 4.4.0
+      debug: 4.4.1
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -3041,7 +3044,7 @@ snapshots:
   '@sveltejs/vite-plugin-svelte-inspector@1.0.4(@sveltejs/vite-plugin-svelte@2.5.3(svelte@5.34.3)(vite@4.5.13))(svelte@5.34.3)(vite@4.5.13)':
     dependencies:
       '@sveltejs/vite-plugin-svelte': 2.5.3(svelte@5.34.3)(vite@4.5.13)
-      debug: 4.4.0
+      debug: 4.4.1
       svelte: 5.34.3
       vite: 4.5.13
     transitivePeerDependencies:
@@ -4164,6 +4167,25 @@ snapshots:
       typescript: 5.8.3
     optionalDependencies:
       vite: 6.3.3
+    transitivePeerDependencies:
+      - '@types/node'
+      - rollup
+      - supports-color
+
+  vite-plugin-dts@4.5.4(rollup@4.46.2)(typescript@5.8.3)(vite@4.5.13):
+    dependencies:
+      '@microsoft/api-extractor': 7.52.10
+      '@rollup/pluginutils': 5.2.0(rollup@4.46.2)
+      '@volar/typescript': 2.4.23
+      '@vue/language-core': 2.2.0(typescript@5.8.3)
+      compare-versions: 6.1.1
+      debug: 4.4.1
+      kolorist: 1.8.0
+      local-pkg: 1.1.1
+      magic-string: 0.30.17
+      typescript: 5.8.3
+    optionalDependencies:
+      vite: 4.5.13
     transitivePeerDependencies:
       - '@types/node'
       - rollup
