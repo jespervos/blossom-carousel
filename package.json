@@ -20,19 +20,13 @@
     "dev:vue": "pnpm --filter @blossom-carousel/vue dev",
     "dev:react": "pnpm --filter @blossom-carousel/react dev",
     "dev:svelte": "pnpm --filter @blossom-carousel/svelte dev",
-    "dev:web": "pnpm --filter @blossom-carousel/web dev",
-    "publish:all": "node scripts/publish-all.js patch",
-    "publish:minor": "node scripts/publish-all.js minor",
-    "publish:major": "node scripts/publish-all.js major",
-    "release": "./scripts/publish-simple.sh patch",
-    "release:minor": "./scripts/publish-simple.sh minor",
-    "release:major": "./scripts/publish-simple.sh major"
+    "dev:web": "pnpm --filter @blossom-carousel/web dev"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "turbo": "^2.5.0"
+    "turbo": "^2.7.2"
   },
   "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
 }

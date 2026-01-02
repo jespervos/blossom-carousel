@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/svelte",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for Svelte.",
@@ -54,7 +54,7 @@
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "optionalDependencies": {
-    "@blossom-carousel/core": "^0.2.0"
+    "@blossom-carousel/core": "workspace:^"
   },
   "scripts": {
     "dev": "vite",
@@ -62,10 +62,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^2.0.0",
-    "svelte": "^5.34.3",
-    "typescript": "^5.0.0",
-    "vite": "^4.4.0",
-    "vite-plugin-dts": "^4.5.3"
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "svelte": "^5.46.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-dts": "^4.5.4"
   }
 }

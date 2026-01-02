@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/dev",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for Vue.",
@@ -17,14 +17,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blossom-carousel/core": "workspace:*"
+    "@blossom-carousel/core": "workspace:^"
   },
   "peerDependencies": {
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.2",
-    "vite": "^6.3.1",
-    "vite-plugin-dts": "^4.5.3"
+    "@vitejs/plugin-vue": "^6.0.3",
+    "vite": "^7.3.0",
+    "vite-plugin-dts": "^4.5.4"
   }
 }
