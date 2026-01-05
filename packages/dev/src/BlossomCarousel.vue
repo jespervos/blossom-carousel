@@ -27,7 +27,11 @@ const props = defineProps({
 });
 
 const root = shallowRef(null);
-defineExpose({ el: root });
+defineExpose({
+  el: root,
+  prev: () => blossom?.prev({ align: "center" }),
+  next: () => blossom?.next({ align: "center" }),
+});
 
 let blossom = null;
 onMounted(async () => {

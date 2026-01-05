@@ -11,6 +11,9 @@ export interface HasOverflow {
 export interface SnapPosition {
   target: HTMLElement | null;
   x: number;
+  y: number;
+  width?: number | undefined;
+  height?: number | undefined;
 }
 
 export interface CarouselOptions {
@@ -20,3 +23,5 @@ export interface CarouselOptions {
 export interface AxisOption {
   axis: "x" | "y";
 }
+
+export type AlignOption = "start" | "center" | "end";

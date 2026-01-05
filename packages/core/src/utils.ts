@@ -12,7 +12,6 @@ export function clamp(value: number, min: number, max: number): number {
   } else if (value > max) {
     return max;
   }
-
   return value;
 }
 

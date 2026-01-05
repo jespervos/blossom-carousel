@@ -9,7 +9,7 @@ import { clamp, project } from "./utils.js";
 
 export const snapStore = {
   positions: [] as SnapPosition[],
-  activePosition: { target: null, x: 0 } as SnapPosition,
+  activePosition: { target: null, x: 0, y: 0 } as SnapPosition,
 };
 
 export function findSnapPositions(scroller: HTMLElement): void {
@@ -54,16 +54,19 @@ export function findSnapPositions(scroller: HTMLElement): void {
         return {
           target: el as HTMLElement,
           x: left - state.scrollPadding.start,
+          y: 0,
         };
       case "end":
         return {
           target: el as HTMLElement,
           x: left + clientWidth - state.scrollerWidth + state.scrollPadding.end,
+          y: 0,
         };
       case "center":
         return {
           target: el as HTMLElement,
           x: left + clientWidth * 0.5 - state.scrollerWidth / 2,
+          y: 0,
         };
       default:
         return null;
@@ -87,7 +90,7 @@ export function dragSnap(
   target: number,
   velocity: number,
   friction: number
-): void {
+): number {
   //TODO: add support for vertical snapping
   const newSnapPosition = snapSelect(target, velocity, friction);
   if (newSnapPosition.x !== snapStore.activePosition.x) {
@@ -104,7 +107,7 @@ export function dragSnap(
   );
   const distance = slideX - target;
   const force = distance * (1 - FRICTION) * (1 / FRICTION);
-  velocity = force;
+  return force;
 }
 
 export function snapSelect(
@@ -120,6 +123,7 @@ export function snapSelect(
     : {
         target: null,
         x: clamp(restingX, Math.min(state.end, 0), Math.max(state.end, 0)),
+        y: 0,
       };
 }
 

@@ -9,6 +9,7 @@ import {
   onSnapChanging,
   dragSnap,
 } from "./snap";
+import { prev, next } from "./methods";
 
 export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   state.scroller = scroller;
@@ -26,7 +27,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         target[prop] = value;
 
         if (target.x >= 10 || target.y >= 10) {
-          setIsTicking(true);
+          isTicking.value = true;
         }
 
         return true;
@@ -94,10 +95,12 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       scroller.style.setProperty("scroll-snap-type", "none");
     }
 
+    scroller.setAttribute("has-snap", snap ? "true" : "false");
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
 
     restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
-      if (target === scroller || scroller.contains(target)) setIsTicking(false);
+      if (target === scroller || scroller.contains(target))
+        isTicking.value = false;
     });
   }
 
@@ -149,7 +152,22 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     state.end =
       (state.scrollerScrollWidth - state.scrollerWidth - 4) * state.dir;
 
-    state.hasSnap && findSnapPositions(scroller);
+    if (state.hasSnap) {
+      findSnapPositions(scroller);
+    } else {
+      state.slidePositions = Array.from(scroller.children).map((el) => {
+        const rect = (el as HTMLElement).getBoundingClientRect();
+        const scrollerRect = scroller.getBoundingClientRect();
+        const left = rect.left - scrollerRect.left + scroller.scrollLeft;
+        return {
+          target: el as HTMLElement,
+          x: left - state.scrollPadding.start,
+          y: 0,
+          width: rect.width,
+          height: rect.height,
+        };
+      });
+    }
     if (options?.repeat) onRepeat(null, null);
   }
 
@@ -238,13 +256,13 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    dragSnap(target.x, velocity.x, FRICTION);
+    velocity.x = dragSnap(target.x, velocity.x, FRICTION);
     preventGlobalClick();
   }
 
   function onWheel(e: WheelEvent): void {
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      setIsTicking(false);
+      isTicking.value = false;
       if (state.isDragging || !scroller) return;
       if (hasOverflow.x) virtualScroll.x = scroller.scrollLeft;
       if (hasOverflow.y) virtualScroll.y = scroller.scrollTop;
@@ -253,7 +271,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   function onKeydown(e: KeyboardEvent): void {
     if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key))
-      setIsTicking(false);
+      isTicking.value = false;
   }
 
   /*********************
@@ -314,42 +332,52 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
    ******************/
 
   function onScrollEnd(e: Event) {
-    if (isTicking) {
+    if (isTicking.value) {
       e.stopPropagation();
     }
   }
 
-  let isTicking = false;
+  type TickingState = { value: boolean };
+  const isTicking: TickingState = new Proxy(
+    { value: false },
+    {
+      set(ticking: TickingState, prop: keyof TickingState, value: boolean) {
+        snap = !value;
+        const old = ticking[prop];
+        if (old === value) return true;
 
-  function setIsTicking(bool: boolean): void {
-    if (!scroller) return;
+        if (!scroller) return false;
 
-    // start ticker
-    if (bool && !isTicking) {
-      lastTick = performance.now();
-      if (hasOverflow.x) target.x = scroller.scrollLeft;
-      if (hasOverflow.y) target.y = scroller.scrollTop;
+        scroller.setAttribute("has-snap", snap ? "true" : "false");
 
-      scroller.addEventListener("scrollend", onScrollEnd, {
-        capture: true,
-        passive: false,
-      });
+        // start ticker
+        if (value && !isTicking.value) {
+          lastTick = performance.now();
+          if (hasOverflow.x) target.x = scroller.scrollLeft;
+          if (hasOverflow.y) target.y = scroller.scrollTop;
 
-      if (!raf) {
-        raf = requestAnimationFrame(tick);
-      }
+          scroller.addEventListener("scrollend", onScrollEnd, {
+            capture: true,
+            passive: false,
+          });
+
+          if (!raf) {
+            raf = requestAnimationFrame(tick);
+          }
+        }
+        // stop ticker
+        else if (!value) {
+          if (raf) cancelAnimationFrame(raf);
+          raf = null;
+          scroller.removeEventListener("scrollend", onScrollEnd);
+        }
+
+        ticking[prop] = value;
+
+        return true;
+      },
     }
-    // stop ticker
-    else if (!bool) {
-      if (raf) cancelAnimationFrame(raf);
-      raf = null;
-      scroller.removeEventListener("scrollend", onScrollEnd);
-    }
-
-    isTicking = bool;
-    snap = !bool;
-    scroller.setAttribute("has-snap", snap ? "true" : "false");
-  }
+  );
 
   let frameDelta = 0;
   let lastTick = 0;
@@ -400,7 +428,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     if (!state.isDragging && round(velocity.x, 8) === 0) {
-      setIsTicking(false);
+      isTicking.value = false;
       dispatchScrollEndEvent(scroller);
       if (state.hasSnap) {
         onScrollSnapChange();
@@ -456,7 +484,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   const scrollTo = scroller.scrollTo.bind(scroller);
   scroller.scrollTo = function (...args: any[]) {
     const internal = __scrollingInternally === true;
-    if (!internal) setIsTicking(false);
+    if (!internal) isTicking.value = false;
     __scrollingInternally = false;
     scrollTo(...args);
   };
@@ -464,7 +492,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   const scrollBy = scroller.scrollBy.bind(scroller);
   scroller.scrollBy = function (...args: any[]) {
     const internal = __scrollingInternally === true;
-    if (!internal) setIsTicking(false);
+    if (!internal) isTicking.value = false;
     __scrollingInternally = false;
     scrollBy(...args);
   };
@@ -510,5 +538,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     hasOverflow,
     init,
     destroy,
+    prev,
+    next,
   };
 };

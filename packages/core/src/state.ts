@@ -8,6 +8,13 @@ export const state = {
   scrollerHeight: 300,
   padding: { start: 0, end: 0 },
   scrollPadding: { start: 0, end: 0 },
+  slidePositions: [] as Array<{
+    x: number;
+    y: number;
+    target: HTMLElement | null;
+    width: number;
+    height: number;
+  }>,
   hasSnap: false,
   dir: 1,
 };

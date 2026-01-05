@@ -59,64 +59,64 @@ function remove() {
     blossom.value?.el?.removeChild(slides[slides.length - 1]);
   }
 }
-const getCurrentSlide = () => {
-  if (!blossom.value) return null;
+// const getCurrentSlide = () => {
+//   if (!blossom.value) return null;
 
-  const carousel = blossom.value.$el;
-  const slides = carousel.children;
-  const carouselRect = carousel.getBoundingClientRect();
-  const carouselLeft = carouselRect.left;
+//   const carousel = blossom.value.$el;
+//   const slides = carousel.children;
+//   const carouselRect = carousel.getBoundingClientRect();
+//   const carouselLeft = carouselRect.left;
 
-  let closestSlide = null;
-  let closestDistance = Infinity;
+//   let closestSlide = null;
+//   let closestDistance = Infinity;
 
-  for (let i = 0; i < slides.length; i++) {
-    const slide = slides[i];
-    const slideRect = slide.getBoundingClientRect();
-    const distance = Math.abs(slideRect.left - carouselLeft);
+//   for (let i = 0; i < slides.length; i++) {
+//     const slide = slides[i];
+//     const slideRect = slide.getBoundingClientRect();
+//     const distance = Math.abs(slideRect.left - carouselLeft);
 
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestSlide = { element: slide, index: i };
-    }
-  }
+//     if (distance < closestDistance) {
+//       closestDistance = distance;
+//       closestSlide = { element: slide, index: i };
+//     }
+//   }
 
-  return closestSlide;
-};
-const prev = () => {
-  const currentSlide = getCurrentSlide();
-  if (!currentSlide || !blossom.value) return;
+//   return closestSlide;
+// };
+// const prev = () => {
+//   const currentSlide = getCurrentSlide();
+//   if (!currentSlide || !blossom.value) return;
 
-  const carousel = blossom.value.$el;
-  const slides = carousel.children;
-  const prevIndex = currentSlide.index - 1;
+//   const carousel = blossom.value.$el;
+//   const slides = carousel.children;
+//   const prevIndex = currentSlide.index - 1;
 
-  if (prevIndex >= 0) {
-    const prevSlide = slides[prevIndex];
-    prevSlide.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "start",
-    });
-  }
-};
-const next = () => {
-  const currentSlide = getCurrentSlide();
-  if (!currentSlide || !blossom.value) return;
+//   if (prevIndex >= 0) {
+//     const prevSlide = slides[prevIndex];
+//     prevSlide.scrollIntoView({
+//       behavior: "smooth",
+//       block: "nearest",
+//       inline: "start",
+//     });
+//   }
+// };
+// const next = () => {
+//   const currentSlide = getCurrentSlide();
+//   if (!currentSlide || !blossom.value) return;
 
-  const carousel = blossom.value.$el;
-  const slides = carousel.children;
-  const nextIndex = currentSlide.index + 1;
+//   const carousel = blossom.value.$el;
+//   const slides = carousel.children;
+//   const nextIndex = currentSlide.index + 1;
 
-  if (nextIndex < slides.length) {
-    const nextSlide = slides[nextIndex];
-    nextSlide.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "start",
-    });
-  }
-};
+//   if (nextIndex < slides.length) {
+//     const nextSlide = slides[nextIndex];
+//     nextSlide.scrollIntoView({
+//       behavior: "smooth",
+//       block: "nearest",
+//       inline: "start",
+//     });
+//   }
+// };
 </script>
 
 <template>
@@ -139,11 +139,11 @@ const next = () => {
     <!-- <div class="controls">
       <button @click="add">add slide</button>
       <button @click="remove">remove slide</button>
-    </div>
-    <div class="controls">
-      <button @click="prev">prev slide</button>
-      <button @click="next">next slide</button>
     </div> -->
+    <div class="controls">
+      <button @click="blossom.prev">prev slide</button>
+      <button @click="blossom.next">next slide</button>
+    </div>
   </div>
 </template>
 
@@ -167,8 +167,8 @@ const next = () => {
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
 
-  scroll-snap-type: x mandatory;
-  scroll-snap-stop: always;
+  /* scroll-snap-type: x mandatory;
+  scroll-snap-stop: always; */
 
   padding-block: 4rem;
   margin-block: -4rem;
