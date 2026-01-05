@@ -428,7 +428,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       onSnapChanging(target.x, velocity.x, FRICTION);
     }
 
-    if (!state.isDragging && round(velocity.x, 8) === 0) {
+    if (!state.isDragging && round(velocity.x, 12) === 0) {
       isTicking.value = false;
       dispatchScrollEndEvent(scroller);
       if (state.hasSnap) {
