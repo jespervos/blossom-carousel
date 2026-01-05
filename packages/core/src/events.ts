@@ -1,53 +1,41 @@
-export function dispatchOverscrollEvent(
-  scroller: HTMLElement | null,
-  detail: { left: number }
-): CustomEvent<{ left: number }> {
-  const overscrollEvent = new CustomEvent("overscroll", {
-    bubbles: true,
-    cancelable: true,
-    detail,
-  });
-  scroller?.dispatchEvent(overscrollEvent);
-  return overscrollEvent;
-}
-
 const scrollEndEvent = new Event("scrollend", {
   bubbles: true,
   cancelable: true,
 });
-export function dispatchScrollEndEvent(scroller: HTMLElement | null): Event {
-  scroller?.dispatchEvent(scrollEndEvent);
-  return scrollEndEvent;
-}
 
-export function dispatchScrollSnapChangeEvent(
+const dispatchEvent = (
+  scroller: HTMLElement | null,
+  eventName: string,
+  detail?: any
+) => {
+  const event = detail
+    ? new CustomEvent(eventName, { bubbles: true, cancelable: true, detail })
+    : new Event(eventName, { bubbles: true, cancelable: true });
+  scroller?.dispatchEvent(event);
+  return event;
+};
+
+export const dispatchOverscrollEvent = (
+  scroller: HTMLElement | null,
+  detail: { left: number }
+) => dispatchEvent(scroller, "overscroll", detail);
+
+export const dispatchScrollEndEvent = (scroller: HTMLElement | null) => (
+  scroller?.dispatchEvent(scrollEndEvent), scrollEndEvent
+);
+
+export const dispatchScrollSnapChangeEvent = (
   scroller: HTMLElement | null,
   detail: {
     snapTargetInline: HTMLElement | null;
     snapTargetBlock: HTMLElement | null;
   }
-): Event {
-  const scrollSnapChangeEvent = new CustomEvent("scrollsnapchange", {
-    bubbles: true,
-    cancelable: true,
-    detail,
-  });
-  scroller?.dispatchEvent(scrollSnapChangeEvent);
-  return scrollSnapChangeEvent;
-}
+) => dispatchEvent(scroller, "scrollsnapchange", detail);
 
-export function dispatchScrollSnapChangingEvent(
+export const dispatchScrollSnapChangingEvent = (
   scroller: HTMLElement | null,
   detail: {
     snapTargetInline: HTMLElement | null;
     snapTargetBlock: HTMLElement | null;
   }
-): Event {
-  const scrollSnapChangingEvent = new CustomEvent("scrollsnapchanging", {
-    bubbles: true,
-    cancelable: true,
-    detail,
-  });
-  scroller?.dispatchEvent(scrollSnapChangingEvent);
-  return scrollSnapChangingEvent;
-}
+) => dispatchEvent(scroller, "scrollsnapchanging", detail);

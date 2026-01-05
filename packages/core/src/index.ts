@@ -289,35 +289,35 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       (state.scrollerScrollWidth - state.scrollerWidth - state.padding.end);
     const slides = Array.from(scroller.children) as HTMLElement[];
 
-    /**
-     * TODO: compute amount of slides to offset
-     */
+    const offsetSlides = (
+      startIdx: number,
+      endIdx: number,
+      threshold: number,
+      isEnd: boolean
+    ) => {
+      let offset = 0;
+      const step = isEnd ? -1 : 1;
+      const baseOffset = isEnd
+        ? -(state.scrollerScrollWidth - state.scrollerWidth)
+        : state.scrollerScrollWidth - state.scrollerWidth;
 
-    // offset end slides to start
-    let ows = 0;
-    for (let i = slides.length - 1; i >= slides.length / 2; i--) {
-      const offsetX =
-        ows > distanceToStartEdge
-          ? 0
-          : -(state.scrollerScrollWidth - state.scrollerWidth);
-      ows += slides[i].clientWidth;
-      slides[i].style.translate = `${offsetX}px 0`;
-    }
+      for (let i = startIdx; isEnd ? i >= endIdx : i < endIdx; i += step) {
+        const thresholdCheck = isEnd ? offset > threshold : offset > threshold;
+        slides[i].style.translate = `${thresholdCheck ? 0 : baseOffset}px 0`;
+        offset += slides[i].clientWidth;
+      }
+    };
 
-    // offset start slides to end
-    let owe = 0;
-    for (let i = 0; i < slides.length / 2; i++) {
-      const offsetX =
-        owe > distanceToEndEdge
-          ? 0
-          : state.scrollerScrollWidth - state.scrollerWidth;
-      owe += slides[i].clientWidth;
-      slides[i].style.translate = `${offsetX}px 0`;
-    }
+    offsetSlides(
+      slides.length - 1,
+      slides.length / 2,
+      distanceToStartEdge,
+      true
+    );
+    offsetSlides(0, slides.length / 2, distanceToEndEdge, false);
 
     if (state.isDragging) return;
 
-    // loop
     const left =
       scrollStart > state.end ? 4 : scrollStart < 4 ? state.end : null;
     if (!left) return;

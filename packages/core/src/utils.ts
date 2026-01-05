@@ -7,12 +7,7 @@ export function damp(x: number, y: number, t: number, delta: number): number {
 }
 
 export function clamp(value: number, min: number, max: number): number {
-  if (value < min) {
-    return min;
-  } else if (value > max) {
-    return max;
-  }
-  return value;
+  return Math.max(min, Math.min(max, value));
 }
 
 export function round(value: number, precision: number = 0): number {

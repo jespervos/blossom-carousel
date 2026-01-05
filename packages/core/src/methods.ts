@@ -2,22 +2,21 @@ import { state } from "./state";
 import { snapStore } from "./snap";
 import type { AlignOption, SnapPosition } from "./types";
 
+const alignmentMap = {
+  center: (l: number, w: number) => l + w * 0.5 - state.scrollerWidth / 2,
+  end: (l: number, w: number) =>
+    l + w - state.scrollerWidth + state.scrollPadding.end,
+  start: (l: number, w: number) => l - state.scrollPadding.start,
+} as const;
+
 function alignedPosition(
   left: number,
   width: number,
   align: AlignOption | undefined
 ): number {
   if (state.hasSnap) return left;
-
-  switch (align) {
-    case "center":
-      return left + width * 0.5 - state.scrollerWidth / 2;
-    case "end":
-      return left + width - state.scrollerWidth + state.scrollPadding.end;
-    case "start":
-    default:
-      return left - state.scrollPadding.start;
-  }
+  const alignFn = alignmentMap[(align || "start") as keyof typeof alignmentMap];
+  return alignFn(left, width);
 }
 
 function findTargetPosition(dir: "prev" | "next", align?: AlignOption): number {
