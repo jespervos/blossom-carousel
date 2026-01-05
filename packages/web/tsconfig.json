@@ -9,7 +9,10 @@
     "sourceMap": true,
     "outDir": "dist",
     "lib": ["esnext", "dom"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
-  "include": ["src"]
+  "include": ["src", "vite.config.ts"]
 }

@@ -20,59 +20,44 @@ function alignedPosition(
   }
 }
 
-export function prev({
-  align,
-}: { align?: AlignOption | undefined } = {}): void {
-  if (!state.scroller) return;
-  const left = state.scroller.scrollLeft;
+function findTargetPosition(dir: "prev" | "next", align?: AlignOption): number {
+  if (!state.scroller) return 0;
 
-  // find nearest snap position to the left
+  const left = state.scroller.scrollLeft;
   const positions = snapStore.positions.length
     ? snapStore.positions
     : state.slidePositions;
-  let targetPosition: number = Infinity;
-  for (let i = positions.length - 1; i >= 0; i--) {
-    const pos = positions[i];
-    const posX = alignedPosition(pos.x, pos.width || 0, align);
-    if (posX < left - 1) {
-      targetPosition = posX;
-      break;
+
+  if (dir === "prev") {
+    for (let i = positions.length - 1; i >= 0; i--) {
+      const posX = alignedPosition(
+        positions[i].x,
+        positions[i].width || 0,
+        align
+      );
+      if (posX < left - 1) return posX;
+    }
+  } else {
+    for (let i = 0; i < positions.length; i++) {
+      const posX = alignedPosition(
+        positions[i].x,
+        positions[i].width || 0,
+        align
+      );
+      if (posX > left + 1) return posX;
     }
   }
-
-  // if found, scroll to it
-  if (targetPosition) {
-    state.scroller.scrollTo({
-      left: targetPosition,
-      behavior: "smooth",
-    });
-  }
+  return 0;
 }
-export function next({
-  align,
-}: { align?: AlignOption | undefined } = {}): void {
-  if (!state.scroller) return;
-  const left = state.scroller.scrollLeft;
 
-  // find nearest snap position to the right
-  const positions = snapStore.positions.length
-    ? snapStore.positions
-    : state.slidePositions;
-  let targetPosition: number = 0;
-  for (let i = 0; i < positions.length; i++) {
-    const pos = positions[i];
-    const posX = alignedPosition(pos.x, pos.width || 0, align);
-    if (posX > left + 1) {
-      targetPosition = posX;
-      break;
-    }
-  }
+export function prev({ align }: { align?: AlignOption } = {}): void {
+  const targetPosition = findTargetPosition("prev", align);
+  if (!targetPosition) return;
+  state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
+}
 
-  // if found, scroll to it
-  if (targetPosition) {
-    state.scroller.scrollTo({
-      left: targetPosition,
-      behavior: "smooth",
-    });
-  }
+export function next({ align }: { align?: AlignOption } = {}): void {
+  const targetPosition = findTargetPosition("next", align);
+  if (!targetPosition) return;
+  state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }

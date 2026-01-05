@@ -14,10 +14,10 @@ import "@blossom-carousel/core/style.css";
 #### CDN
 
 ```html
-<script src="https://unpkg.com/@blossom-carousel/web@0.0.11/dist/blossom-carousel-web.umd.cjs"></script>
+<script src="https://unpkg.com/@blossom-carousel/web@latest/dist/blossom-carousel-web.umd.js"></script>
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@blossom-carousel/web@0.0.11/dist/blossom-carousel-web.umd.cjs"
+  href="https://unpkg.com/@blossom-carousel/web@latest/dist/web.css"
 />
 ```
 
@@ -30,6 +30,19 @@ import "@blossom-carousel/core/style.css";
   <div>Slide 3</div>
   ...
 </blossom-carousel>
+```
+
+### Methods
+
+Slide to the previous or next element.
+use the `align` option to control the alignment of the target element. allowed values are `"start" | "center" | "end"`
+
+> ⚠ when scroll-snap is active, the css scroll-snap-align value will be used and the align option will be ignored.
+
+```js
+const carousel = document.getElementById("carousel");
+carousel.prev({ align: "center" });
+carousel.next({ align: "center" });
 ```
 
 ## Examples

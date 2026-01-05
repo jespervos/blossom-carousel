@@ -46,6 +46,18 @@ Renders as
 </ul>
 ```
 
+### Methods
+
+Slide to the previous or next element.
+use the `align` option to control the alignment of the target element. allowed values are `"start" | "center" | "end"`
+
+> ⚠ when scroll-snap is active, the css scroll-snap-align value will be used and the align option will be ignored.
+
+```js
+blossomRef.prev({ align: "center" });
+blossomRef.next({ align: "center" });
+```
+
 ## Examples
 
 - [Simple](https://www.blossom-carousel.com/docs/examples#simple)

@@ -59,7 +59,6 @@ function remove() {
     blossom.value?.el?.removeChild(slides[slides.length - 1]);
   }
 }
-// const getCurrentSlide = () => {
 //   if (!blossom.value) return null;
 
 //   const carousel = blossom.value.$el;
@@ -167,8 +166,8 @@ function remove() {
   /* padding-inline: 1rem; */
   /* scroll-padding-inline: 1rem; */
 
-  /* scroll-snap-type: x mandatory;
-  scroll-snap-stop: always; */
+  scroll-snap-type: x mandatory;
+  scroll-snap-stop: always;
 
   padding-block: 4rem;
   margin-block: -4rem;

@@ -29,11 +29,13 @@ const BlossomCarousel = forwardRef(
       | ((instance: HTMLElement | null) => void)
   ) => {
     const localRef = useRef<HTMLElement>(null);
+    const blossomRef = useRef<InstanceType<typeof Blossom> | null>(null);
 
     useEffect(() => {
       if (!localRef.current) return;
 
       const blossom = Blossom(localRef.current, { repeat });
+      blossomRef.current = blossom;
 
       blossom.init();
 
@@ -42,10 +44,11 @@ const BlossomCarousel = forwardRef(
       };
     }, [repeat]);
 
-    useImperativeHandle<HTMLElement | null, HTMLElement | null>(
-      parentRef,
-      () => localRef.current
-    );
+    useImperativeHandle(parentRef, () => ({
+      prev: () => blossomRef.current?.prev(),
+      next: () => blossomRef.current?.next(),
+      element: localRef.current,
+    }));
 
     return (
       <Component ref={localRef} blossom-carousel="true" {...props}>

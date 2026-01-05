@@ -22,6 +22,14 @@ export class BlossomCarousel extends HTMLElement {
   disconnectedCallback(): void {
     this.carouselInstance.destroy();
   }
+
+  prev(options?: unknown): void {
+    this.carouselInstance.prev(options);
+  }
+
+  next(options?: unknown): void {
+    this.carouselInstance.next(options);
+  }
 }
 
 customElements.define("blossom-carousel", BlossomCarousel);

@@ -42,6 +42,18 @@ const blossom = Blossom(element);
 blossom.init();
 ```
 
+### Methods
+
+Slide to the previous or next element.
+use the `align` option to control the alignment of the target element. allowed values are `"start" | "center" | "end"`
+
+> ⚠ when scroll-snap is active, the css scroll-snap-align value will be used and the align option will be ignored.
+
+```js
+blossom.prev({ align: "center" });
+blossom.next({ align: "center" });
+```
+
 ### Destroy
 
 Destroy the Blossom instance when you no longer need it to free up resources.

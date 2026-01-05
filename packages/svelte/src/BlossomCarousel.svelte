@@ -26,6 +26,14 @@
   onDestroy(() => {
     blossom?.destroy();
   });
+
+  export function prev(options) {
+    blossom?.prev(options);
+  }
+
+  export function next(options) {
+    blossom?.next(options);
+  }
 </script>
 
 <svelte:element

@@ -5,14 +5,6 @@ import "@blossom-carousel/core/style.css";
 export default function App() {
   const carouselRef = useRef<HTMLUListElement>(null);
 
-  const handleClick = (next: boolean) => () => {
-    if (!carouselRef.current) return;
-    const slideWidth =
-      carouselRef.current?.children?.[0]?.getBoundingClientRect?.()?.width;
-    if (isNaN(slideWidth)) return;
-    carouselRef.current.scrollBy({ left: slideWidth * (next ? 1 : -1) });
-  };
-
   return (
     <div className="page">
       <h1>Blossom in React</h1>
@@ -24,8 +16,12 @@ export default function App() {
         ))}
       </BlossomCarousel>
       <div>
-        <button onClick={handleClick(false)}>Previous</button>
-        <button onClick={handleClick(true)}>Next</button>
+        <button onClick={() => carouselRef.current?.prev({ align: "center" })}>
+          Previous
+        </button>
+        <button onClick={() => carouselRef.current?.next({ align: "center" })}>
+          Next
+        </button>
       </div>
     </div>
   );
