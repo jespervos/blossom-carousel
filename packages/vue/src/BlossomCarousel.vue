@@ -22,10 +22,14 @@ const props = defineProps({
   },
 });
 
-const root = shallowRef(null);
-defineExpose({ el: root });
-
 let blossom = null;
+const root = shallowRef(null);
+defineExpose({
+  el: root,
+  prev: () => blossom?.prev({ align: "center" }),
+  next: () => blossom?.next({ align: "center" }),
+});
+
 onMounted(async () => {
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
