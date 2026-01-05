@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import BlossomCarousel from "./BlossomCarousel";
+import BlossomCarousel, { BlossomCarouselHandle } from "./BlossomCarousel";
 import "@blossom-carousel/core/style.css";
 
 export default function App() {
-  const carouselRef = useRef<HTMLUListElement>(null);
+  const carouselRef = useRef<BlossomCarouselHandle>(null);
 
   return (
     <div className="page">
