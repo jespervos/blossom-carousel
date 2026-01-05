@@ -183,7 +183,7 @@ function remove() {
   height: 400px;
   margin-right: 1rem;
   aspect-ratio: 3/4;
-  scroll-snap-align: center;
+  scroll-snap-align: start;
   background-color: #404040;
   border-radius: 1rem;
   display: inline-flex;

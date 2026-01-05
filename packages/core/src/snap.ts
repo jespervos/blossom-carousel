@@ -92,14 +92,11 @@ export function dragSnap(
   friction: number
 ): number {
   const newSnapPosition = snapSelect(target, velocity, friction);
-  const dispatchSnapEvent = (pos: SnapPosition) => {
-    dispatchScrollSnapChangingEvent(state.scroller, {
-      snapTargetInline: (pos || snapStore.activePosition).target,
-      snapTargetBlock: (pos || snapStore.activePosition).target,
-    });
-  };
   if (newSnapPosition.x !== snapStore.activePosition.x) {
-    dispatchSnapEvent(newSnapPosition);
+    dispatchScrollSnapChangingEvent(state.scroller, {
+      snapTargetInline: (newSnapPosition || snapStore.activePosition).target,
+      snapTargetBlock: (newSnapPosition || snapStore.activePosition).target,
+    });
   }
   snapStore.activePosition = newSnapPosition;
   const slideX = clamp(
@@ -136,13 +133,6 @@ export function onScrollSnapChange(): void {
   });
 }
 
-const dispatchSnapEvent = (pos: SnapPosition) => {
-  dispatchScrollSnapChangingEvent(state.scroller, {
-    snapTargetInline: (pos || snapStore.activePosition).target,
-    snapTargetBlock: (pos || snapStore.activePosition).target,
-  });
-};
-
 export function onSnapChanging(
   target: number,
   velocity: number,
@@ -151,6 +141,9 @@ export function onSnapChanging(
   const newSnapPosition = snapSelect(target, velocity, friction);
   if (newSnapPosition.x !== snapStore.activePosition.x) {
     snapStore.activePosition = newSnapPosition;
-    dispatchSnapEvent(newSnapPosition);
+    dispatchScrollSnapChangingEvent(state.scroller, {
+      snapTargetInline: (newSnapPosition || snapStore.activePosition).target,
+      snapTargetBlock: (newSnapPosition || snapStore.activePosition).target,
+    });
   }
 }
