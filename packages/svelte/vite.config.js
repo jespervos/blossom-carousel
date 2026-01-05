@@ -6,10 +6,7 @@ import path from "path";
 export default defineConfig({
   plugins: [
     svelte({
-      compilerOptions: {
-        // Ensure proper component compilation for Svelte 5
-        generate: "dom",
-      },
+      // compilerOptions like 'generate' are controlled by vite-plugin-svelte
     }),
     dts({
       insertTypesEntry: true,
@@ -37,6 +34,7 @@ export default defineConfig({
         exports: "named",
         globals: {
           svelte: "svelte",
+          "svelte/internal/client": "svelteInternalClient",
           "@blossom-carousel/core": "BlossomCarouselCore",
         },
       },

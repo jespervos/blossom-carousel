@@ -23,11 +23,11 @@ export class BlossomCarousel extends HTMLElement {
     this.carouselInstance.destroy();
   }
 
-  prev(options?: unknown): void {
+  prev(options: { align: string }): void {
     this.carouselInstance.prev(options);
   }
 
-  next(options?: unknown): void {
+  next(options: { align: string }): void {
     this.carouselInstance.next(options);
   }
 }
