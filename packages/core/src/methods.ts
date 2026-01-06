@@ -1,25 +1,33 @@
-import { state } from "./state";
-import { snapStore } from "./snap";
+import type { CarouselState } from "./state";
+import type { SnapStore } from "./snap";
 import type { AlignOption, SnapPosition } from "./types";
 
 const alignmentMap = {
-  center: (l: number, w: number) => l + w * 0.5 - state.scrollerWidth / 2,
-  end: (l: number, w: number) =>
+  center: (l: number, w: number, state: CarouselState) =>
+    l + w * 0.5 - state.scrollerWidth / 2,
+  end: (l: number, w: number, state: CarouselState) =>
     l + w - state.scrollerWidth + state.scrollPadding.end,
-  start: (l: number, w: number) => l - state.scrollPadding.start,
+  start: (l: number, w: number, state: CarouselState) =>
+    l - state.scrollPadding.start,
 } as const;
 
 function alignedPosition(
   left: number,
   width: number,
-  align: AlignOption | undefined
+  align: AlignOption | undefined,
+  state: CarouselState
 ): number {
   if (state.hasSnap) return left;
   const alignFn = alignmentMap[(align || "start") as keyof typeof alignmentMap];
-  return alignFn(left, width);
+  return alignFn(left, width, state);
 }
 
-function findTargetPosition(dir: "prev" | "next", align?: AlignOption): number {
+function findTargetPosition(
+  dir: "prev" | "next",
+  align: AlignOption | undefined,
+  state: CarouselState,
+  snapStore: SnapStore
+): number {
   if (!state.scroller) return 0;
 
   const left = state.scroller.scrollLeft;
@@ -32,7 +40,8 @@ function findTargetPosition(dir: "prev" | "next", align?: AlignOption): number {
       const posX = alignedPosition(
         positions[i].x,
         positions[i].width || 0,
-        align
+        align,
+        state
       );
       if (posX < left - 1) return posX;
     }
@@ -41,7 +50,8 @@ function findTargetPosition(dir: "prev" | "next", align?: AlignOption): number {
       const posX = alignedPosition(
         positions[i].x,
         positions[i].width || 0,
-        align
+        align,
+        state
       );
       if (posX > left + 1) return posX;
     }
@@ -49,14 +59,22 @@ function findTargetPosition(dir: "prev" | "next", align?: AlignOption): number {
   return 0;
 }
 
-export function prev({ align }: { align?: AlignOption } = {}): void {
-  const targetPosition = findTargetPosition("prev", align);
+export function prev(
+  state: CarouselState,
+  snapStore: SnapStore,
+  { align }: { align?: AlignOption } = {}
+): void {
+  const targetPosition = findTargetPosition("prev", align, state, snapStore);
   if (!targetPosition) return;
   state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }
 
-export function next({ align }: { align?: AlignOption } = {}): void {
-  const targetPosition = findTargetPosition("next", align);
+export function next(
+  state: CarouselState,
+  snapStore: SnapStore,
+  { align }: { align?: AlignOption } = {}
+): void {
+  const targetPosition = findTargetPosition("next", align, state, snapStore);
   if (!targetPosition) return;
   state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }

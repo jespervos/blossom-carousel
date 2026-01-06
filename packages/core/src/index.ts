@@ -1,6 +1,6 @@
 import "./style.css";
 import type { Point, HasOverflow, CarouselOptions } from "./types";
-import { state } from "./state";
+import { createState, type CarouselState } from "./state";
 import { damp, round } from "./utils";
 import { FRICTION, DAMPING } from "./constants";
 import { dispatchOverscrollEvent, dispatchScrollEndEvent } from "./events";
@@ -9,10 +9,14 @@ import {
   onScrollSnapChange,
   onSnapChanging,
   dragSnap,
+  createSnapStore,
+  type SnapStore,
 } from "./snap";
 import { prev, next } from "./methods";
 
 export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
+  const state = createState();
+  const snapStore = createSnapStore();
   state.scroller = scroller;
   let snap = <boolean>true;
   const pointerStart: Point = { x: 0, y: 0 };
@@ -154,7 +158,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       (state.scrollerScrollWidth - state.scrollerWidth - 4) * state.dir;
 
     if (state.hasSnap) {
-      findSnapPositions(scroller);
+      findSnapPositions(scroller, state, snapStore);
     } else {
       state.slidePositions = Array.from(scroller.children).map((el) => {
         const rect = (el as HTMLElement).getBoundingClientRect();
@@ -257,7 +261,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    velocity.x = dragSnap(target.x, velocity.x, FRICTION);
+    velocity.x = dragSnap(target.x, velocity.x, FRICTION, state, snapStore);
     preventGlobalClick();
   }
 
@@ -425,14 +429,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     });
 
     if (state.isDragging && state.hasSnap) {
-      onSnapChanging(target.x, velocity.x, FRICTION);
+      onSnapChanging(target.x, velocity.x, FRICTION, state, snapStore);
     }
 
     if (!state.isDragging && round(velocity.x, 12) === 0) {
       isTicking.value = false;
       dispatchScrollEndEvent(scroller);
       if (state.hasSnap) {
-        onScrollSnapChange();
+        onScrollSnapChange(state, snapStore);
       }
     }
 
@@ -539,7 +543,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     hasOverflow,
     init,
     destroy,
-    prev,
-    next,
+    prev: (opts?: { align?: any }) => prev(state, snapStore, opts),
+    next: (opts?: { align?: any }) => next(state, snapStore, opts),
   };
 };

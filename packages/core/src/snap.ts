@@ -3,16 +3,27 @@ import {
   dispatchScrollSnapChangeEvent,
   dispatchScrollSnapChangingEvent,
 } from "./events";
-import { state } from "./state";
+import type { CarouselState } from "./state";
 import { FRICTION } from "./constants.js";
 import { clamp, project } from "./utils.js";
 
-export const snapStore = {
-  positions: [] as SnapPosition[],
-  activePosition: { target: null, x: 0, y: 0 } as SnapPosition,
+export type SnapStore = {
+  positions: SnapPosition[];
+  activePosition: SnapPosition;
 };
 
-export function findSnapPositions(scroller: HTMLElement): void {
+export function createSnapStore(): SnapStore {
+  return {
+    positions: [],
+    activePosition: { target: null, x: 0, y: 0 },
+  };
+}
+
+export function findSnapPositions(
+  scroller: HTMLElement,
+  state: CarouselState,
+  snapStore: SnapStore
+): void {
   let positions: { align: string; el: HTMLElement | Element }[] = [];
 
   let cycles = 0;
@@ -89,9 +100,17 @@ export function findSnapPositions(scroller: HTMLElement): void {
 export function dragSnap(
   target: number,
   velocity: number,
-  friction: number
+  friction: number,
+  state: CarouselState,
+  snapStore: SnapStore
 ): number {
-  const newSnapPosition = snapSelect(target, velocity, friction);
+  const newSnapPosition = snapSelect(
+    target,
+    velocity,
+    friction,
+    state,
+    snapStore
+  );
   if (newSnapPosition.x !== snapStore.activePosition.x) {
     dispatchScrollSnapChangingEvent(state.scroller, {
       snapTargetInline: (newSnapPosition || snapStore.activePosition).target,
@@ -112,7 +131,9 @@ export function dragSnap(
 export function snapSelect(
   target: number,
   velocity: number,
-  friction: number
+  friction: number,
+  state: CarouselState,
+  snapStore: SnapStore
 ): SnapPosition {
   const restingX = project(target, velocity, friction);
   return snapStore.positions.length
@@ -126,7 +147,10 @@ export function snapSelect(
       };
 }
 
-export function onScrollSnapChange(): void {
+export function onScrollSnapChange(
+  state: CarouselState,
+  snapStore: SnapStore
+): void {
   dispatchScrollSnapChangeEvent(state.scroller, {
     snapTargetInline: snapStore.activePosition.target,
     snapTargetBlock: snapStore.activePosition.target,
@@ -136,9 +160,17 @@ export function onScrollSnapChange(): void {
 export function onSnapChanging(
   target: number,
   velocity: number,
-  friction: number
+  friction: number,
+  state: CarouselState,
+  snapStore: SnapStore
 ): void {
-  const newSnapPosition = snapSelect(target, velocity, friction);
+  const newSnapPosition = snapSelect(
+    target,
+    velocity,
+    friction,
+    state,
+    snapStore
+  );
   if (newSnapPosition.x !== snapStore.activePosition.x) {
     snapStore.activePosition = newSnapPosition;
     dispatchScrollSnapChangingEvent(state.scroller, {
