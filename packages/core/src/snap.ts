@@ -22,7 +22,7 @@ export function createSnapStore(): SnapStore {
 export function findSnapPositions(
   scroller: HTMLElement,
   state: CarouselState,
-  snapStore: SnapStore
+  snapStore: SnapStore,
 ): void {
   let positions: { align: string; el: HTMLElement | Element }[] = [];
 
@@ -47,7 +47,7 @@ export function findSnapPositions(
     // traverse all children
     const children = node.children;
     if (children.length === 0) return;
-    for (let child of children) {
+    for (let child of Array.from(children)) {
       traverseDOM(child);
     }
   };
@@ -102,14 +102,14 @@ export function dragSnap(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore
+  snapStore: SnapStore,
 ): number {
   const newSnapPosition = snapSelect(
     target,
     velocity,
     friction,
     state,
-    snapStore
+    snapStore,
   );
   if (newSnapPosition.x !== snapStore.activePosition.x) {
     dispatchScrollSnapChangingEvent(state.scroller, {
@@ -121,7 +121,7 @@ export function dragSnap(
   const slideX = clamp(
     newSnapPosition.x,
     Math.min((state.scrollerScrollWidth - state.scrollerWidth) * state.dir, 0),
-    Math.max((state.scrollerScrollWidth - state.scrollerWidth) * state.dir, 0)
+    Math.max((state.scrollerScrollWidth - state.scrollerWidth) * state.dir, 0),
   );
   const distance = slideX - target;
   const force = distance * (1 - FRICTION) * (1 / FRICTION);
@@ -133,12 +133,12 @@ export function snapSelect(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore
+  snapStore: SnapStore,
 ): SnapPosition {
   const restingX = project(target, velocity, friction);
   return snapStore.positions.length
     ? snapStore.positions.reduce((prev, curr) =>
-        Math.abs(curr.x - restingX) < Math.abs(prev.x - restingX) ? curr : prev
+        Math.abs(curr.x - restingX) < Math.abs(prev.x - restingX) ? curr : prev,
       )
     : {
         target: null,
@@ -149,7 +149,7 @@ export function snapSelect(
 
 export function onScrollSnapChange(
   state: CarouselState,
-  snapStore: SnapStore
+  snapStore: SnapStore,
 ): void {
   dispatchScrollSnapChangeEvent(state.scroller, {
     snapTargetInline: snapStore.activePosition.target,
@@ -162,14 +162,14 @@ export function onSnapChanging(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore
+  snapStore: SnapStore,
 ): void {
   const newSnapPosition = snapSelect(
     target,
     velocity,
     friction,
     state,
-    snapStore
+    snapStore,
   );
   if (newSnapPosition.x !== snapStore.activePosition.x) {
     snapStore.activePosition = newSnapPosition;

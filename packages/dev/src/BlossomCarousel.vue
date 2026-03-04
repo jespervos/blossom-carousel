@@ -4,7 +4,7 @@
   </component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, onBeforeUnmount, shallowRef } from "vue";
 // import { Blossom } from "../../core/dist/blossom-carousel-core.js";
 // import "../../core/dist/blossom-carousel-core.css";
@@ -26,17 +26,17 @@ const props = defineProps({
   },
 });
 
-const root = shallowRef(null);
+const root = shallowRef<HTMLElement | null>(null);
 defineExpose({
   el: root,
   prev: () => blossom?.prev({ align: "center" }),
   next: () => blossom?.next({ align: "center" }),
 });
 
-let blossom = null;
+let blossom = null as any;
 onMounted(async () => {
   const hasMouse = window.matchMedia(
-    "(hover: hover) and (pointer: fine)"
+    "(hover: hover) and (pointer: fine)",
   ).matches;
 
   // don't load if the user has no mouse.
@@ -45,8 +45,10 @@ onMounted(async () => {
 
   const { Blossom } = await import("../../core/src/index");
 
-  blossom = Blossom(root.value, { repeat: props.repeat });
-  blossom.init();
+  if (root.value) {
+    blossom = Blossom(root.value, { repeat: props.repeat });
+    blossom.init();
+  }
 });
 onBeforeUnmount(() => {
   blossom?.destroy();

@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import BlossomCarousel from "./BlossomCarousel.vue";
 import "../../core/src/style.css";
 
-const blossom = ref(null);
+const blossom = ref<InstanceType<typeof BlossomCarousel> | null>(null);
 // const slides = ref([]);
 // function onOverScroll(event) {
 //   event.preventDefault();

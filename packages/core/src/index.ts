@@ -10,7 +10,6 @@ import {
   onSnapChanging,
   dragSnap,
   createSnapStore,
-  type SnapStore,
 } from "./snap";
 import { prev, next } from "./methods";
 
@@ -37,7 +36,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
         return true;
       },
-    }
+    },
   );
   const hasOverflow: HasOverflow = new Proxy(
     { x: false, y: false },
@@ -60,7 +59,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
         return true;
       },
-    }
+    },
   );
   let raf: number | null = null;
   let links: NodeListOf<HTMLAnchorElement> | null = null;
@@ -88,7 +87,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     });
 
     const hasMouse = window.matchMedia(
-      "(hover: hover) and (pointer: fine)"
+      "(hover: hover) and (pointer: fine)",
     ).matches;
 
     state.dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
@@ -297,7 +296,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       startIdx: number,
       endIdx: number,
       threshold: number,
-      isEnd: boolean
+      isEnd: boolean,
     ) => {
       let offset = 0;
       const step = isEnd ? -1 : 1;
@@ -316,7 +315,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       slides.length - 1,
       slides.length / 2,
       distanceToStartEdge,
-      true
+      true,
     );
     offsetSlides(0, slides.length / 2, distanceToEndEdge, false);
 
@@ -381,7 +380,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
         return true;
       },
-    }
+    },
   );
 
   let frameDelta = 0;
@@ -466,7 +465,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       rubberBandOffset,
       targetOffset,
       state.isDragging ? 0.8 : DAMPING,
-      frameDelta
+      frameDelta,
     );
 
     if (Math.abs(rubberBandOffset) > 0.01) {
@@ -503,7 +502,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   };
 
   function interceptScrollIntoViewCalls(
-    onExternalScroll: (target: Element, method: string, args: any[]) => void
+    onExternalScroll: (target: Element, method: string, args: any[]) => void,
   ) {
     const stopFns: Array<() => void> = [];
 
@@ -511,7 +510,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     const originalScrollIntoView = Element.prototype.scrollIntoView;
     if (originalScrollIntoView) {
       Element.prototype.scrollIntoView = function (
-        arg?: boolean | ScrollIntoViewOptions
+        arg?: boolean | ScrollIntoViewOptions,
       ): void {
         onExternalScroll(this, "scrollIntoView", [arg]);
         return originalScrollIntoView.call(this, arg);

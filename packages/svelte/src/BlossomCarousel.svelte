@@ -1,12 +1,13 @@
-<script>
+<script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import type { Blossom } from '@blossom-carousel/core';
 
-  export let as = 'div';
-  export let load = 'conditional'; // 'always' or 'conditional'
-  export let repeat = false;
+  export let as: string = 'div';
+  export let load: 'always' | 'conditional' = 'conditional';
+  export let repeat: boolean = false;
   
-  let root;
-  let blossom;
+  let root: HTMLElement;
+  let blossom: ReturnType<typeof Blossom> | undefined;
 
   onMount(async () => {
     if (root) {
@@ -27,11 +28,11 @@
     blossom?.destroy();
   });
 
-  export function prev(options) {
+  export function prev(options?: { align?: string }) {
     blossom?.prev(options);
   }
 
-  export function next(options) {
+  export function next(options?: { align?: string }) {
     blossom?.next(options);
   }
 </script>

@@ -10,7 +10,6 @@
     "outDir": "dist",
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
-    "types": ["node"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },

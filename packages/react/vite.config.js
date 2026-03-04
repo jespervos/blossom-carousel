@@ -4,7 +4,12 @@ import dts from "vite-plugin-dts";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react(), dts()],
+  plugins: [
+    react(),
+    dts({
+      include: ["src/index.ts", "src/BlossomCarousel.tsx"],
+    }),
+  ],
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),

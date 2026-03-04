@@ -1,6 +1,6 @@
 import type { CarouselState } from "./state";
 import type { SnapStore } from "./snap";
-import type { AlignOption, SnapPosition } from "./types";
+import type { AlignOption } from "./types";
 
 const alignmentMap = {
   center: (l: number, w: number, state: CarouselState) =>
@@ -15,7 +15,7 @@ function alignedPosition(
   left: number,
   width: number,
   align: AlignOption | undefined,
-  state: CarouselState
+  state: CarouselState,
 ): number {
   if (state.hasSnap) return left;
   const alignFn = alignmentMap[(align || "start") as keyof typeof alignmentMap];
@@ -26,7 +26,7 @@ function findTargetPosition(
   dir: "prev" | "next",
   align: AlignOption | undefined,
   state: CarouselState,
-  snapStore: SnapStore
+  snapStore: SnapStore,
 ): number {
   if (!state.scroller) return 0;
 
@@ -41,7 +41,7 @@ function findTargetPosition(
         positions[i].x,
         positions[i].width || 0,
         align,
-        state
+        state,
       );
       if (posX < left - 1) return posX;
     }
@@ -51,7 +51,7 @@ function findTargetPosition(
         positions[i].x,
         positions[i].width || 0,
         align,
-        state
+        state,
       );
       if (posX > left + 1) return posX;
     }
@@ -62,7 +62,7 @@ function findTargetPosition(
 export function prev(
   state: CarouselState,
   snapStore: SnapStore,
-  { align }: { align?: AlignOption } = {}
+  { align }: { align?: AlignOption } = {},
 ): void {
   const targetPosition = findTargetPosition("prev", align, state, snapStore);
   if (!targetPosition) return;
@@ -72,7 +72,7 @@ export function prev(
 export function next(
   state: CarouselState,
   snapStore: SnapStore,
-  { align }: { align?: AlignOption } = {}
+  { align }: { align?: AlignOption } = {},
 ): void {
   const targetPosition = findTargetPosition("next", align, state, snapStore);
   if (!targetPosition) return;
