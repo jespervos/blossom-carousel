@@ -97,6 +97,35 @@ export function findSnapPositions(
   snapStore.positions = filteredSnapPositions;
 }
 
+export function shouldSnap(
+  target: number,
+  velocity: number,
+  friction: number,
+  state: CarouselState,
+  snapStore: SnapStore,
+): boolean {
+  if (!state.hasSnap || !snapStore.positions.length) {
+    return false;
+  }
+
+  if (state.snapMandatory) {
+    return true;
+  }
+
+  const restingX = project(target, velocity, friction);
+  const snapportWidth = Math.max(
+    state.scrollerWidth - state.scrollPadding.start - state.scrollPadding.end,
+    0,
+  );
+  const proximityThreshold = snapportWidth / 3;
+  const nearestDistance = snapStore.positions.reduce(
+    (distance, position) => Math.min(distance, Math.abs(position.x - restingX)),
+    Number.POSITIVE_INFINITY,
+  );
+
+  return nearestDistance <= proximityThreshold;
+}
+
 export function dragSnap(
   target: number,
   velocity: number,

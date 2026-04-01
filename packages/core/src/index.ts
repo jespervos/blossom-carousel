@@ -10,6 +10,7 @@ import {
   onSnapChanging,
   dragSnap,
   createSnapStore,
+  shouldSnap,
 } from "./snap";
 import { prev, next } from "./methods";
 
@@ -83,7 +84,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     mutationObserver.observe(scroller, {
       attributes: false,
       childList: true,
-      subtree: false,
+      subtree: true,
     });
 
     const hasMouse = window.matchMedia(
@@ -94,6 +95,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     const { scrollSnapType } = window.getComputedStyle(scroller);
     state.hasSnap = scrollSnapType !== "none";
+    state.snapMandatory = scrollSnapType.includes("mandatory");
     scroller.style.setProperty("--snap-type", scrollSnapType);
     if (hasMouse) {
       scroller.style.setProperty("scroll-snap-type", "none");
@@ -260,7 +262,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    velocity.x = dragSnap(target.x, velocity.x, FRICTION, state, snapStore);
+    if (shouldSnap(target.x, velocity.x, FRICTION, state, snapStore)) {
+      velocity.x = dragSnap(target.x, velocity.x, FRICTION, state, snapStore);
+    }
     preventGlobalClick();
   }
 

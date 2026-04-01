@@ -16,6 +16,7 @@ export type CarouselState = {
     height: number;
   }>;
   hasSnap: boolean;
+  snapMandatory?: boolean;
   dir: number;
 };
 
@@ -32,6 +33,7 @@ export function createState(): CarouselState {
     scrollPadding: { start: 0, end: 0 },
     slidePositions: [],
     hasSnap: false,
+    snapMandatory: false,
     dir: 1,
   };
 }
