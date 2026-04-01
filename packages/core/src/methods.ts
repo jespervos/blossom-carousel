@@ -27,8 +27,8 @@ function findTargetPosition(
   align: AlignOption | undefined,
   state: CarouselState,
   snapStore: SnapStore,
-): number {
-  if (!state.scroller) return 0;
+): number | null {
+  if (!state.scroller) return null;
 
   const left = state.scroller.scrollLeft;
   const positions = snapStore.positions.length
@@ -56,7 +56,7 @@ function findTargetPosition(
       if (posX > left + 1) return posX;
     }
   }
-  return 0;
+  return null;
 }
 
 export function prev(
@@ -65,7 +65,7 @@ export function prev(
   { align }: { align?: AlignOption } = {},
 ): void {
   const targetPosition = findTargetPosition("prev", align, state, snapStore);
-  if (!targetPosition) return;
+  if (targetPosition === null) return;
   state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }
 
@@ -75,6 +75,6 @@ export function next(
   { align }: { align?: AlignOption } = {},
 ): void {
   const targetPosition = findTargetPosition("next", align, state, snapStore);
-  if (!targetPosition) return;
+  if (targetPosition === null) return;
   state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }
