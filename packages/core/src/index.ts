@@ -127,7 +127,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   }
 
   function onLinkClick(e: MouseEvent): void {
-    if (distanceMovedSincePointerDown.x > 10) {
+    if (
+      distanceMovedSincePointerDown.x > 10 ||
+      distanceMovedSincePointerDown.y > 10
+    ) {
       e.preventDefault();
     }
   }
@@ -152,11 +155,17 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
     state.padding.end = parseInt(styles.paddingInlineEnd) || 0;
     state.padding.start = parseInt(styles.paddingInlineStart) || 0;
+    state.paddingBlock.end = parseInt(styles.paddingBlockEnd) || 0;
+    state.paddingBlock.start = parseInt(styles.paddingBlockStart) || 0;
     state.scrollPadding.start = parseInt(styles.scrollPaddingInlineStart) || 0;
     state.scrollPadding.end = parseInt(styles.scrollPaddingInlineEnd) || 0;
+    state.scrollPaddingBlock.start =
+      parseInt(styles.scrollPaddingBlockStart) || 0;
+    state.scrollPaddingBlock.end = parseInt(styles.scrollPaddingBlockEnd) || 0;
     state.dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
     state.end =
       (state.scrollerScrollWidth - state.scrollerWidth - 4) * state.dir;
+    state.endY = state.scrollerScrollHeight - state.scrollerHeight - 4;
 
     if (state.hasSnap) {
       findSnapPositions(scroller, state, snapStore);
@@ -165,10 +174,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         const rect = (el as HTMLElement).getBoundingClientRect();
         const scrollerRect = scroller.getBoundingClientRect();
         const left = rect.left - scrollerRect.left + scroller.scrollLeft;
+        const top = rect.top - scrollerRect.top + scroller.scrollTop;
         return {
           target: el as HTMLElement,
           x: left - state.scrollPadding.start,
-          y: 0,
+          y: top - state.scrollPaddingBlock.start,
           width: rect.width,
           height: rect.height,
         };
@@ -190,13 +200,28 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (state.isDragging || !scroller) return;
 
     const scrollStart = scroller.scrollLeft;
+    const scrollTop = scroller.scrollTop;
+    let overscrollLeft = 0;
+    let overscrollTop = 0;
 
     if (scrollStart < 0) {
-      dispatchOverscrollEvent(scroller, { left: scrollStart * -1 });
+      overscrollLeft = scrollStart * -1;
     } else if (scrollStart > state.scrollerScrollWidth - state.scrollerWidth) {
+      overscrollLeft =
+        scrollStart * -1 + state.scrollerScrollWidth - state.scrollerWidth;
+    }
+
+    if (scrollTop < 0) {
+      overscrollTop = scrollTop * -1;
+    } else if (scrollTop > state.scrollerScrollHeight - state.scrollerHeight) {
+      overscrollTop =
+        scrollTop * -1 + state.scrollerScrollHeight - state.scrollerHeight;
+    }
+
+    if (overscrollLeft !== 0 || overscrollTop !== 0) {
       dispatchOverscrollEvent(scroller, {
-        left:
-          scrollStart * -1 + state.scrollerScrollWidth - state.scrollerWidth,
+        left: overscrollLeft,
+        top: overscrollTop,
       });
     }
   }
@@ -236,19 +261,19 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     e.preventDefault();
 
     if (hasOverflow.x) {
-      const deltaX = pointerStart.x - e.clientX;
-      target.x += deltaX;
-      velocity.x += deltaX;
+      const delta = pointerStart.x - e.clientX;
+      target.x += delta;
+      velocity.x += delta;
       pointerStart.x = e.clientX;
-      distanceMovedSincePointerDown.x += Math.abs(deltaX);
+      distanceMovedSincePointerDown.x += Math.abs(delta);
     }
 
     if (hasOverflow.y) {
-      const deltaY = pointerStart.y - e.clientY;
-      target.y += deltaY;
-      velocity.y += deltaY;
+      const delta = pointerStart.y - e.clientY;
+      target.y += delta;
+      velocity.y += delta;
       pointerStart.y = e.clientY;
-      distanceMovedSincePointerDown.y += Math.abs(deltaY);
+      distanceMovedSincePointerDown.y += Math.abs(delta);
     }
   }
 
@@ -258,18 +283,44 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     state.isDragging = false;
 
-    if (distanceMovedSincePointerDown.x <= 10) return;
+    if (
+      distanceMovedSincePointerDown.x <= 10 &&
+      distanceMovedSincePointerDown.y <= 10
+    )
+      return;
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    if (shouldSnap(target.x, velocity.x, FRICTION, state, snapStore)) {
-      velocity.x = dragSnap(target.x, velocity.x, FRICTION, state, snapStore);
+    if (shouldSnap("x", target.x, velocity.x, FRICTION, state, snapStore)) {
+      velocity.x = dragSnap(
+        "x",
+        target.x,
+        velocity.x,
+        FRICTION,
+        state,
+        snapStore,
+      );
+    }
+    if (shouldSnap("y", target.y, velocity.y, FRICTION, state, snapStore)) {
+      velocity.y = dragSnap(
+        "y",
+        target.y,
+        velocity.y,
+        FRICTION,
+        state,
+        snapStore,
+      );
     }
     preventGlobalClick();
   }
 
   function onWheel(e: WheelEvent): void {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+    const hasHorizontalWheel =
+      hasOverflow.x && Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    const hasVerticalWheel =
+      hasOverflow.y && Math.abs(e.deltaY) > Math.abs(e.deltaX);
+
+    if (hasHorizontalWheel || hasVerticalWheel) {
       isTicking.value = false;
       if (state.isDragging || !scroller) return;
       if (hasOverflow.x) virtualScroll.x = scroller.scrollLeft;
@@ -395,23 +446,24 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     if (!scroller) return;
 
-    if (hasOverflow.x) {
-      velocity.x *= FRICTION;
+    for (const axis of ["x", "y"] as const) {
+      if (!hasOverflow[axis]) continue;
+      velocity[axis] *= FRICTION;
       if (!state.isDragging) {
-        target.x += velocity.x;
-        virtualScroll.x = damp(virtualScroll.x, target.x, DAMPING, frameDelta);
+        target[axis] += velocity[axis];
+        virtualScroll[axis] = damp(
+          virtualScroll[axis],
+          target[axis],
+          DAMPING,
+          frameDelta,
+        );
       } else {
-        virtualScroll.x = damp(virtualScroll.x, target.x, FRICTION, frameDelta);
-      }
-    }
-
-    if (hasOverflow.y) {
-      velocity.y *= FRICTION;
-      if (!state.isDragging) {
-        target.y += velocity.y;
-        virtualScroll.y = damp(virtualScroll.y, target.y, DAMPING, frameDelta);
-      } else {
-        virtualScroll.y = damp(virtualScroll.y, target.y, FRICTION, frameDelta);
+        virtualScroll[axis] = damp(
+          virtualScroll[axis],
+          target[axis],
+          FRICTION,
+          frameDelta,
+        );
       }
     }
 
@@ -432,10 +484,15 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     });
 
     if (state.isDragging && state.hasSnap) {
-      onSnapChanging(target.x, velocity.x, FRICTION, state, snapStore);
+      onSnapChanging("x", target.x, velocity.x, FRICTION, state, snapStore);
+      onSnapChanging("y", target.y, velocity.y, FRICTION, state, snapStore);
     }
 
-    if (!state.isDragging && round(velocity.x, 12) === 0) {
+    if (
+      !state.isDragging &&
+      round(velocity.x, 12) === 0 &&
+      round(velocity.y, 12) === 0
+    ) {
       isTicking.value = false;
       dispatchScrollEndEvent(scroller);
       if (state.hasSnap) {
@@ -444,7 +501,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     }
 
     if (!options?.repeat) {
-      applyRubberBanding(round(virtualScroll.x, 2));
+      applyRubberBanding(round(virtualScroll.x, 2), round(virtualScroll.y, 2));
     } else {
       onRepeat(null, virtualScroll.x);
     }
@@ -452,35 +509,45 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     lastTick = t;
   }
 
-  let rubberBandOffset = 0;
-  function applyRubberBanding(left: number): void {
+  const rubberBand: Point = { x: 0, y: 0 };
+
+  function rubberBandAxis(pos: number, edge: number, dir: number): number {
+    if (pos * dir <= 0) return state.isDragging ? pos * -0.2 : 0;
+    if (pos * dir > edge * dir)
+      return state.isDragging ? (pos - edge) * -0.2 : 0;
+    return 0;
+  }
+
+  function applyRubberBanding(left: number, top: number): void {
     if (!scroller) return;
 
-    //TODO: add support for vertical rubber banding
-    const edge = state.end;
-
-    let targetOffset = 0;
-    if (left * state.dir <= 0) {
-      targetOffset = state.isDragging ? left * -0.2 : 0;
-    } else if (left * state.dir > edge * state.dir) {
-      targetOffset = state.isDragging ? (left - edge) * -0.2 : 0;
-    }
-    rubberBandOffset = damp(
-      rubberBandOffset,
-      targetOffset,
-      state.isDragging ? 0.8 : DAMPING,
+    const dampFactor = state.isDragging ? 0.8 : DAMPING;
+    rubberBand.x = damp(
+      rubberBand.x,
+      rubberBandAxis(left, state.end, state.dir),
+      dampFactor,
+      frameDelta,
+    );
+    rubberBand.y = damp(
+      rubberBand.y,
+      rubberBandAxis(top, state.endY, 1),
+      dampFactor,
       frameDelta,
     );
 
-    if (Math.abs(rubberBandOffset) > 0.01) {
-      const evt = dispatchOverscrollEvent(scroller, { left: rubberBandOffset });
+    if (Math.abs(rubberBand.x) > 0.01 || Math.abs(rubberBand.y) > 0.01) {
+      const evt = dispatchOverscrollEvent(scroller, {
+        left: rubberBand.x,
+        top: rubberBand.y,
+      });
       if (evt.defaultPrevented) return;
-      scroller.style.transform = `translateX(${round(rubberBandOffset, 3)}px)`;
+      scroller.style.transform = `translate(${round(rubberBand.x, 3)}px, ${round(rubberBand.y, 3)}px)`;
       return;
     }
 
     scroller.style.transform = "";
-    rubberBandOffset = 0;
+    rubberBand.x = 0;
+    rubberBand.y = 0;
   }
 
   /******************************

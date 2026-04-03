@@ -6,7 +6,7 @@ const scrollEndEvent = new Event("scrollend", {
 const dispatchEvent = (
   scroller: HTMLElement | null,
   eventName: string,
-  detail?: any
+  detail?: any,
 ) => {
   const event = detail
     ? new CustomEvent(eventName, { bubbles: true, cancelable: true, detail })
@@ -17,11 +17,12 @@ const dispatchEvent = (
 
 export const dispatchOverscrollEvent = (
   scroller: HTMLElement | null,
-  detail: { left: number }
+  detail: { left: number; top: number },
 ) => dispatchEvent(scroller, "overscroll", detail);
 
 export const dispatchScrollEndEvent = (scroller: HTMLElement | null) => (
-  scroller?.dispatchEvent(scrollEndEvent), scrollEndEvent
+  scroller?.dispatchEvent(scrollEndEvent),
+  scrollEndEvent
 );
 
 export const dispatchScrollSnapChangeEvent = (
@@ -29,7 +30,7 @@ export const dispatchScrollSnapChangeEvent = (
   detail: {
     snapTargetInline: HTMLElement | null;
     snapTargetBlock: HTMLElement | null;
-  }
+  },
 ) => dispatchEvent(scroller, "scrollsnapchange", detail);
 
 export const dispatchScrollSnapChangingEvent = (
@@ -37,5 +38,5 @@ export const dispatchScrollSnapChangingEvent = (
   detail: {
     snapTargetInline: HTMLElement | null;
     snapTargetBlock: HTMLElement | null;
-  }
+  },
 ) => dispatchEvent(scroller, "scrollsnapchanging", detail);
