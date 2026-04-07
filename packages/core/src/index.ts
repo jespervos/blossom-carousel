@@ -100,7 +100,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         !hasTouch &&
         state.scrollerScrollHeight > state.scrollerHeight &&
         ["auto", "scroll"].includes(values["overflow-y"].value);
-        console.log(values, hasOverflow);
       },                                                 
       {
         properties: ['overflow-x', 'overflow-y'],
