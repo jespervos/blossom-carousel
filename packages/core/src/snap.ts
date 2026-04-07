@@ -26,32 +26,22 @@ export function findSnapPositions(
 ): void {
   let positions: { align: string; el: HTMLElement | Element }[] = [];
 
-  let cycles = 0;
-  const traverseDOM = (node: HTMLElement | Element) => {
-    cycles++;
-    // break if the max depth is reached
-    if (cycles > 100) return;
+  const walker = document.createTreeWalker(scroller, NodeFilter.SHOW_ELEMENT);
+  let node = walker.nextNode();
 
-    const styles = window.getComputedStyle(node);
+  while (node) {
+    const styles = window.getComputedStyle(node as Element);
     const scrollSnapAlign = styles.scrollSnapAlign;
 
-    // break if a snap-type value  is found
     if (scrollSnapAlign !== "none") {
       positions.push({
         align: scrollSnapAlign,
-        el: node,
+        el: node as Element,
       });
-      return;
     }
 
-    // traverse all children
-    const children = node.children;
-    if (children.length === 0) return;
-    for (let child of Array.from(children)) {
-      traverseDOM(child);
-    }
-  };
-  traverseDOM(scroller);
+    node = walker.nextNode();
+  }
 
   // precompute snap positions for all slides
   const scrollerRect = scroller.getBoundingClientRect();
