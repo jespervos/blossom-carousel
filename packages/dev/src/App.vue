@@ -116,6 +116,14 @@ function remove() {
 //     });
 //   }
 // };
+
+const isLocked = ref(false);
+function toggleScrollLock() {
+  if (!blossom.value?.el) return;
+
+  isLocked.value = !isLocked.value;
+  blossom.value.el.style.overflow = isLocked.value ? "hidden" : 'auto';
+}
 </script>
 
 <template>
@@ -142,6 +150,7 @@ function remove() {
     <div class="controls">
       <button @click="blossom.prev">prev slide</button>
       <button @click="blossom.next">next slide</button>
+      <button @click="toggleScrollLock">scroll lock</button>
     </div>
   </div>
 </template>

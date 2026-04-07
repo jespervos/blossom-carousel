@@ -1,5 +1,6 @@
 import "./style.css";
 import type { Point, HasOverflow, CarouselOptions } from "./types";
+import StyleObserver, { ReturnFormat } from '@bramus/style-observer';
 import { createState, type CarouselState } from "./state";
 import { damp, round } from "./utils";
 import { FRICTION, DAMPING } from "./constants";
@@ -67,6 +68,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let restoreScrollMethods: () => void;
+  let styleObserver: StyleObserver | null = null;
+  let hasTouch = false;
 
   function init() {
     scroller?.setAttribute("blossom-carousel", "true");
@@ -86,6 +89,25 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       childList: true,
       subtree: true,
     });
+
+    styleObserver = new StyleObserver(
+      (values) => {
+        hasOverflow.x =
+        !hasTouch &&
+        state.scrollerScrollWidth > state.scrollerWidth &&
+        ["auto", "scroll"].includes(values["overflow-x"].value);
+        hasOverflow.y =
+        !hasTouch &&
+        state.scrollerScrollHeight > state.scrollerHeight &&
+        ["auto", "scroll"].includes(values["overflow-y"].value);
+        console.log(values, hasOverflow);
+      },                                                 
+      {
+        properties: ['overflow-x', 'overflow-y'],
+        returnFormat: ReturnFormat.OBJECT,
+      }
+    );
+    styleObserver.observe(scroller);
 
     const hasMouse = window.matchMedia(
       "(hover: hover) and (pointer: fine)",
@@ -114,6 +136,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller.removeAttribute("blossom-carousel");
     resizeObserver?.disconnect();
     mutationObserver?.disconnect();
+    styleObserver?.unobserve(scroller);
     if (raf) cancelAnimationFrame(raf);
 
     window.removeEventListener("keydown", onKeydown);
@@ -135,7 +158,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   function onResize(): void {
     if (!scroller) return;
 
-    const hasTouch = "ontouchmove" in window;
+    hasTouch = "ontouchmove" in window;
     state.scrollerScrollWidth = scroller.scrollWidth;
     state.scrollerWidth = scroller.clientWidth;
     state.scrollerScrollHeight = scroller.scrollHeight;
