@@ -62,10 +62,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^6.2.4",
-    "svelte": "^5.53.7",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "svelte": "^5.55.2",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.7",
     "vite-plugin-dts": "^4.5.4"
   }
 }
