@@ -1,4 +1,3 @@
-import { Blossom } from "@blossom-carousel/core";
 import React, {
   ElementType,
   forwardRef,
@@ -19,26 +18,40 @@ export interface BlossomCarouselProps extends React.HTMLAttributes<HTMLElement> 
   children?: ReactNode | Array<ReactNode>;
   as?: ElementType;
   repeat?: boolean;
+  load?: "always" | "conditional";
 }
 
 const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
-  ({ children, as = "div", repeat = false, ...props }, parentRef) => {
+  ({ children, as = "div", repeat = false, load = "conditional", ...props }, parentRef) => {
     const Component = as as JSXElementConstructor<any>;
     const localRef = useRef<HTMLElement>(null);
-    const blossomRef = useRef<ReturnType<typeof Blossom> | null>(null);
+    const blossomRef = useRef<ReturnType<typeof import("@blossom-carousel/core").Blossom> | null>(null);
 
     useEffect(() => {
       if (!localRef.current) return;
 
-      const blossom = Blossom(localRef.current, { repeat });
-      blossomRef.current = blossom;
+      const hasMouse = window.matchMedia(
+        "(hover: hover) and (pointer: fine)",
+      ).matches;
 
-      blossom.init();
+      if (!hasMouse && load !== "always") return;
+
+      let destroyed = false;
+
+      import("@blossom-carousel/core").then(({ Blossom }) => {
+        if (destroyed || !localRef.current) return;
+
+        const blossom = Blossom(localRef.current, { repeat });
+        blossomRef.current = blossom;
+        blossom.init();
+      });
 
       return () => {
-        blossom.destroy();
+        destroyed = true;
+        blossomRef.current?.destroy();
+        blossomRef.current = null;
       };
-    }, [repeat]);
+    }, [repeat, load]);
 
     useImperativeHandle(
       parentRef,

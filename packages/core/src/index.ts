@@ -1,8 +1,8 @@
 import "./style.css";
 import type { Point, HasOverflow, CarouselOptions } from "./types";
 import StyleObserver, { ReturnFormat } from '@bramus/style-observer';
-import { createState, type CarouselState } from "./state";
-import { damp, round } from "./utils";
+import { createState } from "./state";
+import { damp, round, resolveCSSLength } from "./utils";
 import { FRICTION, DAMPING } from "./constants";
 import { dispatchOverscrollEvent, dispatchScrollEndEvent } from "./events";
 import {
@@ -10,14 +10,43 @@ import {
   onScrollSnapChange,
   onSnapChanging,
   dragSnap,
-  createSnapStore,
   shouldSnap,
 } from "./snap";
 import { prev, next } from "./methods";
 
+
+const scrollIntoViewInterceptors = new Map<HTMLElement, (target: Element) => void>();
+let originalScrollIntoView: typeof Element.prototype.scrollIntoView | null = null;
+
+function registerScrollIntoViewIntercept(
+  scroller: HTMLElement,
+  onExternalScroll: (target: Element) => void,
+): () => void {
+  if (scrollIntoViewInterceptors.size === 0) {
+    originalScrollIntoView = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (
+      arg?: boolean | ScrollIntoViewOptions,
+    ): void {
+      for (const callback of scrollIntoViewInterceptors.values()) {
+        callback(this);
+      }
+      return originalScrollIntoView!.call(this, arg);
+    };
+  }
+
+  scrollIntoViewInterceptors.set(scroller, onExternalScroll);
+
+  return () => {
+    scrollIntoViewInterceptors.delete(scroller);
+    if (scrollIntoViewInterceptors.size === 0 && originalScrollIntoView) {
+      Element.prototype.scrollIntoView = originalScrollIntoView;
+      originalScrollIntoView = null;
+    }
+  };
+}
+
 export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
   const state = createState();
-  const snapStore = createSnapStore();
   state.scroller = scroller;
   let snap = <boolean>true;
   const pointerStart: Point = { x: 0, y: 0 };
@@ -125,7 +154,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller.setAttribute("has-snap", snap ? "true" : "false");
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
 
-    restoreScrollMethods = interceptScrollIntoViewCalls((target) => {
+    restoreScrollMethods = registerScrollIntoViewIntercept(scroller, (target) => {
       if (target === scroller || scroller.contains(target))
         isTicking.value = false;
     });
@@ -146,6 +175,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     });
 
     restoreScrollMethods?.();
+    scroller.scrollTo = originalScrollTo;
+    scroller.scrollBy = originalScrollBy;
   }
 
   function onLinkClick(e: MouseEvent): void {
@@ -172,16 +203,16 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       !hasTouch &&
       state.scrollerScrollHeight > state.scrollerHeight &&
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
-    state.padding.end = parseInt(styles.paddingInlineEnd) || 0;
-    state.padding.start = parseInt(styles.paddingInlineStart) || 0;
-    state.scrollPadding.start = parseInt(styles.scrollPaddingInlineStart) || 0;
-    state.scrollPadding.end = parseInt(styles.scrollPaddingInlineEnd) || 0;
+    state.padding.end = resolveCSSLength(scroller, styles.paddingInlineEnd);
+    state.padding.start = resolveCSSLength(scroller, styles.paddingInlineStart);
+    state.scrollPadding.start = resolveCSSLength(scroller, styles.scrollPaddingInlineStart);
+    state.scrollPadding.end = resolveCSSLength(scroller, styles.scrollPaddingInlineEnd);
     state.dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
     state.end =
       (state.scrollerScrollWidth - state.scrollerWidth - 4) * state.dir;
 
     if (state.hasSnap) {
-      findSnapPositions(scroller, state, snapStore);
+      findSnapPositions(scroller, state);
     } else {
       state.slidePositions = Array.from(scroller.children).map((el) => {
         const rect = (el as HTMLElement).getBoundingClientRect();
@@ -284,8 +315,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    if (shouldSnap(target.x, velocity.x, FRICTION, state, snapStore)) {
-      velocity.x = dragSnap(target.x, velocity.x, FRICTION, state, snapStore);
+    if (shouldSnap(target.x, velocity.x, FRICTION, state)) {
+      velocity.x = dragSnap(target.x, velocity.x, FRICTION, state);
     }
     preventGlobalClick();
   }
@@ -454,14 +485,14 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     });
 
     if (state.isDragging && state.hasSnap) {
-      onSnapChanging(target.x, velocity.x, FRICTION, state, snapStore);
+      onSnapChanging(target.x, velocity.x, FRICTION, state);
     }
 
     if (!state.isDragging && round(velocity.x, 12) === 0) {
       isTicking.value = false;
       dispatchScrollEndEvent(scroller);
       if (state.hasSnap) {
-        onScrollSnapChange(state, snapStore);
+        onScrollSnapChange(state);
       }
     }
 
@@ -511,6 +542,9 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
   let __scrollingInternally = false;
 
+  const originalScrollTo = scroller.scrollTo;
+  const originalScrollBy = scroller.scrollBy;
+
   const scrollTo = scroller.scrollTo.bind(scroller);
   scroller.scrollTo = function (...args: any[]) {
     const internal = __scrollingInternally === true;
@@ -526,28 +560,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     __scrollingInternally = false;
     scrollBy(...args);
   };
-
-  function interceptScrollIntoViewCalls(
-    onExternalScroll: (target: Element, method: string, args: any[]) => void,
-  ) {
-    const stopFns: Array<() => void> = [];
-
-    // Patch scrollIntoView for all elements
-    const originalScrollIntoView = Element.prototype.scrollIntoView;
-    if (originalScrollIntoView) {
-      Element.prototype.scrollIntoView = function (
-        arg?: boolean | ScrollIntoViewOptions,
-      ): void {
-        onExternalScroll(this, "scrollIntoView", [arg]);
-        return originalScrollIntoView.call(this, arg);
-      };
-      stopFns.push(() => {
-        Element.prototype.scrollIntoView = originalScrollIntoView;
-      });
-    }
-
-    return () => stopFns.forEach((fn) => fn());
-  }
 
   /******************************
    ********* UTILS **************
@@ -568,7 +580,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     hasOverflow,
     init,
     destroy,
-    prev: (opts?: { align?: any }) => prev(state, snapStore, opts),
-    next: (opts?: { align?: any }) => next(state, snapStore, opts),
+    prev: (opts?: { align?: any }) => prev(state, opts),
+    next: (opts?: { align?: any }) => next(state, opts),
   };
 };

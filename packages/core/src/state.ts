@@ -1,3 +1,5 @@
+import type { SnapPosition } from "./types";
+
 export type CarouselState = {
   scroller: HTMLElement | null;
   end: number;
@@ -17,6 +19,8 @@ export type CarouselState = {
   }>;
   hasSnap: boolean;
   snapMandatory?: boolean;
+  snapPositions: SnapPosition[];
+  activeSnapPosition: SnapPosition;
   dir: number;
 };
 
@@ -34,6 +38,8 @@ export function createState(): CarouselState {
     slidePositions: [],
     hasSnap: false,
     snapMandatory: false,
+    snapPositions: [],
+    activeSnapPosition: { target: null, x: 0, y: 0 },
     dir: 1,
   };
 }

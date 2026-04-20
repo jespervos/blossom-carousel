@@ -130,17 +130,19 @@ function toggleScrollLock() {
   <div class="page">
     <h1>Blossom Dev</h1>
     <div class="wrapper">
-      <BlossomCarousel ref="blossom" class="carousel" as="ul">
-        <li
-          v-for="i in 24"
-          ref="slides"
-          :key="`slide${i}`"
-          class="slide"
-          :snapped="snappedSlide == i"
-          :snapping="snappingSlide == i"
-        >
-          <p>{{ i }}</p>
-        </li>
+      <BlossomCarousel ref="blossom" class="carousel">
+        <ul>
+          <li
+            v-for="i in 24"
+            ref="slides"
+            :key="`slide${i}`"
+            class="slide"
+            :snapped="snappedSlide == i"
+            :snapping="snappingSlide == i"
+          >
+            <p>{{ i }}</p>
+          </li>
+        </ul>
       </BlossomCarousel>
     </div>
     <!-- <div class="controls">
@@ -185,6 +187,14 @@ function toggleScrollLock() {
   grid-auto-flow: column;
   grid-auto-columns: 300px;
   grid-gap: 1rem; */
+  scroll-padding-inline: calc(50% - (0.5 * min(1260px, 87.5%)));
+}
+
+ul {
+  display: flex !important;
+  flex-wrap: nowrap;
+  padding-inline: calc(50% - (0.5 * min(1260px, 87.5%)));
+  /* scroll-padding-inline: 10rem; */
 }
 
 .slide {

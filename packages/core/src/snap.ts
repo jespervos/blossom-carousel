@@ -7,22 +7,9 @@ import type { CarouselState } from "./state";
 import { FRICTION } from "./constants.js";
 import { clamp, project } from "./utils.js";
 
-export type SnapStore = {
-  positions: SnapPosition[];
-  activePosition: SnapPosition;
-};
-
-export function createSnapStore(): SnapStore {
-  return {
-    positions: [],
-    activePosition: { target: null, x: 0, y: 0 },
-  };
-}
-
 export function findSnapPositions(
   scroller: HTMLElement,
   state: CarouselState,
-  snapStore: SnapStore,
 ): void {
   let positions: { align: string; el: HTMLElement | Element }[] = [];
 
@@ -84,7 +71,7 @@ export function findSnapPositions(
       return acc;
     }, []);
 
-  snapStore.positions = filteredSnapPositions;
+  state.snapPositions = filteredSnapPositions;
 }
 
 export function shouldSnap(
@@ -92,9 +79,8 @@ export function shouldSnap(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore,
 ): boolean {
-  if (!state.hasSnap || !snapStore.positions.length) {
+  if (!state.hasSnap || !state.snapPositions.length) {
     return false;
   }
 
@@ -108,7 +94,7 @@ export function shouldSnap(
     0,
   );
   const proximityThreshold = snapportWidth / 3;
-  const nearestDistance = snapStore.positions.reduce(
+  const nearestDistance = state.snapPositions.reduce(
     (distance, position) => Math.min(distance, Math.abs(position.x - restingX)),
     Number.POSITIVE_INFINITY,
   );
@@ -121,22 +107,20 @@ export function dragSnap(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore,
 ): number {
   const newSnapPosition = snapSelect(
     target,
     velocity,
     friction,
     state,
-    snapStore,
   );
-  if (newSnapPosition.x !== snapStore.activePosition.x) {
+  if (newSnapPosition.x !== state.activeSnapPosition.x) {
     dispatchScrollSnapChangingEvent(state.scroller, {
-      snapTargetInline: (newSnapPosition || snapStore.activePosition).target,
-      snapTargetBlock: (newSnapPosition || snapStore.activePosition).target,
+      snapTargetInline: (newSnapPosition || state.activeSnapPosition).target,
+      snapTargetBlock: (newSnapPosition || state.activeSnapPosition).target,
     });
   }
-  snapStore.activePosition = newSnapPosition;
+  state.activeSnapPosition = newSnapPosition;
   const slideX = clamp(
     newSnapPosition.x,
     Math.min((state.scrollerScrollWidth - state.scrollerWidth) * state.dir, 0),
@@ -152,11 +136,10 @@ export function snapSelect(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore,
 ): SnapPosition {
   const restingX = project(target, velocity, friction);
-  return snapStore.positions.length
-    ? snapStore.positions.reduce((prev, curr) =>
+  return state.snapPositions.length
+    ? state.snapPositions.reduce((prev, curr) =>
         Math.abs(curr.x - restingX) < Math.abs(prev.x - restingX) ? curr : prev,
       )
     : {
@@ -168,11 +151,10 @@ export function snapSelect(
 
 export function onScrollSnapChange(
   state: CarouselState,
-  snapStore: SnapStore,
 ): void {
   dispatchScrollSnapChangeEvent(state.scroller, {
-    snapTargetInline: snapStore.activePosition.target,
-    snapTargetBlock: snapStore.activePosition.target,
+    snapTargetInline: state.activeSnapPosition.target,
+    snapTargetBlock: state.activeSnapPosition.target,
   });
 }
 
@@ -181,20 +163,18 @@ export function onSnapChanging(
   velocity: number,
   friction: number,
   state: CarouselState,
-  snapStore: SnapStore,
 ): void {
   const newSnapPosition = snapSelect(
     target,
     velocity,
     friction,
     state,
-    snapStore,
   );
-  if (newSnapPosition.x !== snapStore.activePosition.x) {
-    snapStore.activePosition = newSnapPosition;
+  if (newSnapPosition.x !== state.activeSnapPosition.x) {
+    state.activeSnapPosition = newSnapPosition;
     dispatchScrollSnapChangingEvent(state.scroller, {
-      snapTargetInline: (newSnapPosition || snapStore.activePosition).target,
-      snapTargetBlock: (newSnapPosition || snapStore.activePosition).target,
+      snapTargetInline: (newSnapPosition || state.activeSnapPosition).target,
+      snapTargetBlock: (newSnapPosition || state.activeSnapPosition).target,
     });
   }
 }
