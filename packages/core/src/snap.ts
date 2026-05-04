@@ -32,28 +32,33 @@ export function findSnapPositions(
 
   // precompute snap positions for all slides
   const scrollerRect = scroller.getBoundingClientRect();
-  let snapPositions = positions.map(({ el, align }, i) => {
+  let snapPositions = positions.map(({ el, align }) => {
     const elementRect = (el as HTMLElement).getBoundingClientRect();
     const clientWidth = (el as HTMLElement).clientWidth;
     const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
+    const styles = window.getComputedStyle(el as Element);
+    const marginStart = parseFloat(styles.scrollMarginInlineStart) || 0;
+    const marginEnd = parseFloat(styles.scrollMarginInlineEnd) || 0;
+    const snapAreaStart = left - marginStart;
+    const snapAreaEnd = left + clientWidth + marginEnd;
 
     switch (align) {
       case "start":
         return {
           target: el as HTMLElement,
-          x: left - state.scrollPadding.start,
+          x: snapAreaStart - state.scrollPadding.start,
           y: 0,
         };
       case "end":
         return {
           target: el as HTMLElement,
-          x: left + clientWidth - state.scrollerWidth + state.scrollPadding.end,
+          x: snapAreaEnd - state.scrollerWidth + state.scrollPadding.end,
           y: 0,
         };
       case "center":
         return {
           target: el as HTMLElement,
-          x: left + clientWidth * 0.5 - state.scrollerWidth / 2,
+          x: (snapAreaStart + snapAreaEnd) / 2 - state.scrollerWidth / 2,
           y: 0,
         };
       default:
