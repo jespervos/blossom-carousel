@@ -23,8 +23,9 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.5",
-    "vite": "^8.0.7",
-    "vite-plugin-dts": "^4.5.4"
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/language-core": "^3.1.8",
+    "vite": "^8.0.13",
+    "vite-plugin-dts": "^5.0.0"
   }
 }
