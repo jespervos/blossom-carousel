@@ -1,5 +1,4 @@
 import type { CarouselState } from "./state";
-import type { SnapStore } from "./snap";
 import type { AlignOption } from "./types";
 
 const alignmentMap = {
@@ -26,13 +25,12 @@ function findTargetPosition(
   dir: "prev" | "next",
   align: AlignOption | undefined,
   state: CarouselState,
-  snapStore: SnapStore,
 ): number | null {
   if (!state.scroller) return null;
 
   const left = state.scroller.scrollLeft;
-  const positions = snapStore.positions.length
-    ? snapStore.positions
+  const positions = state.snapPositions.length
+    ? state.snapPositions
     : state.slidePositions;
 
   if (dir === "prev") {
@@ -61,20 +59,18 @@ function findTargetPosition(
 
 export function prev(
   state: CarouselState,
-  snapStore: SnapStore,
   { align }: { align?: AlignOption } = {},
 ): void {
-  const targetPosition = findTargetPosition("prev", align, state, snapStore);
+  const targetPosition = findTargetPosition("prev", align, state);
   if (targetPosition === null) return;
   state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }
 
 export function next(
   state: CarouselState,
-  snapStore: SnapStore,
   { align }: { align?: AlignOption } = {},
 ): void {
-  const targetPosition = findTargetPosition("next", align, state, snapStore);
+  const targetPosition = findTargetPosition("next", align, state);
   if (targetPosition === null) return;
   state.scroller!.scrollTo({ left: targetPosition, behavior: "smooth" });
 }

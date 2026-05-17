@@ -1,8 +1,3 @@
-const scrollEndEvent = new Event("scrollend", {
-  bubbles: true,
-  cancelable: true,
-});
-
 const dispatchEvent = (
   scroller: HTMLElement | null,
   eventName: string,
@@ -20,9 +15,8 @@ export const dispatchOverscrollEvent = (
   detail: { left: number }
 ) => dispatchEvent(scroller, "overscroll", detail);
 
-export const dispatchScrollEndEvent = (scroller: HTMLElement | null) => (
-  scroller?.dispatchEvent(scrollEndEvent), scrollEndEvent
-);
+export const dispatchScrollEndEvent = (scroller: HTMLElement | null) =>
+  dispatchEvent(scroller, "scrollend");
 
 export const dispatchScrollSnapChangeEvent = (
   scroller: HTMLElement | null,
