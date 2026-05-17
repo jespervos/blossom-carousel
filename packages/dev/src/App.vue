@@ -122,7 +122,7 @@ function toggleScrollLock() {
   if (!blossom.value?.el) return;
 
   isLocked.value = !isLocked.value;
-  blossom.value.el.style.overflow = isLocked.value ? "hidden" : 'auto';
+  blossom.value.el.style.overflow = isLocked.value ? "hidden" : "auto";
 }
 </script>
 
@@ -130,19 +130,19 @@ function toggleScrollLock() {
   <div class="page">
     <h1>Blossom Dev</h1>
     <div class="wrapper">
-      <BlossomCarousel ref="blossom" class="carousel">
-        <ul>
-          <li
-            v-for="i in 24"
-            ref="slides"
-            :key="`slide${i}`"
-            class="slide"
-            :snapped="snappedSlide == i"
-            :snapping="snappingSlide == i"
-          >
+      <BlossomCarousel ref="blossom" class="carousel" as="ul">
+        <li
+          v-for="i in 24"
+          ref="slides"
+          :key="`slide${i}`"
+          class="slide"
+          :snapped="snappedSlide == i"
+          :snapping="snappingSlide == i"
+        >
+          <div class="card">
             <p>{{ i }}</p>
-          </li>
-        </ul>
+          </div>
+        </li>
       </BlossomCarousel>
     </div>
     <!-- <div class="controls">
@@ -167,114 +167,77 @@ function toggleScrollLock() {
   flex-direction: column;
 }
 
-.wrapper {
-  /* max-width: 1000px; */
+.carousel {
+  --card-width: 12rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  scroll-snap-type: x mandatory;
+  width: calc(var(--card-width) * 3);
+  padding-inline: var(--card-width) !important;
 }
 
-.carousel {
-  /* padding-inline: calc(50vw - 150px) !important; */
-  /* scroll-padding-inline: calc(50vw - 150px); */
-  /* padding-inline: 1rem; */
-  /* scroll-padding-inline: 1rem; */
+.slide {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  position: sticky;
+  left: calc(var(--card-width) * -1);
+  right: calc(var(--card-width) * -1);
 
-  scroll-snap-type: x mandatory;
+  scroll-snap-align: center;
   scroll-snap-stop: always;
 
-  padding-block: 4rem;
-  margin-block: -4rem;
+  view-timeline: --cards inline;
+  animation: stack-cards linear both;
+  animation-timeline: --cards;
+  animation-range: contain;
 
-  /* display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 300px;
-  grid-gap: 1rem; */
-  scroll-padding-inline: calc(50% - (0.5 * min(1260px, 87.5%)));
-}
-
-ul {
-  display: flex !important;
-  flex-wrap: nowrap;
-  padding-inline: calc(50% - (0.5 * min(1260px, 87.5%)));
-  /* scroll-padding-inline: 10rem; */
-}
-
-.slide {
-  width: 300px;
-  height: 400px;
-  margin-right: 1rem;
-  aspect-ratio: 3/4;
-  scroll-snap-align: start;
-  background-color: #404040;
-  border-radius: 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: 300ms background-color ease;
-
-  &[snapping="true"] {
-    background-color: purple;
-  }
-  &[snapped="true"] {
-    background-color: magenta;
-  }
-
-  /* container-type: scroll-state;
-  container-name: snap-container;
-  position: relative;
-
-  > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: purple;
-    border-radius: inherit;
-    opacity: 0;
-    transition: 300ms opacity ease;
-  } */
-}
-/*
-@container snap-container scroll-state(snapped: x) {
-  .slide::after {
-    opacity: 1;
-  }
-} */
-
-/* .carousel {
-  perspective: 1000px;
-}
-
-.slide {
-  transform-style: preserve-3d;
-  container-type: scroll-state;
-
-  > p {
+  & .card {
     width: 100%;
     height: 100%;
+    background-color: #404040;
     border-radius: 1rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #404040;
-    transform-style: preserve-3d;
-    animation: carousel linear both;
-    animation-timeline: view(x);
-    animation-range: cover;
+
+    animation: rotate-cards linear both;
+    animation-timeline: --cards;
+    animation-range: contain;
+    animation-range: contain -50% contain 150%;
   }
 }
 
-@keyframes carousel {
+@keyframes stack-cards {
   0% {
-    transform: rotateY(-70deg) translateZ(-100px) scale(0.8);
+    z-index: calc(100 - sibling-index());
+  }
+  40% {
+    z-index: 1000;
+  }
+  100% {
+    z-index: sibling-index();
+  }
+}
+
+@keyframes rotate-cards {
+  0% {
+    transform: translateX(-80%) rotate(10deg) scale(0.8);
+  }
+  25% {
+    transform: translateX(-90%) rotate(5deg) scale(0.9);
   }
   50% {
-    transform: none;
+    transform: translateX(0%) rotate(0deg) scale(1);
   }
-  to {
-    transform: rotateY(70deg) translateZ(-100px) scale(0.8);
+  60% {
+    transform: translateX(-20%) rotate(-15deg) scale(0.6);
   }
-} */
+  75% {
+    transform: translateX(90%) rotate(-5deg) scale(0.9);
+  }
+  100% {
+    transform: translateX(80%) rotate(-10deg) scale(0.8);
+  }
+}
 </style>
