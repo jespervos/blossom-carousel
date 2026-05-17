@@ -19,12 +19,29 @@ export function createSnapStore(): SnapStore {
   };
 }
 
+type PositionRestore = {
+  el: HTMLElement;
+  value: string;
+  priority: string;
+};
+
+function restorePosition(restores: PositionRestore[]): void {
+  for (const { el, value, priority } of restores) {
+    if (value) {
+      el.style.setProperty("position", value, priority);
+    } else {
+      el.style.removeProperty("position");
+    }
+  }
+}
+
 export function findSnapPositions(
   scroller: HTMLElement,
   state: CarouselState,
   snapStore: SnapStore,
 ): void {
   let positions: { align: string; el: HTMLElement | Element }[] = [];
+  const stickyRestores: PositionRestore[] = [];
 
   const walker = document.createTreeWalker(scroller, NodeFilter.SHOW_ELEMENT);
   let node = walker.nextNode();
@@ -32,52 +49,69 @@ export function findSnapPositions(
   while (node) {
     const styles = window.getComputedStyle(node as Element);
     const scrollSnapAlign = styles.scrollSnapAlign;
+    const el = node as HTMLElement;
 
     if (scrollSnapAlign !== "none") {
       positions.push({
         align: scrollSnapAlign,
-        el: node as Element,
+        el,
       });
+    }
+
+    // Temporarily disable sticky positioning to get correct bounding rects
+    if (styles.position === "sticky") {
+      stickyRestores.push({
+        el,
+        value: el.style.getPropertyValue("position"),
+        priority: el.style.getPropertyPriority("position"),
+      });
+      el.style.setProperty("position", "static", "important");
     }
 
     node = walker.nextNode();
   }
 
-  // precompute snap positions for all slides
-  const scrollerRect = scroller.getBoundingClientRect();
-  let snapPositions = positions.map(({ el, align }) => {
-    const elementRect = (el as HTMLElement).getBoundingClientRect();
-    const clientWidth = (el as HTMLElement).clientWidth;
-    const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
-    const styles = window.getComputedStyle(el as Element);
-    const marginStart = parseFloat(styles.scrollMarginInlineStart) || 0;
-    const marginEnd = parseFloat(styles.scrollMarginInlineEnd) || 0;
-    const snapAreaStart = left - marginStart;
-    const snapAreaEnd = left + clientWidth + marginEnd;
+  let snapPositions: Array<SnapPosition | null>;
 
-    switch (align) {
-      case "start":
-        return {
-          target: el as HTMLElement,
-          x: snapAreaStart - state.scrollPadding.start,
-          y: 0,
-        };
-      case "end":
-        return {
-          target: el as HTMLElement,
-          x: snapAreaEnd - state.scrollerWidth + state.scrollPadding.end,
-          y: 0,
-        };
-      case "center":
-        return {
-          target: el as HTMLElement,
-          x: (snapAreaStart + snapAreaEnd) / 2 - state.scrollerWidth / 2,
-          y: 0,
-        };
-      default:
-        return null;
-    }
-  });
+  try {
+    const scrollerRect = scroller.getBoundingClientRect();
+    snapPositions = positions.map(({ el, align }) => {
+      const target = el as HTMLElement;
+      const elementRect = target.getBoundingClientRect();
+      const clientWidth = target.clientWidth;
+      const left = elementRect.left - scrollerRect.left + scroller.scrollLeft;
+      const styles = window.getComputedStyle(target);
+      const marginStart = parseFloat(styles.scrollMarginInlineStart) || 0;
+      const marginEnd = parseFloat(styles.scrollMarginInlineEnd) || 0;
+      const snapAreaStart = left - marginStart;
+      const snapAreaEnd = left + clientWidth + marginEnd;
+
+      switch (align) {
+        case "start":
+          return {
+            target,
+            x: snapAreaStart - state.scrollPadding.start,
+            y: 0,
+          };
+        case "end":
+          return {
+            target,
+            x: snapAreaEnd - state.scrollerWidth + state.scrollPadding.end,
+            y: 0,
+          };
+        case "center":
+          return {
+            target,
+            x: (snapAreaStart + snapAreaEnd) / 2 - state.scrollerWidth / 2,
+            y: 0,
+          };
+        default:
+          return null;
+      }
+    });
+  } finally {
+    restorePosition(stickyRestores);
+  }
 
   // Filter out duplicates (i.e. in case of multiple rows)
   const filteredSnapPositions = snapPositions
