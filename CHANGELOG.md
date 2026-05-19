@@ -2,7 +2,25 @@
 
 All notable changes to Blossom Carousel will be documented in this file.
 
-## Unreleased — 2026-04-10
+## Unreleased - 2026-05-19
+
+### Improved
+
+- Fixed an issue where overscroll would not clamp to the carousel bounderies on non-snap carousels.
+
+## 2026-05-17
+
+### Improved
+
+- Fixed an issue where elements with position: sticky would compute their sticky position as snap position instead of their real offset.
+
+## 2026-05-03
+
+### Added
+
+- Added scroll-margin support
+
+## 2026-04-10
 
 ### Added
 - 📐 Added `resolveCSSLength()` utility to resolve arbitrary CSS length values (including `calc()`) to pixels.
@@ -12,7 +30,7 @@ All notable changes to Blossom Carousel will be documented in this file.
 - 🎨 Wrapped default styles in `@layer blossom-carousel` so they can be overridden without `!important` (e.g. by Tailwind utilities).
 - 🧹 Consolidated snap state (`snapPositions`, `activeSnapPosition`) into `CarouselState`, removing the separate `SnapStore`.
 
-## Unreleased — 2026-04-07
+## 2026-04-07
 
 ### Added
 - ⏮️ Added `prev()` and `next()` methods for programmatic carousel navigation, including optional alignment support.

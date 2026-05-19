@@ -37,6 +37,5 @@ pids/
 
 # Dev
 packages/dev/
-packages/dev/*.*
 
 NOTES.md
