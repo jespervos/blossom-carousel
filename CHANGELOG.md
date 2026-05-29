@@ -2,11 +2,11 @@
 
 All notable changes to Blossom Carousel will be documented in this file.
 
-## Unreleased - 2026-05-19
+## 2026-05-19
 
 ### Improved
 
-- Fixed an issue where overscroll would not clamp to the carousel bounderies on non-snap carousels.
+- Fixed an issue where overscroll would not clamp to the carousel boundaries on non-snap carousels.
 
 ## 2026-05-17
 
