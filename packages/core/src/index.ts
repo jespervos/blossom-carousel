@@ -1,6 +1,6 @@
 import "./style.css";
 import type { Point, HasOverflow, CarouselOptions } from "./types";
-import StyleObserver, { ReturnFormat } from "@bramus/style-observer";
+import StyleObserver, { ReturnFormat } from '@bramus/style-observer';
 import { createState } from "./state";
 import { damp, round, resolveCSSLength } from "./utils";
 import { FRICTION, DAMPING } from "./constants";
@@ -14,15 +14,9 @@ import {
 } from "./snap";
 import { prev, next } from "./methods";
 
-const getStyleObserverValue = (value: string | { value: string }) =>
-  typeof value === "string" ? value : value.value;
 
-const scrollIntoViewInterceptors = new Map<
-  HTMLElement,
-  (target: Element) => void
->();
-let originalScrollIntoView: typeof Element.prototype.scrollIntoView | null =
-  null;
+const scrollIntoViewInterceptors = new Map<HTMLElement, (target: Element) => void>();
+let originalScrollIntoView: typeof Element.prototype.scrollIntoView | null = null;
 
 function registerScrollIntoViewIntercept(
   scroller: HTMLElement,
@@ -127,22 +121,19 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
 
     styleObserver = new StyleObserver(
       (values) => {
-        const overflowX = getStyleObserverValue(values["overflow-x"]);
-        const overflowY = getStyleObserverValue(values["overflow-y"]);
-
         hasOverflow.x =
-          !hasTouch &&
-          state.scrollerScrollWidth > state.scrollerWidth &&
-          ["auto", "scroll"].includes(overflowX);
+        !hasTouch &&
+        state.scrollerScrollWidth > state.scrollerWidth &&
+        ["auto", "scroll"].includes(values["overflow-x"].value);
         hasOverflow.y =
-          !hasTouch &&
-          state.scrollerScrollHeight > state.scrollerHeight &&
-          ["auto", "scroll"].includes(overflowY);
-      },
+        !hasTouch &&
+        state.scrollerScrollHeight > state.scrollerHeight &&
+        ["auto", "scroll"].includes(values["overflow-y"].value);
+      },                                                 
       {
-        properties: ["overflow-x", "overflow-y"],
+        properties: ['overflow-x', 'overflow-y'],
         returnFormat: ReturnFormat.OBJECT,
-      },
+      }
     );
     styleObserver.observe(scroller);
 
@@ -163,13 +154,10 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     scroller.setAttribute("has-snap", snap ? "true" : "false");
     scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
 
-    restoreScrollMethods = registerScrollIntoViewIntercept(
-      scroller,
-      (target) => {
-        if (target === scroller || scroller.contains(target))
-          isTicking.value = false;
-      },
-    );
+    restoreScrollMethods = registerScrollIntoViewIntercept(scroller, (target) => {
+      if (target === scroller || scroller.contains(target))
+        isTicking.value = false;
+    });
   }
 
   function destroy() {
@@ -217,14 +205,8 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
       ["auto", "scroll"].includes(styles.getPropertyValue("overflow-y"));
     state.padding.end = resolveCSSLength(scroller, styles.paddingInlineEnd);
     state.padding.start = resolveCSSLength(scroller, styles.paddingInlineStart);
-    state.scrollPadding.start = resolveCSSLength(
-      scroller,
-      styles.scrollPaddingInlineStart,
-    );
-    state.scrollPadding.end = resolveCSSLength(
-      scroller,
-      styles.scrollPaddingInlineEnd,
-    );
+    state.scrollPadding.start = resolveCSSLength(scroller, styles.scrollPaddingInlineStart);
+    state.scrollPadding.end = resolveCSSLength(scroller, styles.scrollPaddingInlineEnd);
     state.dir = scroller.closest('[dir="rtl"]') ? -1 : 1;
     state.end =
       (state.scrollerScrollWidth - state.scrollerWidth - 4) * state.dir;
@@ -333,7 +315,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
     if (hasOverflow.x) velocity.x *= 2;
     if (hasOverflow.y) velocity.y *= 2;
 
-    if (shouldSnap(target.x, velocity.x, FRICTION, state)) {
+    if (shouldSnap(target.x, velocity.x, FRICTION, state) || target.x < 0 || target.x > state.end) {
       velocity.x = dragSnap(target.x, velocity.x, FRICTION, state);
     }
     preventGlobalClick();
