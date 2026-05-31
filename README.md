@@ -44,7 +44,7 @@ npx skills add https://www.blossom-carousel.com
 
 Explore ready-to-copy carousel patterns grouped by complexity.
 
-[See all examples](http://localhost:3333/docs/examples/)
+[See all examples](https://www.blossom-carousel.com/docs/examples/)
 
 ## Migration Guides
 
