@@ -6,6 +6,8 @@ A native-scroll-first carousel for Svelte.
 
 `npm install @blossom-carousel/svelte`
 
+[Full installation instructions](https://www.blossom-carousel.com/docs/framework-guides/svelte-sveltekit)
+
 #### Svelte
 
 ```javascript

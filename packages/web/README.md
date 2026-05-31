@@ -6,6 +6,8 @@ A native-scroll-first carousel enhanced with drag support for Web.
 
 `npm install @blossom-carousel/web`
 
+[Full installation instructions](https://www.blossom-carousel.com/docs/framework-guides/web-components)
+
 ```javascript
 import { BlossomCarousel } from "@blossom-carousel/web";
 import "@blossom-carousel/core/style.css";

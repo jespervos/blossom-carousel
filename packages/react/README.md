@@ -6,6 +6,8 @@ A native-scroll-first carousel enhanced with drag support for React.
 
 `npm install @blossom-carousel/react`
 
+[Full installation instructions](https://www.blossom-carousel.com/docs/framework-guides/react-nextjs)
+
 #### React
 
 ```jsx

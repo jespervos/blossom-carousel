@@ -10,6 +10,8 @@ Add the blossom-carousel package to your project.
 npm install @blossom-carousel/core
 ```
 
+[Full installation instructions](https://www.blossom-carousel.com/docs/framework-guides/core)
+
 Then, create a Blossom instance and initialize it.
 
 ```js
@@ -29,7 +31,7 @@ Load Blossom only when needed.
 
 ```js
 const hasMouse = window.matchMedia(
-  "(hover: hover) and (pointer: fine)"
+  "(hover: hover) and (pointer: fine)",
 ).matches;
 
 // We don't need Blossom's engine on touch devices

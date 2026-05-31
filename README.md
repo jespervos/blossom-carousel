@@ -1,4 +1,4 @@
-![Blossom Carousel](./public/cover.jpg)
+![Blossom Carousel](./public/cover.png)
 
 # Blossom Carousel
 
@@ -7,72 +7,51 @@
 <a href="https://bundlephobia.com/package/@blossom-carousel/core"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
 </p>
 
-The native-first carousel enhanced with drag support.
-
-➥ [www.blossom-carousel.com](http://www.blossom-carousel.com)
-
-## Why Blossom?
+Blossom Carousel is the first carousel library that builds on native browser scrolling instead of replacing it. It provides a small drag enhancement for pointer devices while maintaining the core interaction model, performance, and accessibility of a real scroll container.
 
 <ul style="list-style: none; padding: 0;">
 <li>🥇 <strong>Native scrolling</strong>: Full performance and accessibility.</li>
 <li>🚀 <strong>Dragging</strong>: Custom physics-based dragging for all pointer types.</li>
 <li>✨ <strong>No abstraction</strong>: use all native web API's.</li>
-<li>💡 <strong>Configure with CSS</strong>: Works with native scroll-snap, position sticky and scroll-driven animations.</li>
+<li>💡 <strong>Configure with CSS</strong>: Works with native scroll-snap, position sticky and scroll-driven animations and more.</li>
 <li>🪶 <strong>0kb on touch devices</strong>: Blossom only loads when a fine pointer device is detected.</li>
-<li>🧱 <strong>Works with major frameworks</strong>: Components for React, Vue, Svelte and Web Components.</li>
+<li>🧱 <strong>Framework ready</strong>: Components for React, Vue, Svelte and Web Components.</li>
 <li>🚧 <strong>Experimental cyclical scrolling</strong>: Allows the carousel to infinitely loop.</li>
 </ul>
 
 ## Installation
 
-### React
+| Framework     | Installation Command                   | Docs                                                                                        |
+| ------------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Vue           | `npm install @blossom-carousel/vue`    | [Vue Docs](https://blossom-carousel.com/docs/framework-guides/vue-nuxt)                     |
+| React         | `npm install @blossom-carousel/react`  | [React Docs](https://blossom-carousel.com/docs/framework-guides/react-nextjs)               |
+| Svelte        | `npm install @blossom-carousel/svelte` | [Svelte Docs](https://blossom-carousel.com/docs/framework-guides/svelte-sveltekit)          |
+| Web Component | `npm install @blossom-carousel/web`    | [Web Component Docs](https://www.blossom-carousel.com/docs/framework-guides/web-components) |
+| Core          | `npm install @blossom-carousel/core`   | [Core Docs](https://www.blossom-carousel.com/docs/framework-guides/core)                    |
 
-[React Docs](./packages/react)
+## Agent Skills
 
-```bash
-npm install @blossom-carousel/react
-```
+Blossom Carousel's Agent Skills help AI coding assistants give package-specific guidance.
 
-### Vue
-
-[Vue Docs](./packages/vue)
-
-```bash
-npm install @blossom-carousel/vue
-```
-
-### Svelte
-
-[Svelte Docs](./packages/svelte)
+Install the skills
+Compatible agents (Cursor, Claude Code, etc.) can discover and use skills automatically.
 
 ```bash
-npm install @blossom-carousel/svelte
-```
-
-### Web Component
-
-[Web Component Docs](./packages/web)
-
-```bash
-npm install @blossom-carousel/web
-```
-
-### Core
-
-[Core Docs](./packages/core)
-
-```bash
-npm install @blossom-carousel/core
+npx skills add https://www.blossom-carousel.com
 ```
 
 ## Examples
 
-- [Simple](https://www.blossom-carousel.com/docs/examples#simple)
-- [Variable widths](https://www.blossom-carousel.com/docs/examples#variable-widths)
-- [CSS Grid](https://www.blossom-carousel.com/docs/examples#css-grid)
-- [Multiple rows](https://www.blossom-carousel.com/docs/examples#multiple-rows)
-- [Snapping](https://www.blossom-carousel.com/docs/examples#snapping)
-- [Grouping](https://www.blossom-carousel.com/docs/examples#grouping)
-- [Sticky](https://www.blossom-carousel.com/docs/examples#sticky)
-- [Coverflow](https://www.blossom-carousel.com/docs/examples#cover-flow)
-- [Right to Left](https://blossom-carousel.com/docs/examples#right-to-left)
+Explore ready-to-copy carousel patterns grouped by complexity.
+
+[See all examples](http://localhost:3333/docs/examples/)
+
+## Migration Guides
+
+| From     | Migration Guide                                                                            |
+| -------- | ------------------------------------------------------------------------------------------ |
+| Embla    | [Migration from Embla](https://www.blossom-carousel.com/docs/migration-guides/embla)       |
+| Swiper   | [Migration from Swiper](https://www.blossom-carousel.com/docs/migration-guides/swiper)     |
+| Splide   | [Migration from Splide](https://www.blossom-carousel.com/docs/migration-guides/splide)     |
+| Slick    | [Migration from Slick](https://www.blossom-carousel.com/docs/migration-guides/slick)       |
+| Flickity | [Migration from Flickity](https://www.blossom-carousel.com/docs/migration-guides/flickity) |
