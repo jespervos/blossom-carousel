@@ -66,18 +66,13 @@ blossom.destroy();
 
 ### Get started in your favorite framework:
 
-- [React](https://www.npmjs.com/package/@blossom-carousel/react)
-- [Vue](https://www.npmjs.com/package/@blossom-carousel/vue)
-- [Svelte](https://www.npmjs.com/package/@blossom-carousel/svelte)
-- [Web Component](https://www.npmjs.com/package/@blossom-carousel/web)
+- [React](https://www.blossom-carousel.com/docs/framework-guides/react-nextjs)
+- [Vue](https://www.blossom-carousel.com/docs/framework-guides/vue-nuxt)
+- [Svelte](https://www.blossom-carousel.com/docs/framework-guides/svelte-sveltekit)
+- [Web Component](https://www.blossom-carousel.com/docs/framework-guides/web-components)
 
 ## Examples
 
-- [Simple](https://www.blossom-carousel.com/docs/examples#simple)
-- [Variable widths](https://www.blossom-carousel.com/docs/examples#variable-widths)
-- [CSS Grid](https://www.blossom-carousel.com/docs/examples#css-grid)
-- [Multiple rows](https://www.blossom-carousel.com/docs/examples#multiple-rows)
-- [Snapping](https://www.blossom-carousel.com/docs/examples#snapping)
-- [Grouping](https://www.blossom-carousel.com/docs/examples#grouping)
-- [Sticky](https://www.blossom-carousel.com/docs/examples#sticky)
-- [Coverflow](https://www.blossom-carousel.com/docs/examples#cover-flow)
+Explore ready-to-copy carousel patterns grouped by complexity.
+
+[See all examples](https://www.blossom-carousel.com/docs/examples/)

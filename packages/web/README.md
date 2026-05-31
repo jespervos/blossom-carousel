@@ -49,11 +49,6 @@ carousel.next({ align: "center" });
 
 ## Examples
 
-- [Simple](https://www.blossom-carousel.com/docs/examples#simple)
-- [Variable widths](https://www.blossom-carousel.com/docs/examples#variable-widths)
-- [CSS Grid](https://www.blossom-carousel.com/docs/examples#css-grid)
-- [Multiple rows](https://www.blossom-carousel.com/docs/examples#multiple-rows)
-- [Snapping](https://www.blossom-carousel.com/docs/examples#snapping)
-- [Grouping](https://www.blossom-carousel.com/docs/examples#grouping)
-- [Sticky](https://www.blossom-carousel.com/docs/examples#sticky)
-- [Coverflow](https://www.blossom-carousel.com/docs/examples#cover-flow)
+Explore ready-to-copy carousel patterns grouped by complexity.
+
+[See all examples](http://localhost:3333/docs/examples/)
