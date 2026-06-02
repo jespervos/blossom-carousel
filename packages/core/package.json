@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/core",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for the web.",
@@ -18,10 +18,10 @@
   ],
   "main": "dist/blossom-carousel-core.umd.cjs",
   "module": "dist/blossom-carousel-core.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/blossom-carousel-core.js",
       "require": "./dist/blossom-carousel-core.umd.cjs"
     },
