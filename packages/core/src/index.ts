@@ -81,7 +81,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         if (target.x || target.y) {
           scroller.setAttribute("has-overflow", "true");
           scroller.addEventListener("pointerdown", onPointerDown);
-          scroller.addEventListener("wheel", onWheel, { passive: false });
+          scroller.addEventListener("wheel", onWheel, { passive: true });
         } else {
           scroller.removeAttribute("has-overflow");
           scroller.removeEventListener("pointerdown", onPointerDown);
