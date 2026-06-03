@@ -59,6 +59,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@blossom-carousel/navigation": "workspace:*",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/language-core": "^3.1.8",
     "vite": "^8.0.13",

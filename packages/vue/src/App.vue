@@ -1,18 +1,26 @@
 <script setup>
 import BlossomCarousel from "./BlossomCarousel.vue";
+import BlossomPrev from "./BlossomPrev.vue";
+import BlossomNext from "./BlossomNext.vue";
+import BlossomDots from "./BlossomDots.vue";
 import "@blossom-carousel/core/style.css";
 </script>
 
 <template>
   <div class="page">
     <h1>Blossom Vue</h1>
-    <BlossomCarousel class="carousel">
+    <BlossomCarousel id="vue-carousel" class="carousel">
       <ul class="track">
-        <li v-for="i in 12" :key="`slide${i}`" class="slide">
+        <li v-for="i in 12" :key="`slide${i}`" class="slide" data-blossom-slide>
           {{ i }}
         </li>
       </ul>
     </BlossomCarousel>
+    <div class="controls">
+      <BlossomPrev for="vue-carousel" />
+      <BlossomDots for="vue-carousel" />
+      <BlossomNext for="vue-carousel" />
+    </div>
   </div>
 </template>
 
@@ -52,5 +60,12 @@ import "@blossom-carousel/core/style.css";
   align-items: center;
   justify-content: center;
   scroll-snap-align: center;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-block-start: 1.5rem;
 }
 </style>
