@@ -9,7 +9,7 @@ import "@blossom-carousel/core/style.css";
 <template>
   <div class="page">
     <h1>Blossom Vue</h1>
-    <BlossomCarousel id="vue-carousel" class="carousel">
+    <BlossomCarousel id="my-carousel" class="carousel">
       <ul class="track">
         <li v-for="i in 12" :key="`slide${i}`" class="slide" data-blossom-slide>
           {{ i }}
@@ -17,9 +17,9 @@ import "@blossom-carousel/core/style.css";
       </ul>
     </BlossomCarousel>
     <div class="controls">
-      <BlossomPrev for="vue-carousel" />
-      <BlossomDots for="vue-carousel" />
-      <BlossomNext for="vue-carousel" />
+      <BlossomPrev for="my-carousel" />
+      <BlossomDots for="my-carousel" />
+      <BlossomNext for="my-carousel" />
     </div>
   </div>
 </template>
@@ -35,7 +35,6 @@ import "@blossom-carousel/core/style.css";
 }
 
 .carousel {
-  padding-inline: 1rem;
   scroll-padding-inline: 1rem;
   scroll-snap-type: x mandatory;
   scroll-snap-stop: always;
@@ -49,6 +48,8 @@ import "@blossom-carousel/core/style.css";
   grid-auto-flow: column;
   grid-auto-columns: 300px;
   grid-gap: 1rem;
+  padding-inline: 30vw;
+  width: fit-content;
 }
 
 .slide {
@@ -60,6 +61,11 @@ import "@blossom-carousel/core/style.css";
   align-items: center;
   justify-content: center;
   scroll-snap-align: center;
+
+  &:nth-child(odd) {
+    aspect-ratio: auto;
+    grid-column: span 2;
+  }
 }
 
 .controls {

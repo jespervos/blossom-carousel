@@ -1,15 +1,15 @@
 import { pageScroll } from "./scroll";
 import { getMarkerTargets } from "./markers";
-
-/** Custom Invoker command names. Custom commands must be `--`-prefixed. */
-export const COMMANDS = {
-  prev: "--blossom-prev",
-  next: "--blossom-next",
-  /** Goto commands are `--blossom-goto-<index>`. */
-  gotoPrefix: "--blossom-goto-",
-} as const;
+import { resolveInlineAlign } from "./snap";
+import { getSnapCache } from "./cache";
 
 const COMMAND_NAMESPACE = "--blossom-";
+export const COMMANDS = {
+  prev: `${COMMAND_NAMESPACE}prev`,
+  next: `${COMMAND_NAMESPACE}next`,
+  gotoPrefix: `${COMMAND_NAMESPACE}goto-`,
+} as const;
+
 const REGISTRY = Symbol.for("blossom-carousel.navigation.registry");
 
 interface Registration {
@@ -29,13 +29,18 @@ function runCommand(scroller: HTMLElement, command: string): void {
       command.slice(COMMANDS.gotoPrefix.length),
       10,
     );
-    if (Number.isNaN(index)) return;
-    const target = getMarkerTargets(scroller)[index];
-    target?.scrollIntoView({
-      block: "nearest",
-      inline: "start",
-      behavior: "smooth",
-    });
+    if (Number.isNaN(index) || index < 0) return;
+
+    // Prefer the cache, but ignore a stale entry whose element has been detached
+    // (a slide removed before the cache refresh runs) and read live instead.
+    const cached = getSnapCache(scroller)?.markers[index];
+    const fresh = cached?.el.isConnected ? cached : undefined;
+    const target = fresh?.el ?? getMarkerTargets(scroller)[index];
+    if (!target) return;
+
+    const inline =
+      fresh?.align ?? resolveInlineAlign(getComputedStyle(target).scrollSnapAlign);
+    target.scrollIntoView({ block: "nearest", inline, behavior: "smooth" });
   }
 }
 

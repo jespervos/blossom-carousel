@@ -1,4 +1,5 @@
-import { getSnapPositions } from "./snap";
+import { getSnapPositions, type SnapPoint } from "./snap";
+import { getSnapCache } from "./cache";
 import type { Direction } from "./types";
 
 /** ::scroll-button() pages ~85% of the scrollport. */
@@ -19,17 +20,17 @@ export function canScroll(scroller: HTMLElement, dir: Direction): boolean {
 }
 
 function adjacentSnap(
-  positions: number[],
+  points: SnapPoint[],
   current: number,
   dir: Direction,
-): number | null {
+): SnapPoint | null {
   if (dir === "next") {
-    for (let i = 0; i < positions.length; i++) {
-      if (positions[i] > current + EPSILON) return positions[i];
+    for (let i = 0; i < points.length; i++) {
+      if (points[i].x > current + EPSILON) return points[i];
     }
   } else {
-    for (let i = positions.length - 1; i >= 0; i--) {
-      if (positions[i] < current - EPSILON) return positions[i];
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (points[i].x < current - EPSILON) return points[i];
     }
   }
   return null;
@@ -37,15 +38,21 @@ function adjacentSnap(
 
 /**
  * Mirrors `::scroll-button()` activation: advance to the next/previous snap
- * position when scroll-snap is in use, otherwise page by ~85% of the scrollport.
+ * point when scroll-snap is in use (brought into view with its own inline
+ * alignment), otherwise page by ~85% of the scrollport.
  */
 export function pageScroll(scroller: HTMLElement, dir: Direction): void {
-  const positions = getSnapPositions(scroller);
+  // Prefer the host-maintained cache; fall back to a live read for plain usage.
+  const points = getSnapCache(scroller)?.pages ?? getSnapPositions(scroller);
 
-  if (positions.length) {
-    const target = adjacentSnap(positions, scroller.scrollLeft, dir);
-    if (target === null) return;
-    scroller.scrollTo({ left: target, behavior: "smooth" });
+  if (points.length) {
+    const target = adjacentSnap(points, scroller.scrollLeft, dir);
+    if (!target) return;
+    target.el.scrollIntoView({
+      block: "nearest",
+      inline: target.align,
+      behavior: "smooth",
+    });
     return;
   }
 

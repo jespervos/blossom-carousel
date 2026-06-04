@@ -1,5 +1,8 @@
 import { onMounted, onBeforeUnmount, ref, watch, type Ref } from "vue";
-import { observeNavigationState, registerCommands } from "@blossom-carousel/navigation";
+import {
+  observeNavigationState,
+  registerCommands,
+} from "@blossom-carousel/navigation";
 
 // Re-declared locally (rather than imported) so the generated declaration files
 // don't reference the internal, unpublished navigation package.
