@@ -1,4 +1,9 @@
-import { getSnapPositions, type SnapPoint } from "./snap";
+import {
+  getSnapPositions,
+  isRtl,
+  logicalScrollLeft,
+  type SnapPoint,
+} from "./snap";
 import { getSnapCache } from "./cache";
 import type { Direction } from "./types";
 
@@ -24,13 +29,18 @@ function adjacentSnap(
   current: number,
   dir: Direction,
 ): SnapPoint | null {
+  // Skip cached points whose element was detached (a slide removed before the
+  // cache refresh runs), mirroring the staleness guard in the goto command —
+  // `scrollIntoView` on a detached element would silently no-op.
   if (dir === "next") {
     for (let i = 0; i < points.length; i++) {
-      if (points[i].x > current + EPSILON) return points[i];
+      if (points[i].x > current + EPSILON && points[i].el.isConnected)
+        return points[i];
     }
   } else {
     for (let i = points.length - 1; i >= 0; i--) {
-      if (points[i].x < current - EPSILON) return points[i];
+      if (points[i].x < current - EPSILON && points[i].el.isConnected)
+        return points[i];
     }
   }
   return null;
@@ -43,10 +53,12 @@ function adjacentSnap(
  */
 export function pageScroll(scroller: HTMLElement, dir: Direction): void {
   // Prefer the host-maintained cache; fall back to a live read for plain usage.
-  const points = getSnapCache(scroller)?.pages ?? getSnapPositions(scroller);
+  const cache = getSnapCache(scroller);
+  const points = cache?.pages ?? getSnapPositions(scroller);
+  const rtl = cache?.rtl ?? isRtl(scroller);
 
   if (points.length) {
-    const target = adjacentSnap(points, scroller.scrollLeft, dir);
+    const target = adjacentSnap(points, logicalScrollLeft(scroller, rtl), dir);
     if (!target) return;
     target.el.scrollIntoView({
       block: "nearest",
@@ -57,5 +69,7 @@ export function pageScroll(scroller: HTMLElement, dir: Direction): void {
   }
 
   const delta = scroller.clientWidth * PAGE_RATIO * (dir === "next" ? 1 : -1);
-  scroller.scrollBy({ left: delta, behavior: "smooth" });
+  // `scrollBy` takes a physical delta; flip it so "next" advances towards the
+  // inline-end in RTL too.
+  scroller.scrollBy({ left: rtl ? -delta : delta, behavior: "smooth" });
 }

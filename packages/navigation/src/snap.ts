@@ -9,6 +9,23 @@
 
 export type InlineAlign = "start" | "center" | "end";
 
+/** Whether the scroller lays out its inline axis right-to-left. */
+export function isRtl(scroller: HTMLElement): boolean {
+  return getComputedStyle(scroller).direction === "rtl";
+}
+
+/**
+ * The logical inline scroll offset: `0` at the inline-start edge, increasing
+ * towards the inline-end. In RTL the physical `scrollLeft` runs `[-max, 0]`,
+ * so it is negated to recover the same `[0, max]` range as LTR. Every snap
+ * position in this package lives in this logical space, so comparisons against
+ * the live scroll offset must go through this helper rather than reading
+ * `scrollLeft` directly.
+ */
+export function logicalScrollLeft(scroller: HTMLElement, rtl: boolean): number {
+  return rtl ? -scroller.scrollLeft : scroller.scrollLeft;
+}
+
 /**
  * A snap target paired with its resolved inline alignment — everything needed
  * to bring it into view via `scrollIntoView({ inline })`.
@@ -28,7 +45,10 @@ export interface SnapTarget {
  * paging to locate the adjacent snap point relative to the current scroll.
  */
 export interface SnapPoint extends SnapTarget {
-  /** The clamped `scrollLeft` at which the target rests when snapped. */
+  /**
+   * The clamped logical scroll offset (see {@link logicalScrollLeft}) at which
+   * the target rests when snapped.
+   */
   x: number;
 }
 
@@ -55,9 +75,14 @@ export function resolveInlineAlign(value: string): InlineAlign {
 }
 
 /**
- * The (unclamped) `scrollLeft` at which `target` would rest when snapped to the
- * given inline alignment. Unclamped on purpose: callers use the raw value to
- * tell whether a target can physically reach its snap position.
+ * The (unclamped) logical scroll offset at which `target` would rest when
+ * snapped to the given inline alignment. Unclamped on purpose: callers use the
+ * raw value to tell whether a target can physically reach its snap position.
+ *
+ * Computed in logical coordinates (see {@link logicalScrollLeft}): in RTL the
+ * inline-start edge is the physical right, so the target's offset is measured
+ * from the scroller's right edge and the result compares directly against the
+ * logical scroll offset in both directions.
  */
 export function snapPositionFor(
   scroller: HTMLElement,
@@ -66,10 +91,16 @@ export function snapPositionFor(
   scrollerRect: DOMRect,
   scrollPaddingStart: number,
   scrollPaddingEnd: number,
+  rtl: boolean,
   styles: CSSStyleDeclaration = getComputedStyle(target),
 ): number {
   const rect = target.getBoundingClientRect();
-  const left = rect.left - scrollerRect.left + scroller.scrollLeft;
+  // Offset of the target's inline-start edge from the scrollport's
+  // inline-start edge, measured along the logical scroll direction.
+  const startEdge = rtl
+    ? scrollerRect.right - rect.right
+    : rect.left - scrollerRect.left;
+  const left = startEdge + logicalScrollLeft(scroller, rtl);
   const marginStart = parseFloat(styles.scrollMarginInlineStart) || 0;
   const marginEnd = parseFloat(styles.scrollMarginInlineEnd) || 0;
   const snapAreaStart = left - marginStart;
@@ -110,6 +141,7 @@ export function getMarkerSnaps(targets: HTMLElement[]): SnapTarget[] {
 export function getSnapPositions(scroller: HTMLElement): SnapPoint[] {
   const scrollerRect = scroller.getBoundingClientRect();
   const scrollerStyles = getComputedStyle(scroller);
+  const rtl = scrollerStyles.direction === "rtl";
   const scrollPaddingStart =
     parseFloat(scrollerStyles.scrollPaddingInlineStart) || 0;
   const scrollPaddingEnd =
@@ -133,6 +165,7 @@ export function getSnapPositions(scroller: HTMLElement): SnapPoint[] {
         scrollerRect,
         scrollPaddingStart,
         scrollPaddingEnd,
+        rtl,
         styles,
       );
       points.push({ el, align, x: Math.min(Math.max(x, 0), maxScroll) });

@@ -10,6 +10,12 @@ import type { SnapTarget, SnapPoint } from "./snap";
  */
 export interface SnapCache {
   /**
+   * Marker target elements, in `getMarkerTargets` (tree) order. Cached so the
+   * per-frame navigation-state read skips the `querySelectorAll` on the
+   * scroll hot loop; refreshed on mutation, so it tracks the live DOM.
+   */
+  targets: HTMLElement[];
+  /**
    * Snap target per marker, in `getMarkerTargets` (tree) order. Used by the
    * `goto` command to `scrollIntoView` the target with its own inline align.
    */
@@ -25,6 +31,16 @@ export interface SnapCache {
    * instead of forcing layout.
    */
   activePositions: number[];
+  /**
+   * `activePositions` sorted ascending. Also scroll-invariant; precomputed so
+   * the per-frame active-index selection is allocation- and sort-free.
+   */
+  sortedActivePositions: number[];
+  /**
+   * Whether the scroller's inline axis is right-to-left. Resolved once per
+   * refresh so the hot loop avoids a `getComputedStyle` per frame.
+   */
+  rtl: boolean;
 }
 
 const store = new WeakMap<HTMLElement, SnapCache>();

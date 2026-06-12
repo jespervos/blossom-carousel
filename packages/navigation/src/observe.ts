@@ -4,24 +4,22 @@ import {
   getMarkerTargets,
 } from "./markers";
 import { canScroll } from "./scroll";
-import { getMarkerSnaps, getSnapPositions } from "./snap";
+import { getMarkerSnaps, getSnapPositions, isRtl } from "./snap";
 import { clearSnapCache, getSnapCache, setSnapCache } from "./cache";
 import type { NavigationState } from "./types";
 
 /**
- * Computes the current navigation state of a scroller via native reads. Uses the
- * cached, scroll-invariant marker positions when available so the active-index
- * selection stays off the layout path on the scroll hot loop.
+ * Computes the current navigation state of a scroller via native reads. Uses
+ * the cached, scroll-invariant marker list and geometry when available so the
+ * per-frame work on the scroll hot loop is free of DOM queries, style reads,
+ * sorts, and allocations — only the scroll metrics are read live.
  */
 export function getNavigationState(scroller: HTMLElement): NavigationState {
-  const targets = getMarkerTargets(scroller);
+  const cache = getSnapCache(scroller);
+  const targets = cache?.targets ?? getMarkerTargets(scroller);
   return {
     count: targets.length,
-    activeIndex: getActiveMarkerIndex(
-      scroller,
-      targets,
-      getSnapCache(scroller)?.activePositions,
-    ),
+    activeIndex: getActiveMarkerIndex(scroller, targets, cache),
     canPrev: canScroll(scroller, "prev"),
     canNext: canScroll(scroller, "next"),
   };
@@ -30,10 +28,14 @@ export function getNavigationState(scroller: HTMLElement): NavigationState {
 /** Recomputes and caches the scroll-invariant snap geometry for a scroller. */
 function refreshSnapCache(scroller: HTMLElement): void {
   const targets = getMarkerTargets(scroller);
+  const activePositions = getMarkerPositions(scroller, targets);
   setSnapCache(scroller, {
+    targets,
     markers: getMarkerSnaps(targets),
     pages: getSnapPositions(scroller),
-    activePositions: getMarkerPositions(scroller, targets),
+    activePositions,
+    sortedActivePositions: [...activePositions].sort((a, b) => a - b),
+    rtl: isRtl(scroller),
   });
 }
 

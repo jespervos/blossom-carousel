@@ -1,4 +1,9 @@
-import { inlineSnapAlign, snapPositionFor } from "./snap";
+import {
+  inlineSnapAlign,
+  isRtl,
+  logicalScrollLeft,
+  snapPositionFor,
+} from "./snap";
 
 /** Attribute the author adds to each element that should get a dot. */
 export const SLIDE_ATTR = "data-blossom-slide";
@@ -20,10 +25,12 @@ export function getMarkerTargets(scroller: HTMLElement): HTMLElement[] {
 
 /**
  * The redistributed activation position of each target, in tree order (parallel
- * to `getMarkerTargets`). Scroll-invariant: it depends only on layout, never on
- * `scrollLeft`, so the host can compute it once on init/resize/mutation and
- * cache it. {@link selectActiveIndex} then maps the live `scrollLeft` onto it
- * each frame without touching layout.
+ * to `getMarkerTargets`). Positions are logical scroll offsets (see
+ * `logicalScrollLeft`), so they hold in both LTR and RTL. Scroll-invariant: it
+ * depends only on layout, never on the scroll offset, so the host can compute
+ * it once on init/resize/mutation and cache it. {@link selectActiveIndex} then
+ * maps the live logical scroll offset onto it each frame without touching
+ * layout.
  *
  * This is a single-axis (inline) implementation of the geometry behind the CSS
  * Overflow Level 5 "Calculating the Active Scroll Marker" algorithm (§3.1.8,
@@ -42,6 +49,7 @@ export function getMarkerPositions(
 
   const scrollerRect = scroller.getBoundingClientRect();
   const scrollerStyles = getComputedStyle(scroller);
+  const rtl = scrollerStyles.direction === "rtl";
   const scrollPaddingStart =
     parseFloat(scrollerStyles.scrollPaddingInlineStart) || 0;
   const scrollPaddingEnd =
@@ -59,6 +67,7 @@ export function getMarkerPositions(
       scrollerRect,
       scrollPaddingStart,
       scrollPaddingEnd,
+      rtl,
       styles,
     );
   });
@@ -106,9 +115,10 @@ export function getMarkerPositions(
 }
 
 /**
- * Maps the current `scrollLeft` onto precomputed marker `positions` and returns
- * the tree-order index of the active target. Pure and layout-free, so it can run
- * on every scroll frame.
+ * Maps the current logical scroll offset onto precomputed marker `positions`
+ * and returns the tree-order index of the active target. Pure and layout-free,
+ * so it can run on every scroll frame; pass the cached `sorted` copy to keep it
+ * allocation-free too.
  *
  * The selected position is the largest target position at or before the current
  * position, or — to surface section-header style markers early — one whose
@@ -120,14 +130,16 @@ export function selectActiveIndex(
   positions: number[],
   position: number,
   scrollportSize: number,
+  // In ascending order each target's nearest smaller position is simply its
+  // predecessor, turning the selection scan into a single pass. The sorted
+  // order is scroll-invariant, so hosts precompute it in the snap cache; this
+  // default only runs on the live (uncached) path.
+  sorted: number[] = [...positions].sort((a, b) => a - b),
 ): number {
   if (positions.length === 0) return -1;
   if (positions.length === 1) return 0;
 
   const halfScrollport = scrollportSize / 2;
-  // Sort once: in ascending order each target's nearest smaller position is
-  // simply its predecessor, turning the selection scan into O(n log n).
-  const sorted = [...positions].sort((a, b) => a - b);
 
   let selectedPosition: number | null = null;
   for (let i = 0; i < sorted.length; i++) {
@@ -156,17 +168,32 @@ export function selectActiveIndex(
 }
 
 /**
+ * The scroll-invariant geometry needed to resolve the active marker index on
+ * the scroll hot loop without layout reads, style reads, or allocations.
+ * Subset of the host-maintained `SnapCache`.
+ */
+export interface ActiveIndexGeometry {
+  /** Redistributed activation position per marker, in tree order. */
+  activePositions: number[];
+  /** `activePositions` sorted ascending. */
+  sortedActivePositions: number[];
+  /** Whether the scroller's inline axis is right-to-left. */
+  rtl: boolean;
+}
+
+/**
  * Returns the tree-order index of the active marker target along the inline
  * axis, or -1 when there are none.
  *
  * Convenience wrapper that composes {@link getMarkerPositions} and
- * {@link selectActiveIndex} for live (uncached) use. Pass `positions` from a
- * host-maintained cache to skip the per-call layout reads on the scroll path.
+ * {@link selectActiveIndex} for live (uncached) use. Pass `cached` geometry
+ * from a host-maintained cache to skip the per-call style/layout reads and
+ * the sort on the scroll path.
  */
 export function getActiveMarkerIndex(
   scroller: HTMLElement,
   targets: HTMLElement[],
-  positions?: number[],
+  cached?: ActiveIndexGeometry,
 ): number {
   if (targets.length === 0) return -1;
   if (targets.length === 1) return 0;
@@ -175,6 +202,12 @@ export function getActiveMarkerIndex(
   // Non-scrollable scroller: everything fits, so the first target is active.
   if (scroller.scrollWidth - scrollportSize <= 0) return 0;
 
-  const resolved = positions ?? getMarkerPositions(scroller, targets);
-  return selectActiveIndex(resolved, scroller.scrollLeft, scrollportSize);
+  const rtl = cached?.rtl ?? isRtl(scroller);
+  const positions = cached?.activePositions ?? getMarkerPositions(scroller, targets);
+  return selectActiveIndex(
+    positions,
+    logicalScrollLeft(scroller, rtl),
+    scrollportSize,
+    cached?.sortedActivePositions,
+  );
 }
