@@ -45,7 +45,8 @@
       "svelte": "./dist/blossom-carousel-svelte.js",
       "import": "./dist/blossom-carousel-svelte.js",
       "require": "./dist/blossom-carousel-svelte.umd.cjs"
-    }
+    },
+    "./style.css": "./dist/blossom-carousel-svelte.css"
   },
   "publishConfig": {
     "access": "public"
@@ -62,6 +63,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@blossom-carousel/navigation": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "svelte": "^5.55.7",
     "typescript": "^6.0.3",

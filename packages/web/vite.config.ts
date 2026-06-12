@@ -8,6 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     dts({
+      entryRoot: "src",
       include: ["src/**/*"],
       exclude: ["vite.config.ts"],
     }),

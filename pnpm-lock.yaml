@@ -34,28 +34,6 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(@microsoft/api-extractor@7.58.1(@types/node@25.8.0))(@vue/language-core@3.1.8(typescript@6.0.3))(esbuild@0.27.7)(rolldown@1.0.1)(rollup@4.60.4)(typescript@6.0.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7))
 
-  packages/dev:
-    dependencies:
-      '@blossom-carousel/core':
-        specifier: workspace:^
-        version: link:../core
-      vue:
-        specifier: ^3.5.13
-        version: 3.5.29(typescript@6.0.3)
-    devDependencies:
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.7
-        version: 6.0.7(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7))(vue@3.5.29(typescript@6.0.3))
-      '@vue/language-core':
-        specifier: ^3.1.8
-        version: 3.1.8(typescript@6.0.3)
-      vite:
-        specifier: ^8.0.13
-        version: 8.0.13(@types/node@25.8.0)(esbuild@0.27.7)
-      vite-plugin-dts:
-        specifier: ^5.0.0
-        version: 5.0.0(@microsoft/api-extractor@7.58.1(@types/node@25.8.0))(@vue/language-core@3.1.8(typescript@6.0.3))(esbuild@0.27.7)(rolldown@1.0.1)(rollup@4.60.4)(typescript@6.0.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7))
-
   packages/navigation: {}
 
   packages/react:
@@ -70,6 +48,9 @@ importers:
         specifier: '>=18.0.0'
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@blossom-carousel/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
@@ -89,6 +70,9 @@ importers:
         specifier: workspace:^
         version: link:../core
     devDependencies:
+      '@blossom-carousel/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.1.2
         version: 7.1.2(svelte@5.55.7(@typescript-eslint/types@8.58.1))(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7))
@@ -135,6 +119,9 @@ importers:
       '@blossom-carousel/core':
         specifier: workspace:^
         version: link:../core
+      '@blossom-carousel/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@types/node':
         specifier: ^25.8.0
         version: 25.8.0

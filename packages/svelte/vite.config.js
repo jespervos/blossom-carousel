@@ -19,6 +19,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
       fileName: "blossom-carousel-svelte",
+      cssFileName: "blossom-carousel-svelte",
       formats: ["es", "umd"], // ES modules and UMD for broader compatibility
     },
     rollupOptions: {

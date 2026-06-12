@@ -50,3 +50,10 @@ body {
   justify-content: center;
   scroll-snap-align: center;
 }
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-block-start: 1.5rem;
+}

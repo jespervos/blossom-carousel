@@ -1,12 +1,20 @@
 <script>
   import BlossomCarousel from './BlossomCarousel.svelte';
+  import BlossomPrev from './BlossomPrev.svelte';
+  import BlossomNext from './BlossomNext.svelte';
+  import BlossomDots from './BlossomDots.svelte';
 </script>
 
 <div class="page">
     <h1>Blossom in Svelte</h1>  
-    <BlossomCarousel as="ul" class="carousel">
+    <BlossomCarousel id="my-carousel" as="ul" class="carousel">
         {#each Array(12).fill(0).map((_, i) => i + 1) as num (num)}
-            <li class="slide">{num}</li>
+            <li class="slide" data-blossom-slide>{num}</li>
         {/each}
     </BlossomCarousel>
+    <div class="controls">
+        <BlossomPrev for="my-carousel" />
+        <BlossomDots for="my-carousel" />
+        <BlossomNext for="my-carousel" />
+    </div>
 </div>

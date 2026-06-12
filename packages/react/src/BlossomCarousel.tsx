@@ -22,10 +22,15 @@ export interface BlossomCarouselProps extends React.HTMLAttributes<HTMLElement> 
 }
 
 const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
-  ({ children, as = "div", repeat = false, load = "conditional", ...props }, parentRef) => {
+  (
+    { children, as = "div", repeat = false, load = "conditional", ...props },
+    parentRef,
+  ) => {
     const Component = as as JSXElementConstructor<any>;
     const localRef = useRef<HTMLElement>(null);
-    const blossomRef = useRef<ReturnType<typeof import("@blossom-carousel/core").Blossom> | null>(null);
+    const blossomRef = useRef<ReturnType<
+      typeof import("@blossom-carousel/core").Blossom
+    > | null>(null);
 
     useEffect(() => {
       if (!localRef.current) return;

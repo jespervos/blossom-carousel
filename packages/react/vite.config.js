@@ -7,7 +7,15 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      include: ["src/index.ts", "src/BlossomCarousel.tsx"],
+      entryRoot: "src",
+      include: [
+        "src/index.ts",
+        "src/BlossomCarousel.tsx",
+        "src/BlossomPrev.tsx",
+        "src/BlossomNext.tsx",
+        "src/BlossomDots.tsx",
+        "src/useNavigation.ts",
+      ],
     }),
   ],
   build: {
@@ -15,6 +23,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
       fileName: "blossom-carousel-react",
+      cssFileName: "blossom-carousel-react",
     },
     rollupOptions: {
       external: [

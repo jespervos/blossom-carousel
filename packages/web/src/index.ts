@@ -1,4 +1,5 @@
 import { Blossom } from "@blossom-carousel/core";
+import { BlossomPrev, BlossomNext, BlossomDots } from "./navigation";
 import "./style.css";
 
 export class BlossomCarousel extends HTMLElement {
@@ -33,3 +34,8 @@ export class BlossomCarousel extends HTMLElement {
 }
 
 customElements.define("blossom-carousel", BlossomCarousel);
+customElements.define("blossom-prev", BlossomPrev);
+customElements.define("blossom-next", BlossomNext);
+customElements.define("blossom-dots", BlossomDots);
+
+export { BlossomPrev, BlossomNext, BlossomDots };
