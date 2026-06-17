@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/vue",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for Vue.",
@@ -38,10 +38,10 @@
   ],
   "main": "dist/blossom-carousel-vue.umd.cjs",
   "module": "dist/blossom-carousel-vue.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/blossom-carousel-vue.js",
       "require": "./dist/blossom-carousel-vue.umd.cjs"
     },
