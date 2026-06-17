@@ -11,8 +11,8 @@ A native-scroll-first carousel for Svelte.
 #### Svelte
 
 ```javascript
-import BlossomCarousel from "@blossom-carousel/svelte";
-import "@blossom-carousel/core/style.css";
+import { BlossomCarousel } from "@blossom-carousel/svelte";
+import "@blossom-carousel/svelte/style.css";
 ```
 
 ## Usage
@@ -48,17 +48,48 @@ Renders as
 </ul>
 ```
 
-### Methods
+### Navigation controls
 
-Slide to the previous or next element.
-use the `align` option to control the alignment of the target element. allowed values are `"start" | "center" | "end"`
+`BlossomPrev`, `BlossomNext`, and `BlossomDots` wire up prev/next and dot navigation using the native Invoker Commands API. They work without a Blossom instance ref — give the carousel an `id`, mark slides with `data-blossom-slide`, and point controls at that id with the `forId` prop.
 
-> ⚠ when scroll-snap is active, the css scroll-snap-align value will be used and the align option will be ignored.
+```html
+<BlossomCarousel id="my-carousel">
+  <ul>
+    {#each Array(12).fill(0).map((_, i) => i + 1) as num (num)}
+      <li data-blossom-slide>{num}</li>
+    {/each}
+  </ul>
+</BlossomCarousel>
 
-```js
-blossomRef.prev({ align: "center" });
-blossomRef.next({ align: "center" });
+<div class="controls">
+  <BlossomPrev forId="my-carousel" />
+  <BlossomDots forId="my-carousel" />
+  <BlossomNext forId="my-carousel" />
+</div>
 ```
+
+```javascript
+import {
+  BlossomCarousel,
+  BlossomPrev,
+  BlossomNext,
+  BlossomDots,
+} from "@blossom-carousel/svelte";
+```
+
+`BlossomPrev` and `BlossomNext` disable automatically at the start and end of the scroll range. Use the default slot to replace the button label.
+
+`BlossomDots` renders one button per marked slide. Use the default slot to customize dot appearance:
+
+```html
+<BlossomDots forId="my-carousel" let:index let:active>
+  <span class:active>{index + 1}</span>
+</BlossomDots>
+```
+
+Dot defaults can be themed with CSS custom properties on the component or any ancestor:
+
+`--blossom-dots-gap`, `--blossom-dot-size`, `--blossom-dot-radius`, `--blossom-dot-color`, `--blossom-dot-opacity`, `--blossom-dot-hover-opacity`, `--blossom-dot-active-opacity`
 
 ## Examples
 

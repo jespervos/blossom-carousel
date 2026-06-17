@@ -1,5 +1,5 @@
-import "@blossom-carousel/core/style.css";
 import "./style.css";
+import "./dev.css";
 import App from "./App.svelte";
 import { mount } from "svelte";
 

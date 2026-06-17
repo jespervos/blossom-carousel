@@ -1,2 +1,7 @@
+import "./style.css";
 import BlossomCarousel from "./BlossomCarousel.svelte";
-export { BlossomCarousel };
+import BlossomPrev from "./BlossomPrev.svelte";
+import BlossomNext from "./BlossomNext.svelte";
+import BlossomDots from "./BlossomDots.svelte";
+
+export { BlossomCarousel, BlossomPrev, BlossomNext, BlossomDots };

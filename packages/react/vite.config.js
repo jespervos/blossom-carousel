@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      include: ["src/index.ts", "src/BlossomCarousel.tsx"],
+      include: ["src/**/*.ts", "src/**/*.tsx"],
     }),
   ],
   build: {
@@ -25,6 +25,12 @@ export default defineConfig({
         "@blossom-carousel/core",
       ],
       output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.names?.some((name) => name.endsWith(".css"))) {
+            return "blossom-carousel-react.css";
+          }
+          return "assets/[name][extname]";
+        },
         globals: {
           react: "React",
           "react-dom": "ReactDOM",

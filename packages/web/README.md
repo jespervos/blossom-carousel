@@ -9,8 +9,8 @@ A native-scroll-first carousel enhanced with drag support for Web.
 [Full installation instructions](https://www.blossom-carousel.com/docs/framework-guides/web-components)
 
 ```javascript
-import { BlossomCarousel } from "@blossom-carousel/web";
-import "@blossom-carousel/core/style.css";
+import "@blossom-carousel/web";
+import "@blossom-carousel/web/style.css";
 ```
 
 #### CDN
@@ -19,7 +19,7 @@ import "@blossom-carousel/core/style.css";
 <script src="https://unpkg.com/@blossom-carousel/web@latest/dist/blossom-carousel-web.umd.js"></script>
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@blossom-carousel/web@latest/dist/web.css"
+  href="https://unpkg.com/@blossom-carousel/web@latest/dist/blossom-carousel-web.css"
 />
 ```
 
@@ -34,21 +34,34 @@ import "@blossom-carousel/core/style.css";
 </blossom-carousel>
 ```
 
-### Methods
+### Navigation controls
 
-Slide to the previous or next element.
-use the `align` option to control the alignment of the target element. allowed values are `"start" | "center" | "end"`
+`blossom-prev`, `blossom-next`, and `blossom-dots` wire up prev/next and dot navigation using the native Invoker Commands API. They work without calling carousel methods — give the carousel an `id`, mark slides with `data-blossom-slide`, and point controls at that id with the `for` attribute.
 
-> ⚠ when scroll-snap is active, the css scroll-snap-align value will be used and the align option will be ignored.
+```html
+<blossom-carousel id="my-carousel">
+  <div data-blossom-slide>Slide 1</div>
+  <div data-blossom-slide>Slide 2</div>
+  <div data-blossom-slide>Slide 3</div>
+</blossom-carousel>
 
-```js
-const carousel = document.getElementById("carousel");
-carousel.prev({ align: "center" });
-carousel.next({ align: "center" });
+<div class="controls">
+  <blossom-prev for="my-carousel"></blossom-prev>
+  <blossom-dots for="my-carousel"></blossom-dots>
+  <blossom-next for="my-carousel"></blossom-next>
+</div>
 ```
+
+`blossom-prev` and `blossom-next` disable automatically at the start and end of the scroll range. Set text content on the element to replace the default button label.
+
+`blossom-dots` renders one button per marked slide.
+
+Dot defaults can be themed with CSS custom properties on the element or any ancestor:
+
+`--blossom-dots-gap`, `--blossom-dot-size`, `--blossom-dot-radius`, `--blossom-dot-color`, `--blossom-dot-opacity`, `--blossom-dot-hover-opacity`, `--blossom-dot-active-opacity`
 
 ## Examples
 
 Explore ready-to-copy carousel patterns grouped by complexity.
 
-[See all examples](http://localhost:3333/docs/examples/)
+[See all examples](https://www.blossom-carousel.com/docs/examples/)

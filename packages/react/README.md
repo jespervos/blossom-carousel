@@ -12,7 +12,7 @@ A native-scroll-first carousel enhanced with drag support for React.
 
 ```jsx
 import { BlossomCarousel } from "@blossom-carousel/react";
-import "@blossom-carousel/core/style.css";
+import "@blossom-carousel/react/style.css";
 
 function App() {
   return <BlossomCarousel>{/* slides */}</BlossomCarousel>;
@@ -25,7 +25,7 @@ Add the import to your page or component:
 
 ```jsx
 import { BlossomCarousel } from "@blossom-carousel/react";
-import "@blossom-carousel/core/style.css";
+import "@blossom-carousel/react/style.css";
 
 export default function Page() {
   return <BlossomCarousel>{/* slides */}</BlossomCarousel>;
@@ -65,18 +65,50 @@ Renders as
 </ul>
 ```
 
-### Methods
+### Navigation controls
 
-Slide to the previous or next element.
-use the `align` option to control the alignment of the target element. allowed values are `"start" | "center" | "end"`
+`BlossomPrev`, `BlossomNext`, and `BlossomDots` wire up prev/next and dot navigation using the native Invoker Commands API. They work without a Blossom ref — give the carousel an `id`, mark slides with `data-blossom-slide`, and point controls at that id with the `for` prop.
 
-> ⚠ when scroll-snap is active, the css scroll-snap-align value will be used and the align option will be ignored.
+```jsx
+<BlossomCarousel id="my-carousel">
+  <ul>
+    {Array.from({ length: 12 }, (_, i) => (
+      <li key={i} data-blossom-slide>
+        Slide {i + 1}
+      </li>
+    ))}
+  </ul>
+</BlossomCarousel>
 
-```js
-const blossomRef = useRef(null);
-blossomRef.current.prev({ align: "center" });
-blossomRef.current.next({ align: "center" });
+<div className="controls">
+  <BlossomPrev for="my-carousel" />
+  <BlossomDots for="my-carousel" />
+  <BlossomNext for="my-carousel" />
+</div>
 ```
+
+```jsx
+import {
+  BlossomCarousel,
+  BlossomPrev,
+  BlossomNext,
+  BlossomDots,
+} from "@blossom-carousel/react";
+```
+
+`BlossomPrev` and `BlossomNext` disable automatically at the start and end of the scroll range. Pass children to replace the button label.
+
+`BlossomDots` renders one button per marked slide. Pass a render function to customize dot appearance:
+
+```jsx
+<BlossomDots for="my-carousel">
+  {({ index, active }) => <span className={active ? "active" : ""}>{index + 1}</span>}
+</BlossomDots>
+```
+
+Dot defaults can be themed with CSS custom properties on the component or any ancestor:
+
+`--blossom-dots-gap`, `--blossom-dot-size`, `--blossom-dot-radius`, `--blossom-dot-color`, `--blossom-dot-opacity`, `--blossom-dot-hover-opacity`, `--blossom-dot-active-opacity`
 
 ## Examples
 

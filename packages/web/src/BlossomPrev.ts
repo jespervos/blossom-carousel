@@ -1,0 +1,28 @@
+import { COMMANDS } from "@blossom-carousel/navigation";
+import { connectNavigation, getForId } from "./navigation";
+
+export class BlossomPrev extends HTMLElement {
+  private cleanup?: () => void;
+  private button?: HTMLButtonElement;
+
+  connectedCallback(): void {
+    const forId = getForId(this);
+    this.button = document.createElement("button");
+    this.button.type = "button";
+    this.button.setAttribute("command", COMMANDS.prev);
+    this.button.setAttribute("commandfor", forId);
+    this.button.setAttribute("aria-label", "Previous");
+    this.button.textContent = this.textContent?.trim() || "Previous";
+    this.replaceChildren(this.button);
+
+    this.cleanup = connectNavigation(forId, (state) => {
+      if (this.button) this.button.disabled = !state.canPrev;
+    });
+  }
+
+  disconnectedCallback(): void {
+    this.cleanup?.();
+  }
+}
+
+customElements.define("blossom-prev", BlossomPrev);

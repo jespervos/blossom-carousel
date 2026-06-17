@@ -70,6 +70,9 @@ importers:
         specifier: '>=18.0.0'
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@blossom-carousel/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
@@ -89,6 +92,9 @@ importers:
         specifier: ^1.1.7
         version: 1.1.7
     devDependencies:
+      '@blossom-carousel/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.1.2
         version: 7.1.2(svelte@5.55.7(@typescript-eslint/types@8.58.1))(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7))
@@ -135,6 +141,9 @@ importers:
       '@blossom-carousel/core':
         specifier: ^1.1.7
         version: 1.1.7
+      '@blossom-carousel/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@types/node':
         specifier: ^25.8.0
         version: 25.8.0

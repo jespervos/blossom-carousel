@@ -15,6 +15,12 @@ export default defineConfig({
       // Don't bundle Vue, expect the app to provide it
       external: ["vue", "@blossom-carousel/core"],
       output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.names?.some((name) => name.endsWith(".css"))) {
+            return "blossom-carousel-vue.css";
+          }
+          return "assets/[name][extname]";
+        },
         globals: {
           vue: "Vue",
           "@blossom-carousel/core": "BlossomCarouselCore",

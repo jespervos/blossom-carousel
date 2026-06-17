@@ -5,9 +5,7 @@ import path from "path";
 
 export default defineConfig({
   plugins: [
-    svelte({
-      // compilerOptions like 'generate' are controlled by vite-plugin-svelte
-    }),
+    svelte(),
     dts({
       insertTypesEntry: true,
       include: ["src/**/*"],
@@ -19,7 +17,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "BlossomCarousel",
       fileName: "blossom-carousel-svelte",
-      formats: ["es", "umd"], // ES modules and UMD for broader compatibility
+      formats: ["es", "umd"],
     },
     rollupOptions: {
       external: [
@@ -27,11 +25,17 @@ export default defineConfig({
         "svelte/internal",
         "svelte/store",
         "@blossom-carousel/core",
-        /^svelte\//, // Match any svelte/* imports
+        /^svelte\//,
       ],
       output: {
         preserveModules: false,
         exports: "named",
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.names?.some((name) => name.endsWith(".css"))) {
+            return "blossom-carousel-svelte.css";
+          }
+          return "assets/[name][extname]";
+        },
         globals: {
           svelte: "svelte",
           "svelte/internal/client": "svelteInternalClient",
