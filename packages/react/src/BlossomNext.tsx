@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import { useNavigation } from "./useNavigation";
+import "./BlossomNext.css";
 
 export interface BlossomNextProps {
   /** Id of the carousel scroller this control targets. */
@@ -17,12 +18,14 @@ function BlossomNext({ for: forId, children }: BlossomNextProps) {
 
   return (
     <button
+      blossom-next=""
       type="button"
       disabled={!state.canNext}
-      aria-label="Next"
+      aria-controls={forId}
+      aria-label="Next slide"
       {...commandAttrs}
     >
-      {children ?? "Next"}
+      {children ?? "›"}
     </button>
   );
 }

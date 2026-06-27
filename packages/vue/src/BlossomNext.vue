@@ -1,12 +1,14 @@
 <template>
   <button
+    blossom-next
     type="button"
     :command="command"
     :commandfor="props.for"
     :disabled="!state.canNext"
-    aria-label="Next"
+    :aria-controls="props.for"
+    aria-label="Next slide"
   >
-    <slot>Next</slot>
+    <slot>›</slot>
   </button>
 </template>
 
@@ -20,3 +22,9 @@ const props = defineProps<{ for: string }>();
 const command = COMMANDS.next;
 const state = useNavigation(toRef(props, "for"));
 </script>
+
+<style scoped>
+:where([blossom-next]) {
+  touch-action: manipulation;
+}
+</style>

@@ -20,11 +20,19 @@
 </script>
 
 <button
+  blossom-prev
   type="button"
   {command}
   commandfor={forId}
   disabled={!$state.canPrev}
-  aria-label="Previous"
+  aria-controls={forId}
+  aria-label="Previous slide"
 >
-  <slot>Previous</slot>
+  <slot>‹</slot>
 </button>
+
+<style>
+  :where([blossom-prev]) {
+    touch-action: manipulation;
+  }
+</style>

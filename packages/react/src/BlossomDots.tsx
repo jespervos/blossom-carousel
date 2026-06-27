@@ -32,7 +32,7 @@ function BlossomDots({ for: forId, children }: BlossomDotsProps) {
             key={i}
             type="button"
             className="blossom-dot"
-            aria-current={active ? "true" : undefined}
+            aria-current={active}
             aria-label={`Go to slide ${i + 1}`}
             {...commandAttrs}
           >

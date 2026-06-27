@@ -1,12 +1,14 @@
 <template>
   <button
+    blossom-prev
     type="button"
     :command="command"
     :commandfor="props.for"
     :disabled="!state.canPrev"
-    aria-label="Previous"
+    :aria-controls="props.for"
+    aria-label="Previous slide"
   >
-    <slot>Previous</slot>
+    <slot>‹</slot>
   </button>
 </template>
 
@@ -20,3 +22,9 @@ const props = defineProps<{ for: string }>();
 const command = COMMANDS.prev;
 const state = useNavigation(toRef(props, "for"));
 </script>
+
+<style scoped>
+:where([blossom-prev]) {
+  touch-action: manipulation;
+}
+</style>

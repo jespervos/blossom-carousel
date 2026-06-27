@@ -98,17 +98,35 @@ abstract class BlossomControl extends HTMLElement {
 
 function createControlButton(
   shadow: ShadowRoot,
-  label: string,
+  content: string,
+  ariaLabel: string,
 ): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
   button.disabled = true;
-  button.setAttribute("aria-label", label);
+  button.setAttribute("aria-label", ariaLabel);
   const slot = document.createElement("slot");
-  slot.textContent = label;
+  slot.textContent = content;
   button.appendChild(slot);
   shadow.appendChild(button);
   return button;
+}
+
+const CONTROL_STYLE = `
+:where(button) {
+  touch-action: manipulation;
+}
+`;
+
+function syncAriaControls(
+  button: HTMLButtonElement,
+  forId: string | null,
+): void {
+  if (forId) {
+    button.setAttribute("aria-controls", forId);
+  } else {
+    button.removeAttribute("aria-controls");
+  }
 }
 
 export class BlossomPrev extends BlossomControl {
@@ -117,12 +135,16 @@ export class BlossomPrev extends BlossomControl {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: "open" });
-    this.button = createControlButton(shadow, "Previous");
+    const style = document.createElement("style");
+    style.textContent = CONTROL_STYLE;
+    shadow.appendChild(style);
+    this.button = createControlButton(shadow, "‹", "Previous slide");
     this.button.addEventListener("click", () => this.dispatch(COMMANDS.prev));
   }
 
   protected update(state: NavigationState): void {
     this.button.disabled = !state.canPrev;
+    syncAriaControls(this.button, this.getAttribute("for"));
   }
 }
 
@@ -132,12 +154,16 @@ export class BlossomNext extends BlossomControl {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: "open" });
-    this.button = createControlButton(shadow, "Next");
+    const style = document.createElement("style");
+    style.textContent = CONTROL_STYLE;
+    shadow.appendChild(style);
+    this.button = createControlButton(shadow, "›", "Next slide");
     this.button.addEventListener("click", () => this.dispatch(COMMANDS.next));
   }
 
   protected update(state: NavigationState): void {
     this.button.disabled = !state.canNext;
+    syncAriaControls(this.button, this.getAttribute("for"));
   }
 }
 
@@ -167,6 +193,10 @@ button {
   opacity: var(--blossom-dot-opacity, 0.35);
   cursor: pointer;
   transition: opacity 0.2s ease;
+}
+
+:where(button) {
+  touch-action: manipulation;
 }
 
 button:hover {

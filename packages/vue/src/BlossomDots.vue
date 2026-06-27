@@ -7,7 +7,7 @@
       class="blossom-dot"
       :command="`${gotoPrefix}${i}`"
       :commandfor="props.for"
-      :aria-current="state.activeIndex === i ? 'true' : undefined"
+      :aria-current="state.activeIndex === i"
       :aria-label="`Go to slide ${i + 1}`"
     >
       <slot :index="i" :active="state.activeIndex === i" />
@@ -53,6 +53,7 @@ const state = useNavigation(toRef(props, "for"));
   opacity: var(--blossom-dot-opacity, 0.35);
   cursor: pointer;
   transition: opacity 0.2s ease;
+  touch-action: manipulation;
 }
 
 :where(.blossom-dot:hover) {

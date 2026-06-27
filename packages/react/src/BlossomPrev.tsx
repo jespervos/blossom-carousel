@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import { useNavigation } from "./useNavigation";
+import "./BlossomPrev.css";
 
 export interface BlossomPrevProps {
   /** Id of the carousel scroller this control targets. */
@@ -17,12 +18,14 @@ function BlossomPrev({ for: forId, children }: BlossomPrevProps) {
 
   return (
     <button
+      blossom-prev=""
       type="button"
       disabled={!state.canPrev}
-      aria-label="Previous"
+      aria-controls={forId}
+      aria-label="Previous slide"
       {...commandAttrs}
     >
-      {children ?? "Previous"}
+      {children ?? "‹"}
     </button>
   );
 }
