@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import { useNavigation } from "./useNavigation";
+import "./BlossomPrev.css";
 
 export interface BlossomPrevProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
@@ -18,11 +19,13 @@ export default function BlossomPrev({
 
   return (
     <button
+      blossom-prev=""
       type="button"
       command={COMMANDS.prev}
       commandfor={carouselId}
       disabled={disabled ?? !state.canPrev}
-      aria-label="Previous"
+      aria-controls={carouselId}
+      aria-label="Previous slide"
       {...props}
     >
       {children}

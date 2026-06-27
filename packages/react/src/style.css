@@ -10,6 +10,7 @@
 :where(.blossom-dot) {
   inline-size: var(--blossom-dot-size, 0.625rem);
   block-size: var(--blossom-dot-size, 0.625rem);
+  touch-action: manipulation;
   padding: 0;
   border: 0;
   border-radius: var(--blossom-dot-radius, 50%);

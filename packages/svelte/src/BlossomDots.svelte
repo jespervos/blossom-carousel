@@ -17,7 +17,7 @@
       class="blossom-dot"
       command="{COMMANDS.gotoPrefix}{index}"
       commandfor={forId}
-      aria-current={$state.activeIndex === index ? "true" : undefined}
+      aria-current={$state.activeIndex === index}
       aria-label="Go to slide {index + 1}"
     >
       <slot {index} active={$state.activeIndex === index} />

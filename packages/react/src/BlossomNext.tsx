@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import { useNavigation } from "./useNavigation";
+import "./BlossomNext.css";
 
 export interface BlossomNextProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
@@ -18,11 +19,13 @@ export default function BlossomNext({
 
   return (
     <button
+      blossom-next=""
       type="button"
       command={COMMANDS.next}
       commandfor={carouselId}
       disabled={disabled ?? !state.canNext}
-      aria-label="Next"
+      aria-controls={carouselId}
+      aria-label="Next slide"
       {...props}
     >
       {children}

@@ -11,7 +11,8 @@ export class BlossomPrev extends HTMLElement {
     this.button.type = "button";
     this.button.setAttribute("command", COMMANDS.prev);
     this.button.setAttribute("commandfor", forId);
-    this.button.setAttribute("aria-label", "Previous");
+    this.button.setAttribute("aria-controls", forId);
+    this.button.setAttribute("aria-label", "Previous slide");
     this.button.textContent = this.textContent?.trim() || "Previous";
     this.replaceChildren(this.button);
 

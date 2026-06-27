@@ -11,11 +11,19 @@
 </script>
 
 <button
+  blossom-next
   type="button"
   command={COMMANDS.next}
   commandfor={forId}
   disabled={!$state.canNext}
-  aria-label="Next"
+  aria-controls={forId}
+  aria-label="Next slide"
 >
-  <slot>Next</slot>
+  <slot>›</slot>
 </button>
+
+<style>
+  :where([blossom-next]) {
+    touch-action: manipulation;
+  }
+</style>

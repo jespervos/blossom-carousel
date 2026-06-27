@@ -19,7 +19,7 @@ export default function BlossomDots({ for: carouselId, children }: BlossomDotsPr
           className="blossom-dot"
           command={`${COMMANDS.gotoPrefix}${index}`}
           commandfor={carouselId}
-          aria-current={state.activeIndex === index ? "true" : undefined}
+          aria-current={state.activeIndex === index}
           aria-label={`Go to slide ${index + 1}`}
         >
           {children?.({ index, active: state.activeIndex === index })}

@@ -11,7 +11,8 @@ export class BlossomNext extends HTMLElement {
     this.button.type = "button";
     this.button.setAttribute("command", COMMANDS.next);
     this.button.setAttribute("commandfor", forId);
-    this.button.setAttribute("aria-label", "Next");
+    this.button.setAttribute("aria-controls", forId);
+    this.button.setAttribute("aria-label", "Next slide");
     this.button.textContent = this.textContent?.trim() || "Next";
     this.replaceChildren(this.button);
 
