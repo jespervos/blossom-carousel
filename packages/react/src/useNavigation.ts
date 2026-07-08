@@ -3,6 +3,7 @@ import {
   observeNavigationState,
   registerCommands,
 } from "@blossom-carousel/navigation";
+import { getSlideCount } from "./slideRegistry";
 
 export interface NavigationState {
   activeIndex: number;
@@ -18,11 +19,18 @@ const INITIAL: NavigationState = {
   canNext: false,
 };
 
+function seededState(forId: string): NavigationState {
+  return { ...INITIAL, count: getSlideCount(forId) };
+}
+
 export function useNavigation(forId: string): NavigationState {
-  const [state, setState] = useState<NavigationState>(INITIAL);
+  const [state, setState] = useState<NavigationState>(() => seededState(forId));
 
   useEffect(() => {
-    setState({ ...INITIAL });
+    // Seed (not reset to 0) on every id change, so a `for` change never
+    // flashes an empty dot list before the observer's first callback, and so
+    // client hydration matches the server-rendered dot count.
+    setState(seededState(forId));
     if (!forId) return;
 
     const scroller = document.getElementById(forId);

@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     dts({
       include: ["src/**/*.ts", "src/**/*.tsx"],
+      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     }),
   ],
   build: {

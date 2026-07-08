@@ -7,6 +7,8 @@ import React, {
   useRef,
   JSXElementConstructor,
 } from "react";
+import { countMarkedSlides } from "./countMarkedSlides";
+import { setSlideCount } from "./slideRegistry";
 
 export interface BlossomCarouselHandle {
   prev: (options?: { align?: string }) => void;
@@ -26,6 +28,14 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
     const Component = as as JSXElementConstructor<any>;
     const localRef = useRef<HTMLElement>(null);
     const blossomRef = useRef<ReturnType<typeof import("@blossom-carousel/core").Blossom> | null>(null);
+
+    // Runs during render (server and client) rather than an effect, so a
+    // sibling `BlossomDots` rendered after this carousel — server or client —
+    // can seed its initial dot count before mount. Idempotent: safe to repeat
+    // across re-renders and StrictMode's double-invoke.
+    if (props.id) {
+      setSlideCount(props.id, countMarkedSlides(children));
+    }
 
     useEffect(() => {
       if (!localRef.current) return;
