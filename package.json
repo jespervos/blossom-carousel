@@ -28,6 +28,12 @@
   "workspaces": [
     "packages/*"
   ],
+  "pnpm": {
+    "overrides": {
+      "undici@>=7.0.0 <7.28.0": "^7.28.0",
+      "esbuild@<0.28.1": "^0.28.1"
+    }
+  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@vitejs/plugin-vue": "^6.0.7",
