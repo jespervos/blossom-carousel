@@ -5,6 +5,7 @@
 <p>
 <a href="https://www.npmjs.com/package/@blossom-carousel/core"><img src="https://img.shields.io/npm/v/@blossom-carousel/core.svg?color=%23c1a8e2"></a>
 <a href="https://bundlephobia.com/package/@blossom-carousel/core"><img src="https://img.shields.io/bundlephobia/minzip/@blossom-carousel/core?color=%238ab4f8&label=gzip%20size"></a>
+<a href="https://www.npmjs.com/package/@blossom-carousel/core"><img src="https://img.shields.io/npm/dm/@blossom-carousel/core"></a>
 </p>
 
 Blossom Carousel is the first carousel library that builds on native browser scrolling instead of replacing it. It provides a small drag enhancement for pointer devices while maintaining the core interaction model, performance, and accessibility of a real scroll container.
