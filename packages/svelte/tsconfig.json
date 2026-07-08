@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Node",
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "types": ["svelte"]
+    "types": ["svelte", "vite/client"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "test/**/*", "dev/**/*", "types/**/*", "scripts/**/*"]
 }

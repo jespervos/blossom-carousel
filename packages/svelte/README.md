@@ -8,6 +8,8 @@ A native-scroll-first carousel for Svelte.
 
 [Full installation instructions](https://www.blossom-carousel.com/docs/framework-guides/svelte-sveltekit)
 
+> **v2** requires Svelte 5 (runes + snippets) and drops Svelte 4 support. This is also what enables `BlossomDots`, `BlossomPrev`, and `BlossomNext` to server-render correctly in SvelteKit — see [Navigation controls](#navigation-controls). If you're on Svelte 4, stay on `@blossom-carousel/svelte@1`.
+
 #### Svelte
 
 ```javascript
@@ -77,13 +79,20 @@ import {
 } from "@blossom-carousel/svelte";
 ```
 
-`BlossomPrev` and `BlossomNext` disable automatically at the start and end of the scroll range. Use the default slot to replace the button label.
+`BlossomPrev` and `BlossomNext` disable automatically at the start and end of the scroll range. Pass children to replace the button label.
 
-`BlossomDots` renders one button per marked slide. Use the default slot to customize dot appearance:
+`BlossomDots` renders one button per marked slide — server-rendered, before any client JS runs. Pass a `children` snippet to customize dot appearance:
+
+> **SSR notes**
+>
+> - Place navigation components *after* their carousel in the markup (as in the example above). During server rendering they read the slide count that the carousel registers when it renders, so controls rendered before the carousel start at zero dots and fill in on the client.
+> - When the children of the carousel perform asynchronous work (`await` with SvelteKit's experimental async SSR), the slide count can't be derived on the server; dots then render empty and seed on the client instead.
 
 ```html
-<BlossomDots forId="my-carousel" let:index let:active>
-  <span class:active>{index + 1}</span>
+<BlossomDots forId="my-carousel">
+  {#snippet children({ index, active })}
+    <span class:active>{index + 1}</span>
+  {/snippet}
 </BlossomDots>
 ```
 

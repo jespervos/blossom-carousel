@@ -1,8 +1,8 @@
 <script>
-  import BlossomCarousel from "./BlossomCarousel.svelte";
-  import BlossomPrev from "./BlossomPrev.svelte";
-  import BlossomNext from "./BlossomNext.svelte";
-  import BlossomDots from "./BlossomDots.svelte";
+  import BlossomCarousel from "../src/BlossomCarousel.svelte";
+  import BlossomPrev from "../src/BlossomPrev.svelte";
+  import BlossomNext from "../src/BlossomNext.svelte";
+  import BlossomDots from "../src/BlossomDots.svelte";
 </script>
 
 <div class="page">

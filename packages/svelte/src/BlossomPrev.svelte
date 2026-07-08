@@ -1,13 +1,24 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import type { Snippet } from "svelte";
   import { COMMANDS } from "@blossom-carousel/navigation";
-  import { createNavigationStore } from "./navigation";
+  import { createNavigationStore } from "./navigation.js";
 
-  export let forId: string;
+  interface Props {
+    forId: string;
+    children?: Snippet;
+  }
 
-  const state = createNavigationStore();
-  $: state.connect(forId);
-  onDestroy(() => state.disconnect());
+  let { forId, children }: Props = $props();
+
+  // Seeds the initial (SSR/pre-mount) count once; the $effect below reacts
+  // to later `forId` changes via `nav.connect()`.
+  // svelte-ignore state_referenced_locally
+  const nav = createNavigationStore(forId);
+
+  $effect(() => {
+    nav.connect(forId);
+    return () => nav.disconnect();
+  });
 </script>
 
 <button
@@ -15,11 +26,15 @@
   type="button"
   command={COMMANDS.prev}
   commandfor={forId}
-  disabled={!$state.canPrev}
+  disabled={!$nav.canPrev}
   aria-controls={forId}
   aria-label="Previous slide"
 >
-  <slot>‹</slot>
+  {#if children}
+    {@render children()}
+  {:else}
+    ‹
+  {/if}
 </button>
 
 <style>
