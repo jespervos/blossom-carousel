@@ -14,7 +14,8 @@
   "homepage": "https://www.blossom-carousel.com",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "main": "dist/blossom-carousel-core.umd.cjs",
   "module": "dist/blossom-carousel-core.js",

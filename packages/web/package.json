@@ -34,7 +34,8 @@
   ],
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "main": "dist/blossom-carousel-web.umd.js",
   "module": "dist/blossom-carousel-web.es.js",

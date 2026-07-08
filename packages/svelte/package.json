@@ -34,7 +34,8 @@
   ],
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
