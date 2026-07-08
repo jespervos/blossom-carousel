@@ -5,7 +5,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, shallowRef } from "vue";
+import {
+  getCurrentInstance,
+  onMounted,
+  onBeforeUnmount,
+  shallowRef,
+  useAttrs,
+  useSlots,
+  watchEffect,
+} from "vue";
+import { countMarkedSlideVnodes } from "./countMarkedSlides";
+import { setSlideCount } from "./slideRegistry";
 
 const props = defineProps({
   as: {
@@ -24,6 +34,18 @@ const props = defineProps({
 
 let blossom = null as any;
 const root = shallowRef<HTMLElement | null>(null);
+const attrs = useAttrs();
+const slots = useSlots();
+const app = getCurrentInstance()!.appContext.app;
+
+watchEffect(() => {
+  const id = attrs.id as string | undefined;
+  if (!id) return;
+
+  const vnodes = slots.default?.() ?? [];
+  setSlideCount(app, id, countMarkedSlideVnodes(vnodes));
+});
+
 defineExpose({
   el: root,
   prev: () => blossom?.prev({ align: "center" }),

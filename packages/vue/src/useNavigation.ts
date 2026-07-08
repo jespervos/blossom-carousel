@@ -1,8 +1,9 @@
-import { onMounted, onBeforeUnmount, ref, watch, type Ref } from "vue";
+import { getCurrentInstance, onMounted, onBeforeUnmount, ref, watch, type Ref } from "vue";
 import {
   observeNavigationState,
   registerCommands,
 } from "@blossom-carousel/navigation";
+import { getSlideCount } from "./slideRegistry";
 
 // Re-declared locally (rather than imported) so the generated declaration files
 // don't reference the internal, unpublished navigation package.
@@ -27,8 +28,20 @@ const INITIAL: NavigationState = {
  * Blossom isn't initialized.
  */
 export function useNavigation(forId: Ref<string>): Ref<NavigationState> {
-  const state = ref<NavigationState>({ ...INITIAL });
+  // Captured once, in setup scope: getCurrentInstance() returns null once we're
+  // inside a watch callback or lifecycle-hook microtask, so it can't be read lazily.
+  const app = getCurrentInstance()?.appContext.app;
+
+  function seededState(id: string | undefined): NavigationState {
+    const count = app ? getSlideCount(app, id) : 0;
+    return { ...INITIAL, count };
+  }
+
+  const state = ref<NavigationState>(seededState(forId.value));
   let cleanup: (() => void) | null = null;
+  // Distinguishes "not yet mounted" from "attach() ran but found nothing", so a
+  // pre-mount `forId` change doesn't get mistaken for a live attachment to retry.
+  let mounted = false;
 
   function detach(): void {
     cleanup?.();
@@ -37,7 +50,7 @@ export function useNavigation(forId: Ref<string>): Ref<NavigationState> {
 
   function attach(id: string | undefined): void {
     detach();
-    state.value = { ...INITIAL };
+    state.value = seededState(id);
     if (!id) return;
 
     const scroller = document.getElementById(id);
@@ -53,8 +66,22 @@ export function useNavigation(forId: Ref<string>): Ref<NavigationState> {
     };
   }
 
-  onMounted(() => attach(forId.value));
-  watch(forId, (id) => attach(id));
+  watch(
+    forId,
+    (id) => {
+      if (mounted) {
+        attach(id);
+        return;
+      }
+      state.value = seededState(id);
+    },
+    { flush: "sync" },
+  );
+
+  onMounted(() => {
+    mounted = true;
+    attach(forId.value);
+  });
   onBeforeUnmount(detach);
 
   return state;
