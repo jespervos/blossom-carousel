@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
+## 2.1.1 (2026-07-15)
+
+### Fixed
+
+- Forward HTML attributes (e.g. `class`) from `BlossomDots`, `BlossomPrev`, and `BlossomNext` to their root elements.
+
 ## 2.1.0 (2026-07-15)
 
 ### Added

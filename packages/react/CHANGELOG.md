@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.5.1 (2026-07-15)
+
+### Fixed
+
+- Forward HTML attributes (e.g. `className`) from `BlossomDots` to its root element.
+
 ## 1.5.0 (2026-07-15)
 
 ### Added

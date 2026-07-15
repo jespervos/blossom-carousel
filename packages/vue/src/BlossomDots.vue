@@ -23,7 +23,7 @@ function usesCustomSlot(): boolean {
 </script>
 
 <template>
-  <div data-blossom-dots role="group" aria-label="Choose slide to display">
+  <div data-blossom-dots role="group" aria-label="Choose slide to display" v-bind="$attrs">
     <template v-if="usesCustomSlot()">
       <DotScope
         v-for="(_, i) in state.count"

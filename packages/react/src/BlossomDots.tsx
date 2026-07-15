@@ -3,7 +3,8 @@ import { COMMANDS } from "@blossom-carousel/navigation";
 import DotScope from "./DotScope";
 import { useNavigation } from "./useNavigation";
 
-export interface BlossomDotsProps {
+export interface BlossomDotsProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   for: string;
   children?: (props: { index: number; active: boolean }) => ReactNode;
 }
@@ -21,12 +22,18 @@ function usesCustomRender(
 export default function BlossomDots({
   for: carouselId,
   children,
+  ...props
 }: BlossomDotsProps) {
   const state = useNavigation(carouselId);
   const custom = usesCustomRender(children);
 
   return (
-    <div data-blossom-dots role="group" aria-label="Choose slide to display">
+    <div
+      data-blossom-dots
+      role="group"
+      aria-label="Choose slide to display"
+      {...props}
+    >
       {custom
         ? Array.from({ length: state.count }, (_, index) => {
             const active = state.activeIndex === index;

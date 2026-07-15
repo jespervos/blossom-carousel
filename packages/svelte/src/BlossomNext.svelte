@@ -6,9 +6,10 @@
   interface Props {
     forId: string;
     children?: Snippet;
+    [key: string]: unknown;
   }
 
-  let { forId, children }: Props = $props();
+  let { forId, children, ...rest }: Props = $props();
 
   // Seeds the initial (SSR/pre-mount) count once; the $effect below reacts
   // to later `forId` changes via `nav.connect()`.
@@ -29,6 +30,7 @@
   disabled={!$nav.canNext}
   aria-controls={forId}
   aria-label="Next slide"
+  {...rest}
 >
   {#if children}
     {@render children()}

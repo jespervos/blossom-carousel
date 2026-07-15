@@ -7,9 +7,10 @@
   interface Props {
     forId: string;
     children?: Snippet<[{ index: number; active: boolean }]>;
+    [key: string]: unknown;
   }
 
-  let { forId, children }: Props = $props();
+  let { forId, children, ...rest }: Props = $props();
 
   // Seeds the initial (SSR/pre-mount) count once; the $effect below reacts
   // to later `forId` changes via `nav.connect()`.
@@ -22,7 +23,12 @@
   });
 </script>
 
-<div data-blossom-dots role="group" aria-label="Choose slide to display">
+<div
+  data-blossom-dots
+  role="group"
+  aria-label="Choose slide to display"
+  {...rest}
+>
   {#if children}
     {#each Array.from({ length: $nav.count }, (_, index) => index) as index (index)}
       <DotScope
