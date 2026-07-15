@@ -25,10 +25,21 @@
       </blossom-carousel>
       <div class="controls">
         <blossom-prev for="my-carousel"></blossom-prev>
-        <blossom-dots for="my-carousel"></blossom-dots>
+        <blossom-dots for="my-carousel" id="dots"></blossom-dots>
         <blossom-next for="my-carousel"></blossom-next>
       </div>
     </div>
     <script type="module" src="src/index.ts"></script>
+    <script type="module">
+      // renderDot mirrors the index/active render-prop in the other
+      // framework packages: it runs per dot, so content can vary by index.
+      document.getElementById("dots").renderDot = (index, active) => {
+        const button = document.createElement("button");
+        button.setAttribute("data-blossom-dot", "");
+        button.dataset.active = String(active);
+        button.textContent = `${index + 1}`;
+        return button;
+      };
+    </script>
   </body>
 </html>

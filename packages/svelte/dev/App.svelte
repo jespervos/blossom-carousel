@@ -3,6 +3,7 @@
   import BlossomPrev from "../src/BlossomPrev.svelte";
   import BlossomNext from "../src/BlossomNext.svelte";
   import BlossomDots from "../src/BlossomDots.svelte";
+  import BlossomDot from "../src/BlossomDot.svelte";
 </script>
 
 <div class="page">
@@ -14,7 +15,13 @@
   </BlossomCarousel>
   <div class="controls">
     <BlossomPrev forId="my-carousel" />
-    <BlossomDots forId="my-carousel" />
+    <BlossomDots forId="my-carousel">
+      {#snippet children({ index, active })}
+        <BlossomDot class="dot" data-active={active}>
+          <img src="https://placehold.co/40x40" alt="Image {index + 1}" />
+        </BlossomDot>
+      {/snippet}
+    </BlossomDots>
     <BlossomNext forId="my-carousel" />
   </div>
 </div>

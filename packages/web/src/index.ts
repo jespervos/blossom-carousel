@@ -2,7 +2,9 @@ import { Blossom } from "@blossom-carousel/core";
 import "./style.css";
 import "./BlossomPrev";
 import "./BlossomNext";
+import "./BlossomDot";
 import "./BlossomDots";
+import "./BlossomDots.css";
 
 export class BlossomCarousel extends HTMLElement {
   private carouselInstance!: ReturnType<typeof Blossom>;
@@ -39,4 +41,5 @@ customElements.define("blossom-carousel", BlossomCarousel);
 
 export { BlossomPrev } from "./BlossomPrev";
 export { BlossomNext } from "./BlossomNext";
+export { BlossomDot } from "./BlossomDot";
 export { BlossomDots } from "./BlossomDots";

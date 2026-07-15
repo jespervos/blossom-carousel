@@ -1,35 +1,36 @@
 @import "@blossom-carousel/core/style.css";
 
-:where(.blossom-dots) {
+:where([data-blossom-dots]) {
   display: flex;
   gap: var(--blossom-dots-gap, 0.5rem);
   align-items: center;
   justify-content: center;
 }
 
-:where(.blossom-dot) {
-  inline-size: var(--blossom-dot-size, 0.625rem);
-  block-size: var(--blossom-dot-size, 0.625rem);
-  touch-action: manipulation;
+:where([data-blossom-dot]) {
   padding: 0;
   border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+:where([data-blossom-dot-marker]) {
+  display: block;
+  inline-size: var(--blossom-dot-size, 0.625rem);
+  block-size: var(--blossom-dot-size, 0.625rem);
   border-radius: var(--blossom-dot-radius, 50%);
   background: var(--blossom-dot-color, currentColor);
   opacity: var(--blossom-dot-opacity, 0.35);
-  cursor: pointer;
   transition: opacity 0.2s ease;
 }
 
-:where(.blossom-dot:hover) {
+:where([data-blossom-dot]:hover [data-blossom-dot-marker]) {
   opacity: var(--blossom-dot-hover-opacity, 0.6);
 }
 
-:where(.blossom-dot[aria-current="true"]) {
+:where([data-blossom-dot][aria-current="true"] [data-blossom-dot-marker]) {
   opacity: var(--blossom-dot-active-opacity, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :where(.blossom-dot) {
-    transition: none;
-  }
 }

@@ -95,7 +95,7 @@ describe("packaging", () => {
 
     expect(body).toContain('blossom-carousel="true"');
     expect(body.match(/data-blossom-slide/g)?.length).toBe(4);
-    expect(body.match(/class="blossom-dot"/g)?.length).toBe(4);
+    expect(body.match(/<button[^>]*data-blossom-dot/g)?.length).toBe(4);
     expect(body).toContain('commandfor="dist-carousel"');
   });
 });

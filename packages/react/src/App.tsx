@@ -2,6 +2,7 @@ import BlossomCarousel from "./BlossomCarousel";
 import BlossomPrev from "./BlossomPrev";
 import BlossomNext from "./BlossomNext";
 import BlossomDots from "./BlossomDots";
+import BlossomDot from "./BlossomDot";
 
 export default function App() {
   return (
@@ -16,7 +17,13 @@ export default function App() {
       </BlossomCarousel>
       <div className="controls">
         <BlossomPrev for="my-carousel" />
-        <BlossomDots for="my-carousel" />
+        <BlossomDots for="my-carousel">
+          {({ index, active }) => (
+            <BlossomDot className="dot" data-active={active}>
+              <img src="https://placehold.co/40x40" />
+            </BlossomDot>
+          )}
+        </BlossomDots>
         <BlossomNext for="my-carousel" />
       </div>
     </div>

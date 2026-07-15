@@ -2,6 +2,19 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.5.0 (2026-07-15)
+
+### Added
+
+- Added `BlossomDot` for fully custom dot buttons with navigation and accessibility attributes wired automatically.
+- Added custom dot rendering on `BlossomDots` via a `children` render prop — return a `<BlossomDot>` to replace the default marker and control markup per slide.
+
+### Changed
+
+- **Breaking:** Default dot styling hooks moved from `.blossom-dots` / `.blossom-dot` classes to `data-blossom-dots`, `data-blossom-dot`, and `data-blossom-dot-marker` attributes; update selectors when overriding default dot styles.
+- **Breaking:** A `children` render prop on `BlossomDots` now replaces the entire default dot button — render `<BlossomDot>` explicitly instead of injecting content into the built-in marker.
+- Default dots now render a `<span data-blossom-dot-marker>` inside the button so custom dot content and themed markers can coexist; dot sizing and opacity custom properties target the marker.
+
 ## 1.4.0 (2026-07-08)
 
 ### Added

@@ -1,6 +1,6 @@
 {
   "name": "@blossom-carousel/svelte",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Jesper Vos",
   "license": "MIT",
   "description": "A native-scroll-first carousel component for Svelte.",

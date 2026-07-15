@@ -44,8 +44,20 @@ describe("SSR dots", () => {
     const mod = await server.ssrLoadModule("./test/ssrRenderFixture.ts");
     const body: string = mod.renderFixture();
 
-    expect(body.match(/class="blossom-dot"/g)?.length).toBe(4);
+    expect(body.match(/<button[^>]*data-blossom-dot/g)?.length).toBe(4);
+    expect(body.match(/data-blossom-dot-marker/g)?.length).toBe(4);
     expect(body).toContain('commandfor="my-carousel"');
+  });
+
+  it("merges command props onto BlossomDot elements", async () => {
+    const mod = await server.ssrLoadModule("./test/ssrRenderFixture.ts");
+    const body: string = mod.renderSlottedFixture();
+
+    expect(body.match(/<button[^>]*data-blossom-dot/g)?.length).toBe(3);
+    expect(body.match(/class="my-dot"/g)?.length).toBe(3);
+    expect(body.match(/commandfor="my-carousel"/g)?.length).toBe(3);
+    expect(body.match(/command="--blossom-goto-/g)?.length).toBe(3);
+    expect(body).toContain('aria-label="Photo 1"');
   });
 
   it("forwards the carousel's contexts into the probe render", async () => {
@@ -54,7 +66,7 @@ describe("SSR dots", () => {
 
     // The slides call `getContext` — the probe render (which derives the dot
     // count) must see the same context values as the real render.
-    expect(body.match(/class="blossom-dot"/g)?.length).toBe(3);
+    expect(body.match(/<button[^>]*data-blossom-dot/g)?.length).toBe(3);
   });
 
   it("cleans up the slide count registry when the render completes", async () => {

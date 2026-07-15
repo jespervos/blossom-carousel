@@ -1,5 +1,6 @@
 import { render } from "svelte/server";
 import SsrFixture from "./SsrFixture.svelte";
+import SlottedSsrFixture from "./SlottedSsrFixture.svelte";
 import ContextFixture from "./ContextFixture.svelte";
 
 /**
@@ -11,6 +12,10 @@ import ContextFixture from "./ContextFixture.svelte";
  */
 export function renderFixture(): string {
   return render(SsrFixture).body;
+}
+
+export function renderSlottedFixture(): string {
+  return render(SlottedSsrFixture).body;
 }
 
 /** Fixture whose slides depend on `getContext` set outside the carousel. */

@@ -2,6 +2,18 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
+## 1.4.0 (2026-07-15)
+
+### Added
+
+- Added `<blossom-dot>` custom element as a hidden prototype cloned into `<blossom-dots>` for uniform custom markup across all dots.
+- Added `renderDot` property on `<blossom-dots>` — a callback `(index, active, forId)` for per-slide dot content (e.g. thumbnails); takes priority over the `<blossom-dot>` prototype.
+
+### Changed
+
+- **Breaking:** Default dot styling hooks moved from `.blossom-dots` / `.blossom-dot` classes to `data-blossom-dots`, `data-blossom-dot`, and `data-blossom-dot-marker` attributes; update selectors when overriding default dot styles.
+- Default dots now render a `<span data-blossom-dot-marker>` inside the button so custom dot content and themed markers can coexist; dot sizing and opacity custom properties target the marker.
+
 ## 1.3.2 (2026-06-27)
 
 ### Changed

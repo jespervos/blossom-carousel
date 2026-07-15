@@ -2,6 +2,7 @@
   import type { Snippet } from "svelte";
   import { COMMANDS } from "@blossom-carousel/navigation";
   import { createNavigationStore } from "./navigation.js";
+  import DotScope from "./DotScope.svelte";
 
   interface Props {
     forId: string;
@@ -21,17 +22,29 @@
   });
 </script>
 
-<div class="blossom-dots" role="group" aria-label="Choose slide to display">
-  {#each Array.from({ length: $nav.count }, (_, index) => index) as index (index)}
-    <button
-      type="button"
-      class="blossom-dot"
-      command="{COMMANDS.gotoPrefix}{index}"
-      commandfor={forId}
-      aria-current={$nav.activeIndex === index}
-      aria-label="Go to slide {index + 1}"
-    >
-      {@render children?.({ index, active: $nav.activeIndex === index })}
-    </button>
-  {/each}
+<div data-blossom-dots role="group" aria-label="Choose slide to display">
+  {#if children}
+    {#each Array.from({ length: $nav.count }, (_, index) => index) as index (index)}
+      <DotScope
+        {index}
+        active={$nav.activeIndex === index}
+        {forId}
+        {children}
+      />
+    {/each}
+  {:else}
+    {#each Array.from({ length: $nav.count }, (_, index) => index) as index (index)}
+      <button
+        type="button"
+        data-blossom-dot
+        command="{COMMANDS.gotoPrefix}{index}"
+        commandfor={forId}
+        aria-controls={forId}
+        aria-current={$nav.activeIndex === index}
+        aria-label="Go to slide {index + 1}"
+      >
+        <span data-blossom-dot-marker></span>
+      </button>
+    {/each}
+  {/if}
 </div>

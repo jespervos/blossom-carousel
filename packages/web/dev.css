@@ -57,3 +57,19 @@ body {
   align-items: center;
   margin-block-start: 1.5rem;
 }
+
+.dot {
+  opacity: 0.4;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.dot[data-active="true"] {
+  opacity: 1;
+}
+
+.dot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

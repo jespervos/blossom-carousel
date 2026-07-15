@@ -3,6 +3,7 @@ import BlossomCarousel from "./BlossomCarousel.vue";
 import BlossomPrev from "./BlossomPrev.vue";
 import BlossomNext from "./BlossomNext.vue";
 import BlossomDots from "./BlossomDots.vue";
+import BlossomDot from "./BlossomDot.vue";
 </script>
 
 <template>
@@ -17,7 +18,13 @@ import BlossomDots from "./BlossomDots.vue";
     </BlossomCarousel>
     <div class="controls">
       <BlossomPrev for="my-carousel" />
-      <BlossomDots for="my-carousel" />
+      <BlossomDots for="my-carousel">
+        <template #default="{ index, active }">
+          <BlossomDot :data-active="active" :aria-label="`Go to image ${index + 1}`">
+            <img src="https://placehold.co/40x40" />
+          </BlossomDot>
+        </template>
+      </BlossomDots>
       <BlossomNext for="my-carousel" />
     </div>
   </div>
@@ -72,5 +79,13 @@ import BlossomDots from "./BlossomDots.vue";
   gap: 1rem;
   align-items: center;
   margin-block-start: 1.5rem;
+}
+
+.dot {
+  opacity: 0.4;
+
+  &[data-active="true"] {
+    opacity: 1;
+  }
 }
 </style>

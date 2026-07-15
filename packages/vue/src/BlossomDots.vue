@@ -1,38 +1,54 @@
-<template>
-  <div class="blossom-dots" role="group" aria-label="Choose slide to display">
-    <button
-      v-for="(_, i) in state.count"
-      :key="i"
-      type="button"
-      class="blossom-dot"
-      :command="`${gotoPrefix}${i}`"
-      :commandfor="props.for"
-      :aria-current="state.activeIndex === i"
-      :aria-label="`Go to slide ${i + 1}`"
-    >
-      <slot :index="i" :active="state.activeIndex === i" />
-    </button>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { toRef } from "vue";
+import { Comment, toRef, type VNode } from "vue";
 import { COMMANDS } from "@blossom-carousel/navigation";
+import DotScope from "./DotScope.vue";
 import { useNavigation } from "./useNavigation";
 
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps<{ for: string }>();
+const slots = defineSlots<{
+  default?: (props: { index: number; active: boolean }) => VNode[];
+}>();
 
 const gotoPrefix = COMMANDS.gotoPrefix;
 const state = useNavigation(toRef(props, "for"));
+
+/** Slot exists even for comment-only content between tags; ignore those. */
+function usesCustomSlot(): boolean {
+  return (slots.default?.({ index: 0, active: false }) ?? []).some(
+    (node) => node.type !== Comment,
+  );
+}
 </script>
 
-<!--
-  Dot defaults live in @blossom-carousel/vue/style.css and are wrapped in
-  :where() so they carry zero specificity: any consumer rule (e.g. a plain
-  `.blossom-dot { ... }`) overrides them without specificity battles.
-  The themeable values are also exposed as custom properties:
-    --blossom-dots-gap, --blossom-dot-size, --blossom-dot-radius,
-    --blossom-dot-color, --blossom-dot-opacity, --blossom-dot-hover-opacity,
-    --blossom-dot-active-opacity
-  These inherit, so they can be set on the component or any ancestor.
--->
+<template>
+  <div data-blossom-dots role="group" aria-label="Choose slide to display">
+    <template v-if="usesCustomSlot()">
+      <DotScope
+        v-for="(_, i) in state.count"
+        :key="`dot-${i}`"
+        :index="i"
+        :active="state.activeIndex === i"
+        :for-id="props.for"
+      >
+        <slot :index="i" :active="state.activeIndex === i" />
+      </DotScope>
+    </template>
+    <template v-else>
+      <button
+        v-for="(_, i) in state.count"
+        :key="`dot-${i}`"
+        type="button"
+        data-blossom-dot
+        :command="`${gotoPrefix}${i}`"
+        :commandfor="props.for"
+        :aria-controls="props.for"
+        :aria-current="state.activeIndex === i"
+        :aria-label="`Go to slide ${i + 1}`"
+      >
+        <span data-blossom-dot-marker />
+      </button>
+    </template>
+  </div>
+</template>

@@ -37,7 +37,7 @@ export default function Page() {
 ```jsx
 <BlossomCarousel>
   {Array.from({ length: 12 }, (_, i) => (
-    <div>{i}</div>
+    <div key={i}>Slide {i + 1}</div>
   ))}
 </BlossomCarousel>
 ```
@@ -49,7 +49,7 @@ Define the HTMLElement of the carousel root.
 ```jsx
 <BlossomCarousel as="ul">
   {Array.from({ length: 12 }, (_, i) => (
-    <div>{i}</div>
+    <li key={i}>Slide {i + 1}</li>
   ))}
 </BlossomCarousel>
 ```
@@ -67,48 +67,106 @@ Renders as
 
 ### Navigation controls
 
-`BlossomPrev`, `BlossomNext`, and `BlossomDots` wire up prev/next and dot navigation using the native Invoker Commands API. They work without a Blossom ref — give the carousel an `id`, mark slides with `data-blossom-slide`, and point controls at that id with the `for` prop.
+Place previous, next, and dot controls outside the carousel with `<BlossomPrev>`, `<BlossomNext>`, and `<BlossomDots>`. Link them to the carousel with an `id` on `<BlossomCarousel>`, and a matching `for` prop on each control and mark slides with `data-blossom-slide`.
 
 ```jsx
 <BlossomCarousel id="my-carousel">
-  <ul>
-    {Array.from({ length: 12 }, (_, i) => (
-      <li key={i} data-blossom-slide>
-        Slide {i + 1}
-      </li>
-    ))}
-  </ul>
+  {Array.from({ length: 12 }, (_, i) => (
+    <div key={i} data-blossom-slide>
+      Slide {i + 1}
+    </div>
+  ))}
 </BlossomCarousel>
 
-<div className="controls">
-  <BlossomPrev for="my-carousel" />
-  <BlossomDots for="my-carousel" />
-  <BlossomNext for="my-carousel" />
-</div>
+<BlossomPrev for="my-carousel" />
+<BlossomDots for="my-carousel" />
+<BlossomNext for="my-carousel" />
 ```
+
+#### Prev/Next Buttons
+`<BlossomPrev>` and `<BlossomNext>` are aware of configured scroll-snap and will navigate between snap points. When no scroll-snap is configured, they will slide the carousel proportionally.
+
+Pass children to replace the default button icon.
 
 ```jsx
-import {
-  BlossomCarousel,
-  BlossomPrev,
-  BlossomNext,
-  BlossomDots,
-} from "@blossom-carousel/react";
+<BlossomPrev for="my-carousel">
+  <span>Previous</span>
+</BlossomPrev>
 ```
 
-`BlossomPrev` and `BlossomNext` disable automatically at the start and end of the scroll range. Pass children to replace the button label.
+#### Dots
+`<BlossomDots>` renders one button per slide marked with `data-blossom-slide`.
+Default styles can be themed with CSS custom properties on the component or any ancestor:
 
-`BlossomDots` renders one button per marked slide. Pass a render function to customize dot appearance:
+```css
+/* defaults */
+--blossom-dot-size: 0.625rem;
+--blossom-dot-radius: 50%;
+--blossom-dot-color: currentColor;
+--blossom-dot-opacity: 0.35;
+--blossom-dot-hover-opacity: 0.6;
+--blossom-dot-active-opacity: 1;
+```
+
+To bring your own dots, pass a render function and render `<BlossomDot>` inside it. This will configure the dot as a `<button>` with navigation wired up.
+Now you can style the dot as you please and attach any button attributes you need.
 
 ```jsx
 <BlossomDots for="my-carousel">
-  {({ index, active }) => <span className={active ? "active" : ""}>{index + 1}</span>}
+  {({ index, active }) => (
+    <BlossomDot
+      className="my-dot"
+      data-active={active}
+      aria-label={`Photo ${index + 1}`}
+    >
+      {index + 1}
+    </BlossomDot>
+  )}
 </BlossomDots>
 ```
 
-Dot defaults can be themed with CSS custom properties on the component or any ancestor:
+#### Listening for commands
+Listen for `command` events on the carousel to know when any navigation control is triggered:
+- previous (`--blossom-prev`)
+- next (`--blossom-next`)
+- dot (`--blossom-goto-{index}`).
 
-`--blossom-dots-gap`, `--blossom-dot-size`, `--blossom-dot-radius`, `--blossom-dot-color`, `--blossom-dot-opacity`, `--blossom-dot-hover-opacity`, `--blossom-dot-active-opacity`
+These events are not fired by drag or free scrolling. Read `event.command` (or `event.detail.command` where the Invoker Commands polyfill applies).
+
+```jsx
+<BlossomCarousel onCommand={handleCommand}>
+  {Array.from({ length: 12 }, (_, i) => (
+    <div key={i} data-blossom-slide>
+      Slide {i + 1}
+    </div>
+  ))}
+</BlossomCarousel>
+
+function handleCommand(event) {
+  const command = event?.command || event?.detail?.command;
+}
+```
+
+## Overscroll API
+
+Tap into Blossom's drag engine's overscroll behavior to create your own style.
+
+```jsx
+<BlossomCarousel
+  onOverscroll={(event) => {
+    event.preventDefault();
+    const overScroll = event.detail.left;
+
+    Array.from(event.currentTarget.children).forEach((slide) => {
+      slide.style.transform = `scale(${1 - overScroll * 0.1})`;
+    });
+  }}
+>
+  {Array.from({ length: 12 }, (_, i) => (
+    <div key={i}>Slide {i + 1}</div>
+  ))}
+</BlossomCarousel>
+```
 
 ## Examples
 
