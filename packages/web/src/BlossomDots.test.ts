@@ -60,7 +60,7 @@ describe("BlossomDots renderDot", () => {
     await nextFrame();
     await nextFrame();
 
-    const buttons = dots.querySelectorAll(":scope > button");
+    const buttons = dots.querySelectorAll<HTMLButtonElement>(":scope > button");
     expect(buttons).toHaveLength(3);
     expect(buttons[0].className).toBe("custom");
     expect(buttons[0].textContent).toBe("dot-0");
@@ -85,7 +85,7 @@ describe("BlossomDots renderDot", () => {
       return button;
     };
 
-    const buttons = dots.querySelectorAll(":scope > button");
+    const buttons = dots.querySelectorAll<HTMLButtonElement>(":scope > button");
     expect(buttons).toHaveLength(3);
     expect(buttons[0].hasAttribute("data-blossom-dot")).toBe(false);
     expect(buttons[0].textContent).toBe("dot-0");
@@ -130,10 +130,10 @@ describe("BlossomDots in-place updates", () => {
   });
 
   it("skips work when count and activeIndex are unchanged", () => {
-    const buttons = [...dots.querySelectorAll(":scope > button")];
+    const buttons = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     renderDots(dots, { count: 3, activeIndex: 0 });
 
-    const after = [...dots.querySelectorAll(":scope > button")];
+    const after = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     expect(after).toHaveLength(3);
     expect(after[0]).toBe(buttons[0]);
     expect(after[1]).toBe(buttons[1]);
@@ -141,10 +141,10 @@ describe("BlossomDots in-place updates", () => {
   });
 
   it("patches default dots in place when only activeIndex changes", () => {
-    const buttons = [...dots.querySelectorAll(":scope > button")];
+    const buttons = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     renderDots(dots, { count: 3, activeIndex: 1 });
 
-    const after = [...dots.querySelectorAll(":scope > button")];
+    const after = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     expect(after[0]).toBe(buttons[0]);
     expect(after[1]).toBe(buttons[1]);
     expect(after[2]).toBe(buttons[2]);
@@ -154,10 +154,10 @@ describe("BlossomDots in-place updates", () => {
   });
 
   it("rebuilds all dots when count changes", () => {
-    const buttons = [...dots.querySelectorAll(":scope > button")];
+    const buttons = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     renderDots(dots, { count: 4, activeIndex: 0 });
 
-    const after = [...dots.querySelectorAll(":scope > button")];
+    const after = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     expect(after).toHaveLength(4);
     expect(after[0]).not.toBe(buttons[0]);
   });
@@ -173,14 +173,14 @@ describe("BlossomDots in-place updates", () => {
     (dots as HTMLElement & { renderDot?: unknown }).renderDot = renderDot;
     renderDot.mockClear();
 
-    const buttons = [...dots.querySelectorAll(":scope > button")];
+    const buttons = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     renderDots(dots, { count: 3, activeIndex: 1 });
 
     expect(renderDot).toHaveBeenCalledTimes(2);
     expect(renderDot).toHaveBeenCalledWith(0, false, "my-carousel");
     expect(renderDot).toHaveBeenCalledWith(1, true, "my-carousel");
 
-    const after = [...dots.querySelectorAll(":scope > button")];
+    const after = [...dots.querySelectorAll<HTMLButtonElement>(":scope > button")];
     expect(after[0]).not.toBe(buttons[0]);
     expect(after[1]).not.toBe(buttons[1]);
     expect(after[2]).toBe(buttons[2]);

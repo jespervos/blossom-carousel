@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
+## 2.1.2 (2026-07-24)
+
+### Changed
+
+- Updated `@blossom-carousel/core` dependency to `^1.1.8`.
+
 ## 2.1.1 (2026-07-15)
 
 ### Fixed

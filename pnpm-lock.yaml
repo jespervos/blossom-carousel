@@ -44,35 +44,13 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(@microsoft/api-extractor@7.58.1(@types/node@25.8.0))(@vue/language-core@3.1.8(typescript@6.0.3))(esbuild@0.28.1)(rolldown@1.1.4)(rollup@4.60.4)(typescript@6.0.3)(vite@8.1.3(@types/node@25.8.0)(esbuild@0.28.1))
 
-  packages/dev:
-    dependencies:
-      '@blossom-carousel/core':
-        specifier: workspace:^
-        version: link:../core
-      vue:
-        specifier: ^3.5.13
-        version: 3.5.29(typescript@6.0.3)
-    devDependencies:
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.7
-        version: 6.0.7(vite@8.1.3(@types/node@25.8.0)(esbuild@0.28.1))(vue@3.5.29(typescript@6.0.3))
-      '@vue/language-core':
-        specifier: ^3.1.8
-        version: 3.1.8(typescript@6.0.3)
-      vite:
-        specifier: ^8.1.3
-        version: 8.1.3(@types/node@25.8.0)(esbuild@0.28.1)
-      vite-plugin-dts:
-        specifier: ^5.0.0
-        version: 5.0.0(@microsoft/api-extractor@7.58.1(@types/node@25.8.0))(@vue/language-core@3.1.8(typescript@6.0.3))(esbuild@0.28.1)(rolldown@1.1.4)(rollup@4.60.4)(typescript@6.0.3)(vite@8.1.3(@types/node@25.8.0)(esbuild@0.28.1))
-
   packages/navigation: {}
 
   packages/react:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^1.1.7
-        version: 1.1.7
+        specifier: ^1.1.8
+        version: 1.1.8
       react:
         specifier: '>=18.0.0'
         version: 19.2.4
@@ -99,8 +77,8 @@ importers:
   packages/svelte:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^1.1.7
-        version: 1.1.7
+        specifier: ^1.1.8
+        version: 1.1.8
     devDependencies:
       '@blossom-carousel/navigation':
         specifier: workspace:*
@@ -124,8 +102,8 @@ importers:
   packages/vue:
     dependencies:
       '@blossom-carousel/core':
-        specifier: ^1.1.7
-        version: 1.1.7
+        specifier: ^1.1.8
+        version: 1.1.8
       vue:
         specifier: ^3.5.13
         version: 3.5.29(typescript@6.0.3)
@@ -149,8 +127,8 @@ importers:
   packages/web:
     devDependencies:
       '@blossom-carousel/core':
-        specifier: ^1.1.7
-        version: 1.1.7
+        specifier: ^1.1.8
+        version: 1.1.8
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
@@ -201,8 +179,8 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@blossom-carousel/core@1.1.7':
-    resolution: {integrity: sha512-3HIaczNWmBqKclz9LSekl48Co7Qc1ktRFLwODsC1P9c5sbo3P1y976aHtXQN83K3Hmr9It7cMVYUmE9qRYgcWQ==}
+  '@blossom-carousel/core@1.1.8':
+    resolution: {integrity: sha512-f3/7jS/Ga63N0X7goVkPs0KafSe463y9w4+zE9ZyacjMCT0VSpAQuCQrOpyfyDJ23EONPHgpEyHtscHoRbtGTg==}
 
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
@@ -1811,7 +1789,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@blossom-carousel/core@1.1.7':
+  '@blossom-carousel/core@1.1.8':
     dependencies:
       '@bramus/style-observer': 2.0.2
 

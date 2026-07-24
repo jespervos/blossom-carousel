@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
+## 1.4.1 (2026-07-24)
+
+### Changed
+
+- Updated build-time `@blossom-carousel/core` dependency to `^1.1.8`.
+
 ## 1.4.0 (2026-07-15)
 
 ### Added

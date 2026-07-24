@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.5.2 (2026-07-24)
+
+### Changed
+
+- Updated `@blossom-carousel/core` dependency to `^1.1.8`.
+
 ## 1.5.1 (2026-07-15)
 
 ### Fixed

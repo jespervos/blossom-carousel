@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/core` are documented in this file.
 
+## 1.1.8 (2026-07-24)
+
+### Fixed
+
+- Reset the internal animation target on `pointerdown` to prevent jumpy re-dragging while deceleration is still in progress. [#27](https://github.com/jespervos/blossom-carousel/pull/27)([@alachie](https://github.com/alachie))
+
 ## 1.1.7 (2026-06-02)
 
 ### Fixed

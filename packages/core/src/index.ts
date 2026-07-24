@@ -124,11 +124,11 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
         hasOverflow.x =
         !hasTouch &&
         state.scrollerScrollWidth > state.scrollerWidth &&
-        ["auto", "scroll"].includes(values["overflow-x"].value);
+        ["auto", "scroll"].includes((typeof values["overflow-x"] === "string" ? values["overflow-x"] : values["overflow-x"].value));
         hasOverflow.y =
         !hasTouch &&
         state.scrollerScrollHeight > state.scrollerHeight &&
-        ["auto", "scroll"].includes(values["overflow-y"].value);
+        ["auto", "scroll"].includes((typeof values["overflow-y"] === "string" ? values["overflow-y"] : values["overflow-y"].value));
       },                                                 
       {
         properties: ['overflow-x', 'overflow-y'],
