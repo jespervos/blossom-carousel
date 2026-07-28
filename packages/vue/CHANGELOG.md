@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/vue` are documented in this file.
 
+## 1.5.3 (2026-07-28)
+
+### Fixed
+
+- Hardened SSR safety in navigation hookup by guarding DOM access when `document` is unavailable.
+
 ## 1.5.2 (2026-07-24)
 
 ### Changed

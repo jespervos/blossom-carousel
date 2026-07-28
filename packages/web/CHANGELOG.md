@@ -2,6 +2,13 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
+## 1.4.2 (2026-07-28)
+
+### Fixed
+
+- Improved SSR compatibility by making custom-element modules safe to import in non-browser runtimes.
+- Guarded `customElements.define(...)` calls to avoid duplicate registrations.
+
 ## 1.4.1 (2026-07-24)
 
 ### Changed
