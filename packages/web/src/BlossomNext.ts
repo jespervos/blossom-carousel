@@ -1,7 +1,12 @@
 import { COMMANDS } from "@blossom-carousel/navigation";
 import { connectNavigation, getForId } from "./navigation";
 
-export class BlossomNext extends HTMLElement {
+const HTMLElementBase: typeof HTMLElement =
+  typeof HTMLElement === "undefined"
+    ? (class {} as unknown as typeof HTMLElement)
+    : HTMLElement;
+
+export class BlossomNext extends HTMLElementBase {
   private cleanup?: () => void;
   private button?: HTMLButtonElement;
 
@@ -26,4 +31,9 @@ export class BlossomNext extends HTMLElement {
   }
 }
 
-customElements.define("blossom-next", BlossomNext);
+if (
+  typeof customElements !== "undefined" &&
+  !customElements.get("blossom-next")
+) {
+  customElements.define("blossom-next", BlossomNext);
+}

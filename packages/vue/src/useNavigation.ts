@@ -85,6 +85,7 @@ export function useNavigation(forId: Ref<string>): Ref<NavigationState> {
     detach();
     state.value = seededState(id);
     if (!id) return;
+    if (typeof document === "undefined") return;
 
     const scroller = document.getElementById(id);
     if (!scroller) return;

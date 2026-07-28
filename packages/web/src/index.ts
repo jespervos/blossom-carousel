@@ -6,7 +6,12 @@ import "./BlossomDot";
 import "./BlossomDots";
 import "./BlossomDots.css";
 
-export class BlossomCarousel extends HTMLElement {
+const HTMLElementBase: typeof HTMLElement =
+  typeof HTMLElement === "undefined"
+    ? (class {} as unknown as typeof HTMLElement)
+    : HTMLElement;
+
+export class BlossomCarousel extends HTMLElementBase {
   private carouselInstance!: ReturnType<typeof Blossom>;
 
   constructor() {
@@ -37,7 +42,12 @@ export class BlossomCarousel extends HTMLElement {
   }
 }
 
-customElements.define("blossom-carousel", BlossomCarousel);
+if (
+  typeof customElements !== "undefined" &&
+  !customElements.get("blossom-carousel")
+) {
+  customElements.define("blossom-carousel", BlossomCarousel);
+}
 
 export { BlossomPrev } from "./BlossomPrev";
 export { BlossomNext } from "./BlossomNext";

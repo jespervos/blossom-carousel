@@ -1,6 +1,11 @@
 import { mergeDotElement } from "./dotTemplate";
 
-export class BlossomDot extends HTMLElement {
+const HTMLElementBase: typeof HTMLElement =
+  typeof HTMLElement === "undefined"
+    ? (class {} as unknown as typeof HTMLElement)
+    : HTMLElement;
+
+export class BlossomDot extends HTMLElementBase {
   private button?: HTMLButtonElement;
 
   connectedCallback(): void {
@@ -24,4 +29,9 @@ export class BlossomDot extends HTMLElement {
   }
 }
 
-customElements.define("blossom-dot", BlossomDot);
+if (
+  typeof customElements !== "undefined" &&
+  !customElements.get("blossom-dot")
+) {
+  customElements.define("blossom-dot", BlossomDot);
+}

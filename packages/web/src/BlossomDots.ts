@@ -8,7 +8,12 @@ import {
   type RenderDot,
 } from "./dotTemplate";
 
-export class BlossomDots extends HTMLElement {
+const HTMLElementBase: typeof HTMLElement =
+  typeof HTMLElement === "undefined"
+    ? (class {} as unknown as typeof HTMLElement)
+    : HTMLElement;
+
+export class BlossomDots extends HTMLElementBase {
   private cleanup?: () => void;
   private dotPrototype?: Element | null;
   private forId = "";
@@ -128,4 +133,9 @@ export class BlossomDots extends HTMLElement {
   }
 }
 
-customElements.define("blossom-dots", BlossomDots);
+if (
+  typeof customElements !== "undefined" &&
+  !customElements.get("blossom-dots")
+) {
+  customElements.define("blossom-dots", BlossomDots);
+}
