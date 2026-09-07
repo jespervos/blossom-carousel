@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
+## 1.5.1 (2026-09-07)
+
+### Fixed
+
+- Pointed the TypeScript `types` export at `dist/index.d.ts` so consumers resolve declarations after the 1.5.0 bundle layout change.
+
 ## 1.5.0 (2026-09-02)
 
 ### Added

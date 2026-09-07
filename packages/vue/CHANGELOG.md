@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/vue` are documented in this file.
 
+## 1.6.1 (2026-09-07)
+
+### Fixed
+
+- Pointed the TypeScript `types` export at `dist/index.d.ts` so consumers resolve declarations after the 1.6.0 bundle layout change (#33).
+
 ## 1.6.0 (2026-09-02)
 
 ### Added
