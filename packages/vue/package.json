@@ -39,10 +39,10 @@
   ],
   "main": "dist/blossom-carousel-vue.umd.cjs",
   "module": "dist/blossom-carousel-vue.js",
-  "types": "./dist/src/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/blossom-carousel-vue.js",
       "require": "./dist/blossom-carousel-vue.umd.cjs"
     },
