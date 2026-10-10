@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import type { Snippet } from "svelte";
   import type { Blossom } from "@blossom-carousel/core";
+  import { createCommands, registerCommands } from "@blossom-carousel/navigation";
   import { registerSlideCountFromSnippet } from "./ssrSlideCount.js";
   import { deleteSlideCount } from "./slideRegistry.js";
 
@@ -36,23 +37,27 @@
 
   let root: HTMLElement | undefined;
   let blossom: ReturnType<typeof Blossom> | undefined;
+  const commands = createCommands(() => root);
+  let unregisterCommands: (() => void) | undefined;
 
   onMount(async () => {
-    if (root) {
-      const hasMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!root) return;
+    unregisterCommands = registerCommands(root);
 
-      // don't load if the user has no mouse.
-      // overwritten by props.load: 'always'
-      if (!hasMouse && load !== "always") return;
+    const hasMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-      const { Blossom } = await import("@blossom-carousel/core");
+    // don't load if the user has no mouse.
+    // overwritten by props.load: 'always'
+    if (!hasMouse && load !== "always") return;
 
-      blossom = Blossom(root, { repeat });
-      blossom.init();
-    }
+    const { Blossom } = await import("@blossom-carousel/core");
+
+    blossom = Blossom(root, { repeat });
+    blossom.init();
   });
 
   onDestroy(() => {
+    unregisterCommands?.();
     blossom?.destroy();
     // On the server, onDestroy runs when the request's render completes —
     // after any sibling navigation components have read the count — so this
@@ -60,12 +65,16 @@
     if (registeredId) deleteSlideCount(registeredId);
   });
 
-  export function prev(options?: { align?: string }) {
-    blossom?.prev(options);
+  export function prev(options?: { behavior?: ScrollBehavior }) {
+    commands.prev(options);
   }
 
-  export function next(options?: { align?: string }) {
-    blossom?.next(options);
+  export function next(options?: { behavior?: ScrollBehavior }) {
+    commands.next(options);
+  }
+
+  export function goTo(index: number, options?: { behavior?: ScrollBehavior }) {
+    commands.goTo(index, options);
   }
 </script>
 

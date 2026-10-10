@@ -42,6 +42,19 @@ describe("BlossomDots renderDot", () => {
     scroller.remove();
   });
 
+  it("copies behavior onto each dot button", async () => {
+    dots.setAttribute("behavior", "instant");
+    document.body.appendChild(dots);
+    await nextFrame();
+    await nextFrame();
+
+    const buttons = dots.querySelectorAll("button");
+    expect(buttons.length).toBeGreaterThan(0);
+    for (const button of buttons) {
+      expect(button.getAttribute("data-blossom-behavior")).toBe("instant");
+    }
+  });
+
   it("takes priority over a <blossom-dot> prototype when set", async () => {
     const prototype = document.createElement("blossom-dot");
     prototype.innerHTML = `<button class="prototype"></button>`;

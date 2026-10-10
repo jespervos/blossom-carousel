@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import BlossomCarousel from "./BlossomCarousel.vue";
 import BlossomDot from "./BlossomDot.vue";
 import BlossomDots from "./BlossomDots.vue";
+import BlossomPrev from "./BlossomPrev.vue";
 
 describe("SSR dots", () => {
   it("renders dot buttons from slot vnode count before mount", async () => {
@@ -85,5 +86,44 @@ describe("SSR dots", () => {
     expect(html.match(/commandfor="my-carousel"/g)?.length).toBe(3);
     expect(html.match(/command="--blossom-goto-/g)?.length).toBe(3);
     expect(html).toContain('aria-label="Photo 1"');
+  });
+
+  it("puts behavior on the command button", async () => {
+    const App = defineComponent({
+      setup() {
+        return () =>
+          h("div", [
+            h(
+              BlossomCarousel,
+              { id: "my-carousel" },
+              {
+                default: () =>
+                  h("div", { "data-blossom-slide": "" }, "1"),
+              },
+            ),
+            h(BlossomPrev, { for: "my-carousel", behavior: "instant" }),
+            h(BlossomDots, { for: "my-carousel", behavior: "instant" }),
+          ]);
+      },
+    });
+
+    const html = await renderToString(createSSRApp(App));
+
+    expect(html.match(/data-blossom-behavior="instant"/g)?.length).toBe(2);
+  });
+
+  it("lets an explicit data-blossom-behavior attribute win", async () => {
+    const html = await renderToString(
+      createSSRApp(() =>
+        h(BlossomPrev, {
+          for: "my-carousel",
+          behavior: "instant",
+          "data-blossom-behavior": "auto",
+        }),
+      ),
+    );
+
+    expect(html).toContain('data-blossom-behavior="auto"');
+    expect(html).not.toContain('data-blossom-behavior="instant"');
   });
 });

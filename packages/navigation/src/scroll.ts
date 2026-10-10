@@ -51,7 +51,11 @@ function adjacentSnap(
  * point when scroll-snap is in use (brought into view with its own inline
  * alignment), otherwise page by ~85% of the scrollport.
  */
-export function pageScroll(scroller: HTMLElement, dir: Direction): void {
+export function pageScroll(
+  scroller: HTMLElement,
+  dir: Direction,
+  behavior: ScrollBehavior = "smooth",
+): void {
   // Prefer the host-maintained cache; fall back to a live read for plain usage.
   const cache = getSnapCache(scroller);
   const points = cache?.pages ?? getSnapPositions(scroller);
@@ -63,7 +67,7 @@ export function pageScroll(scroller: HTMLElement, dir: Direction): void {
     target.el.scrollIntoView({
       block: "nearest",
       inline: target.align,
-      behavior: "smooth",
+      behavior,
     });
     return;
   }
@@ -71,5 +75,5 @@ export function pageScroll(scroller: HTMLElement, dir: Direction): void {
   const delta = scroller.clientWidth * PAGE_RATIO * (dir === "next" ? 1 : -1);
   // `scrollBy` takes a physical delta; flip it so "next" advances towards the
   // inline-end in RTL too.
-  scroller.scrollBy({ left: rtl ? -delta : delta, behavior: "smooth" });
+  scroller.scrollBy({ left: rtl ? -delta : delta, behavior });
 }

@@ -25,6 +25,36 @@ describe.each([
     control.remove();
   });
 
+  it("copies behavior onto the inner button", () => {
+    control.setAttribute("behavior", "instant");
+    document.body.appendChild(control);
+
+    expect(
+      control.querySelector("button")?.getAttribute("data-blossom-behavior"),
+    ).toBe("instant");
+  });
+
+  it("keeps a behavior set on an author-provided button", () => {
+    control.setAttribute("behavior", "instant");
+    control.innerHTML = `<button type="button" data-blossom-behavior="auto"></button>`;
+    document.body.appendChild(control);
+    control.removeAttribute("behavior");
+
+    expect(
+      control.querySelector("button")?.getAttribute("data-blossom-behavior"),
+    ).toBe("auto");
+  });
+
+  it("clears the behavior when the host attribute is removed", () => {
+    control.setAttribute("behavior", "instant");
+    document.body.appendChild(control);
+    control.removeAttribute("behavior");
+
+    expect(
+      control.querySelector("button")?.hasAttribute("data-blossom-behavior"),
+    ).toBe(false);
+  });
+
   it("uses the default label when empty", () => {
     document.body.appendChild(control);
 

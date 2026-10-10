@@ -6,11 +6,13 @@ import "./BlossomNext.css";
 export interface BlossomNextProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   for: string;
+  behavior?: ScrollBehavior;
   children?: ReactNode;
 }
 
 export default function BlossomNext({
   for: carouselId,
+  behavior,
   children = "Next",
   disabled,
   ...props
@@ -26,6 +28,7 @@ export default function BlossomNext({
       disabled={disabled ?? !state.canNext}
       aria-controls={carouselId}
       aria-label="Next slide"
+      data-blossom-behavior={behavior}
       {...props}
     >
       {children}

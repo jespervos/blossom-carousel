@@ -7,10 +7,11 @@
     index: number;
     active: boolean;
     forId: string;
+    behavior?: ScrollBehavior;
     children: Snippet<[{ index: number; active: boolean }]>;
   }
 
-  let { index, active, forId, children }: Props = $props();
+  let { index, active, forId, behavior, children }: Props = $props();
 
   setContext(DOT_CONTEXT, {
     get index() {
@@ -21,6 +22,9 @@
     },
     get forId() {
       return forId;
+    },
+    get behavior() {
+      return behavior;
     },
   } satisfies DotContext);
 </script>

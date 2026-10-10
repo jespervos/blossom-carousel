@@ -20,7 +20,10 @@ import BlossomDot from "./BlossomDot.vue";
       <BlossomPrev for="my-carousel" />
       <BlossomDots for="my-carousel">
         <template #default="{ index, active }">
-          <BlossomDot :data-active="active" :aria-label="`Go to image ${index + 1}`">
+          <BlossomDot
+            :data-active="active"
+            :aria-label="`Go to image ${index + 1}`"
+          >
             <img src="https://placehold.co/40x40" />
           </BlossomDot>
         </template>

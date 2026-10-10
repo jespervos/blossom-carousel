@@ -62,6 +62,7 @@ import {
   useSlots,
   watchEffect,
 } from "vue";
+import { createCommands, registerCommands } from "@blossom-carousel/navigation";
 import { setSlideCount } from "./useNavigation";
 
 const props = defineProps({
@@ -93,13 +94,19 @@ watchEffect(() => {
   setSlideCount(app, id, countMarkedSlideVnodes(vnodes));
 });
 
+const commands = createCommands(() => root.value);
+let unregisterCommands: (() => void) | undefined;
+
 defineExpose({
   el: root,
-  prev: () => blossom?.prev({ align: "center" }),
-  next: () => blossom?.next({ align: "center" }),
+  prev: commands.prev,
+  next: commands.next,
+  goTo: commands.goTo,
 });
 
 onMounted(async () => {
+  if (root.value) unregisterCommands = registerCommands(root.value);
+
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)",
   ).matches;
@@ -115,7 +122,9 @@ onMounted(async () => {
     blossom.init();
   }
 });
+
 onBeforeUnmount(() => {
+  unregisterCommands?.();
   blossom?.destroy();
 });
 </script>

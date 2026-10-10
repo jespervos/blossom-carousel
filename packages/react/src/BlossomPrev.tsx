@@ -6,11 +6,13 @@ import "./BlossomPrev.css";
 export interface BlossomPrevProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   for: string;
+  behavior?: ScrollBehavior;
   children?: ReactNode;
 }
 
 export default function BlossomPrev({
   for: carouselId,
+  behavior,
   children = "Previous",
   disabled,
   ...props
@@ -26,6 +28,7 @@ export default function BlossomPrev({
       disabled={disabled ?? !state.canPrev}
       aria-controls={carouselId}
       aria-label="Previous slide"
+      data-blossom-behavior={behavior}
       {...props}
     >
       {children}

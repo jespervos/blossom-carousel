@@ -4,6 +4,7 @@
 # Node.js dependencies
 node_modules/
 **/node_modules/
+.pnpm-store/
 
 # Logs
 logs/

@@ -125,8 +125,19 @@ Now you can style the dot as you please and attach any button attributes you nee
 </BlossomDots>
 ```
 
+#### Scroll behavior
+Every navigation control scrolls smoothly by default. Set the `behavior` prop to `"instant"` or `"auto"` to change that. On `<BlossomDots>` it applies to every dot; a `<BlossomDot>` can override it for itself.
+
+```jsx
+<BlossomPrev for="my-carousel" behavior="instant" />
+<BlossomDots for="my-carousel" behavior="instant" />
+<BlossomNext for="my-carousel" behavior="instant" />
+```
+
+The prop is rendered as a `data-blossom-behavior` attribute on the button. Setting that attribute yourself takes precedence over the prop.
+
 #### Listening for commands
-Listen for `command` events on the carousel to know when any navigation control is triggered:
+Listen for `command` events on the carousel to know when any navigation control is triggered or a [method](#methods) is called:
 - previous (`--blossom-prev`)
 - next (`--blossom-next`)
 - dot (`--blossom-goto-{index}`).
@@ -144,6 +155,42 @@ These events are not fired by drag or free scrolling. Read `event.command` (or `
 
 function handleCommand(event) {
   const command = event?.command || event?.detail?.command;
+}
+```
+
+## Methods
+
+Pass a `ref` to `<BlossomCarousel>` to navigate from your own code. The ref receives a `BlossomCarouselHandle`:
+
+- `prev(options?)` scrolls to the previous snap point or page.
+- `next(options?)` scrolls to the next snap point or page.
+- `goTo(index, options?)` scrolls to the slide at a zero-based `index`, counting slides marked with `data-blossom-slide`.
+- `element` is the carousel's root element.
+
+`options.behavior` accepts `"smooth"` (default), `"instant"` or `"auto"`. The methods use native scrolling, so they also work on touch devices where the drag engine isn't loaded.
+
+```tsx
+import { useRef } from "react";
+import { BlossomCarousel, type BlossomCarouselHandle } from "@blossom-carousel/react";
+
+function Gallery() {
+  const carousel = useRef<BlossomCarouselHandle>(null);
+
+  return (
+    <>
+      <BlossomCarousel ref={carousel}>
+        {Array.from({ length: 12 }, (_, i) => (
+          <div key={i} data-blossom-slide>
+            Slide {i + 1}
+          </div>
+        ))}
+      </BlossomCarousel>
+
+      <button onClick={() => carousel.current?.goTo(0, { behavior: "instant" })}>
+        Back to start
+      </button>
+    </>
+  );
 }
 ```
 

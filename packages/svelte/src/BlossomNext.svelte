@@ -5,11 +5,12 @@
 
   interface Props {
     forId: string;
+    behavior?: ScrollBehavior;
     children?: Snippet;
     [key: string]: unknown;
   }
 
-  let { forId, children, ...rest }: Props = $props();
+  let { forId, behavior, children, ...rest }: Props = $props();
 
   // Seeds the initial (SSR/pre-mount) count once; the $effect below reacts
   // to later `forId` changes via `nav.connect()`.
@@ -30,6 +31,7 @@
   disabled={!$nav.canNext}
   aria-controls={forId}
   aria-label="Next slide"
+  data-blossom-behavior={behavior}
   {...rest}
 >
   {#if children}

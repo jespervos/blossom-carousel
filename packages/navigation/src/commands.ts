@@ -10,6 +10,63 @@ export const COMMANDS = {
   gotoPrefix: `${COMMAND_NAMESPACE}goto-`,
 } as const;
 
+/** Set on the button that invokes a command to override its scroll behavior. */
+export const BEHAVIOR_ATTR = "data-blossom-behavior";
+
+export interface CommandOptions {
+  behavior?: ScrollBehavior;
+}
+
+/**
+ * Sends a Blossom command to a scroller. The scroller's command handler
+ * performs the scroll, so listeners of the `command` event see the same
+ * event a navigation button would dispatch.
+ */
+export function invoke(
+  scroller: HTMLElement | null | undefined,
+  command: string,
+  options: CommandOptions = {},
+): void {
+  scroller?.dispatchEvent(
+    new CustomEvent("command", {
+      bubbles: false,
+      detail: { command, ...options },
+    }),
+  );
+}
+
+/** Commands bound to whichever scroller `getScroller` returns at call time. */
+export function createCommands(
+  getScroller: () => HTMLElement | null | undefined,
+) {
+  return {
+    prev: (options?: CommandOptions) =>
+      invoke(getScroller(), COMMANDS.prev, options),
+    next: (options?: CommandOptions) =>
+      invoke(getScroller(), COMMANDS.next, options),
+    goTo: (index: number, options?: CommandOptions) =>
+      invoke(getScroller(), `${COMMANDS.gotoPrefix}${index}`, options),
+  };
+}
+
+function commandBehavior(value: unknown): ScrollBehavior | undefined {
+  return value === "auto" || value === "smooth" || value === "instant"
+    ? value
+    : undefined;
+}
+
+function behaviorFrom(event: Event): ScrollBehavior {
+  const detail = (
+    event as CustomEvent<{ behavior?: unknown; source?: Element | null }>
+  ).detail;
+  const explicit = commandBehavior(detail?.behavior);
+  if (explicit) return explicit;
+
+  const source =
+    (event as { source?: Element | null }).source ?? detail?.source ?? null;
+  return commandBehavior(source?.getAttribute?.(BEHAVIOR_ATTR)) ?? "smooth";
+}
+
 const REGISTRY = Symbol.for("blossom-carousel.navigation.registry");
 
 interface Registration {
@@ -19,11 +76,15 @@ interface Registration {
 
 type WithRegistry = HTMLElement & { [REGISTRY]?: Registration };
 
-function runCommand(scroller: HTMLElement, command: string): void {
+function runCommand(
+  scroller: HTMLElement,
+  command: string,
+  behavior: ScrollBehavior,
+): void {
   if (command === COMMANDS.prev) {
-    pageScroll(scroller, "prev");
+    pageScroll(scroller, "prev", behavior);
   } else if (command === COMMANDS.next) {
-    pageScroll(scroller, "next");
+    pageScroll(scroller, "next", behavior);
   } else if (command.startsWith(COMMANDS.gotoPrefix)) {
     const index = Number.parseInt(
       command.slice(COMMANDS.gotoPrefix.length),
@@ -40,7 +101,7 @@ function runCommand(scroller: HTMLElement, command: string): void {
 
     const inline =
       fresh?.align ?? resolveInlineAlign(getComputedStyle(target).scrollSnapAlign);
-    target.scrollIntoView({ block: "nearest", inline, behavior: "smooth" });
+    target.scrollIntoView({ block: "nearest", inline, behavior });
   }
 }
 
@@ -64,11 +125,11 @@ export function registerCommands(scroller: HTMLElement): () => void {
   }
 
   const handler: EventListener = (event) => {
+    const detail = (event as CustomEvent<{ command?: string }>).detail;
     const command =
-      (event as { command?: string }).command ??
-      (event as CustomEvent<{ command?: string }>).detail?.command;
+      (event as { command?: string }).command ?? detail?.command;
     if (typeof command === "string" && command.startsWith(COMMAND_NAMESPACE)) {
-      runCommand(scroller, command);
+      runCommand(scroller, command, behaviorFrom(event));
     }
   };
 
@@ -115,7 +176,10 @@ function installFallback(): void {
 
     const target = document.getElementById(id);
     target?.dispatchEvent(
-      new CustomEvent("command", { bubbles: false, detail: { command } }),
+      new CustomEvent("command", {
+        bubbles: false,
+        detail: { command, source: button },
+      }),
     );
   });
 }

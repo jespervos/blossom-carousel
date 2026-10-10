@@ -6,7 +6,10 @@ import { useNavigation } from "./useNavigation";
 
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps<{ for: string }>();
+const props = defineProps<{
+  for: string;
+  behavior?: ScrollBehavior;
+}>();
 const slots = defineSlots<{
   default?: (props: { index: number; active: boolean }) => VNode[];
 }>();
@@ -31,6 +34,7 @@ function usesCustomSlot(): boolean {
         :index="i"
         :active="state.activeIndex === i"
         :for-id="props.for"
+        :behavior="props.behavior"
       >
         <slot :index="i" :active="state.activeIndex === i" />
       </DotScope>
@@ -44,6 +48,7 @@ function usesCustomSlot(): boolean {
         :command="`${gotoPrefix}${i}`"
         :commandfor="props.for"
         :aria-controls="props.for"
+        :data-blossom-behavior="props.behavior"
         :aria-current="state.activeIndex === i"
         :aria-label="`Go to slide ${i + 1}`"
       >

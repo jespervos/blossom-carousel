@@ -1,4 +1,4 @@
-import { connectNavigation, getForId } from "./navigation";
+import { connectNavigation, getForId, setCommandBehavior } from "./navigation";
 import {
   cloneDotFromPrototype,
   createDefaultDot,
@@ -14,6 +14,10 @@ const HTMLElementBase: typeof HTMLElement =
     : HTMLElement;
 
 export class BlossomDots extends HTMLElementBase {
+  static get observedAttributes(): string[] {
+    return ["behavior"];
+  }
+
   private cleanup?: () => void;
   private dotPrototype?: Element | null;
   private forId = "";
@@ -32,6 +36,11 @@ export class BlossomDots extends HTMLElementBase {
   set renderDot(fn: RenderDot | undefined) {
     this._renderDot = fn;
     if (this.lastState) this.render(this.lastState, this.forId, true);
+  }
+
+  attributeChangedCallback(): void {
+    if (!this.lastState) return;
+    this.render(this.lastState, this.forId, true);
   }
 
   connectedCallback(): void {
@@ -119,13 +128,25 @@ export class BlossomDots extends HTMLElementBase {
   }
 
   private renderDotAt(index: number, active: boolean, forId: string): Node {
-    if (this._renderDot) {
-      return renderCustomDot(this._renderDot, index, active, forId);
-    }
-    if (this.dotPrototype) {
-      return cloneDotFromPrototype(this.dotPrototype, index, active, forId);
-    }
-    return createDefaultDot(index, active, forId);
+    const node = this._renderDot
+      ? renderCustomDot(this._renderDot, index, active, forId)
+      : this.dotPrototype
+        ? cloneDotFromPrototype(this.dotPrototype, index, active, forId)
+        : createDefaultDot(index, active, forId);
+    this.stampBehavior(node);
+    return node;
+  }
+
+  private stampBehavior(node: Node): void {
+    const own = node instanceof Element ? node.getAttribute("behavior") : null;
+    const behavior = own || this.getAttribute("behavior");
+    const button =
+      node instanceof HTMLButtonElement
+        ? node
+        : node instanceof Element
+          ? node.querySelector("button")
+          : null;
+    if (button) setCommandBehavior(button, behavior);
   }
 
   disconnectedCallback(): void {

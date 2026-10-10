@@ -6,6 +6,7 @@ import { useNavigation } from "./useNavigation";
 export interface BlossomDotsProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   for: string;
+  behavior?: ScrollBehavior;
   children?: (props: { index: number; active: boolean }) => ReactNode;
 }
 
@@ -21,6 +22,7 @@ function usesCustomRender(
 
 export default function BlossomDots({
   for: carouselId,
+  behavior,
   children,
   ...props
 }: BlossomDotsProps) {
@@ -43,6 +45,7 @@ export default function BlossomDots({
                 index={index}
                 active={active}
                 forId={carouselId}
+                behavior={behavior}
               >
                 {children({ index, active })}
               </DotScope>
@@ -56,6 +59,7 @@ export default function BlossomDots({
               command={`${gotoPrefix}${index}`}
               commandfor={carouselId}
               aria-controls={carouselId}
+              data-blossom-behavior={behavior}
               aria-current={state.activeIndex === index}
               aria-label={`Go to slide ${index + 1}`}
             >

@@ -1,4 +1,11 @@
-export { COMMANDS, registerCommands } from "./commands";
+export {
+  BEHAVIOR_ATTR,
+  COMMANDS,
+  createCommands,
+  invoke,
+  registerCommands,
+} from "./commands";
+export type { CommandOptions } from "./commands";
 export { observeNavigationState, getNavigationState } from "./observe";
 export { getMarkerTargets, getActiveMarkerIndex, SLIDE_ATTR } from "./markers";
 export type { ActiveIndexGeometry } from "./markers";

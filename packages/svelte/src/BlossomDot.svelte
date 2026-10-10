@@ -5,11 +5,12 @@
   import { DOT_CONTEXT, type DotContext } from "./dotContext.js";
 
   interface Props {
+    behavior?: ScrollBehavior;
     children?: Snippet;
     [key: string]: unknown;
   }
 
-  let { children, ...rest }: Props = $props();
+  let { behavior, children, ...rest }: Props = $props();
 
   const ctx = getContext<DotContext>(DOT_CONTEXT);
   if (!ctx) {
@@ -25,6 +26,7 @@
   aria-controls={ctx?.forId}
   aria-current={ctx?.active ?? false}
   aria-label={ctx ? `Go to slide ${ctx.index + 1}` : undefined}
+  data-blossom-behavior={behavior ?? ctx?.behavior}
   {...rest}
 >
   {@render children?.()}

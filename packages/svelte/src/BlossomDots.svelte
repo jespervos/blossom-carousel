@@ -6,11 +6,12 @@
 
   interface Props {
     forId: string;
+    behavior?: ScrollBehavior;
     children?: Snippet<[{ index: number; active: boolean }]>;
     [key: string]: unknown;
   }
 
-  let { forId, children, ...rest }: Props = $props();
+  let { forId, behavior, children, ...rest }: Props = $props();
 
   // Seeds the initial (SSR/pre-mount) count once; the $effect below reacts
   // to later `forId` changes via `nav.connect()`.
@@ -35,6 +36,7 @@
         {index}
         active={$nav.activeIndex === index}
         {forId}
+        {behavior}
         {children}
       />
     {/each}
@@ -46,6 +48,7 @@
         command="{COMMANDS.gotoPrefix}{index}"
         commandfor={forId}
         aria-controls={forId}
+        data-blossom-behavior={behavior}
         aria-current={$nav.activeIndex === index}
         aria-label="Go to slide {index + 1}"
       >

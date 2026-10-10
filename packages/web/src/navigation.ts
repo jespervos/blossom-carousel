@@ -1,4 +1,5 @@
 import {
+  BEHAVIOR_ATTR,
   observeNavigationState,
   registerCommands,
   type NavigationState,
@@ -24,6 +25,28 @@ export function connectNavigation(
 
 export function getForId(element: HTMLElement): string {
   return element.getAttribute("for") ?? "";
+}
+
+const stampedBehavior = new WeakSet<Element>();
+
+/**
+ * Copies a host `behavior` attribute onto the button that sends the command.
+ * A behavior the author set on the button itself takes precedence.
+ */
+export function setCommandBehavior(
+  button: HTMLElement,
+  behavior: string | null,
+): void {
+  if (button.hasAttribute(BEHAVIOR_ATTR) && !stampedBehavior.has(button)) {
+    return;
+  }
+  if (behavior) {
+    button.setAttribute(BEHAVIOR_ATTR, behavior);
+    stampedBehavior.add(button);
+  } else {
+    button.removeAttribute(BEHAVIOR_ATTR);
+    stampedBehavior.delete(button);
+  }
 }
 
 function isAuthorContent(node: Node): boolean {

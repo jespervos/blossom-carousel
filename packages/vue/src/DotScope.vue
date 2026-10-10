@@ -6,6 +6,7 @@ const props = defineProps<{
   index: number;
   active: boolean;
   forId: string;
+  behavior?: ScrollBehavior;
 }>();
 
 provide(DOT_CONTEXT, props);

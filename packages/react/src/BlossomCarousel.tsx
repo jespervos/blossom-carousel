@@ -7,12 +7,14 @@ import React, {
   useRef,
   JSXElementConstructor,
 } from "react";
+import { createCommands, registerCommands } from "@blossom-carousel/navigation";
 import { countMarkedSlides } from "./countMarkedSlides";
 import { setSlideCount } from "./slideRegistry";
 
 export interface BlossomCarouselHandle {
-  prev: (options?: { align?: string }) => void;
-  next: (options?: { align?: string }) => void;
+  prev: (options?: { behavior?: ScrollBehavior }) => void;
+  next: (options?: { behavior?: ScrollBehavior }) => void;
+  goTo: (index: number, options?: { behavior?: ScrollBehavior }) => void;
   element: HTMLElement | null;
 }
 
@@ -38,13 +40,16 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
     }
 
     useEffect(() => {
-      if (!localRef.current) return;
+      const scroller = localRef.current;
+      if (!scroller) return;
+
+      const unregister = registerCommands(scroller);
 
       const hasMouse = window.matchMedia(
         "(hover: hover) and (pointer: fine)",
       ).matches;
 
-      if (!hasMouse && load !== "always") return;
+      if (!hasMouse && load !== "always") return unregister;
 
       let destroyed = false;
 
@@ -57,6 +62,7 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       });
 
       return () => {
+        unregister();
         destroyed = true;
         blossomRef.current?.destroy();
         blossomRef.current = null;
@@ -66,11 +72,10 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
     useImperativeHandle(
       parentRef,
       () => ({
-        prev: (options?: { align?: string }) =>
-          blossomRef.current?.prev(options),
-        next: (options?: { align?: string }) =>
-          blossomRef.current?.next(options),
-        element: localRef.current,
+        ...createCommands(() => localRef.current),
+        get element() {
+          return localRef.current;
+        },
       }),
       [],
     );

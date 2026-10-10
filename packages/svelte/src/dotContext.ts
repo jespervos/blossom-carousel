@@ -4,4 +4,5 @@ export interface DotContext {
   index: number;
   active: boolean;
   forId: string;
+  behavior?: ScrollBehavior;
 }

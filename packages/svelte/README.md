@@ -122,8 +122,19 @@ Now you can style the dot as you please and attach any button attributes you nee
 </BlossomDots>
 ```
 
+#### Scroll behavior
+Every navigation control scrolls smoothly by default. Set the `behavior` prop to `"instant"` or `"auto"` to change that. On `<BlossomDots>` it applies to every dot; a `<BlossomDot>` can override it for itself.
+
+```html
+<BlossomPrev forId="my-carousel" behavior="instant" />
+<BlossomDots forId="my-carousel" behavior="instant" />
+<BlossomNext forId="my-carousel" behavior="instant" />
+```
+
+The prop is rendered as a `data-blossom-behavior` attribute on the button. Setting that attribute yourself takes precedence over the prop.
+
 #### Listening for commands
-Listen for `command` events on the carousel to know when any navigation control is triggered:
+Listen for `command` events on the carousel to know when any navigation control is triggered or a [method](#methods) is called:
 - previous (`--blossom-prev`)
 - next (`--blossom-next`)
 - dot (`--blossom-goto-{index}`).
@@ -142,6 +153,30 @@ These events are not fired by drag or free scrolling. Read `event.command` (or `
     const command = event?.command || event?.detail?.command;
   }
 </script>
+```
+
+## Methods
+
+Bind the component instance with `bind:this` to navigate from your own code:
+
+- `prev(options?)` scrolls to the previous snap point or page.
+- `next(options?)` scrolls to the next snap point or page.
+- `goTo(index, options?)` scrolls to the slide at a zero-based `index`, counting slides marked with `data-blossom-slide`.
+
+`options.behavior` accepts `"smooth"` (default), `"instant"` or `"auto"`. The methods use native scrolling, so they also work on touch devices where the drag engine isn't loaded.
+
+```html
+<script>
+  let carousel;
+</script>
+
+<BlossomCarousel bind:this={carousel}>
+  {#each Array(12).fill(0).map((_, i) => i + 1) as num (num)}
+    <div data-blossom-slide>Slide {num}</div>
+  {/each}
+</BlossomCarousel>
+
+<button onclick={() => carousel.goTo(0, { behavior: "instant" })}>Back to start</button>
 ```
 
 ## Overscroll API

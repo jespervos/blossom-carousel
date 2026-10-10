@@ -113,8 +113,19 @@ For that, set `renderDot` on the `blossom-dots` element — a callback invoked o
 </script>
 ```
 
+#### Scroll behavior
+Every navigation control scrolls smoothly by default. Set the `behavior` attribute to `"instant"` or `"auto"` to change that. On `<blossom-dots>` it applies to every dot; a `<blossom-dot>` prototype can override it.
+
+```html
+<blossom-prev for="my-carousel" behavior="instant"></blossom-prev>
+<blossom-dots for="my-carousel" behavior="instant"></blossom-dots>
+<blossom-next for="my-carousel" behavior="instant"></blossom-next>
+```
+
+The attribute is copied to the inner button as `data-blossom-behavior`. If your own button already has a `data-blossom-behavior` attribute, it takes precedence.
+
 #### Listening for commands
-Listen for `command` events on the carousel to know when any navigation control is triggered:
+Listen for `command` events on the carousel to know when any navigation control is triggered or a [method](#methods) is called:
 - previous (`--blossom-prev`)
 - next (`--blossom-next`)
 - dot (`--blossom-goto-{index}`).
@@ -131,6 +142,33 @@ These events are not fired by drag or free scrolling. Read `event.command` (or `
 <script>
   document.getElementById("my-carousel").addEventListener("command", (event) => {
     const command = event?.command || event?.detail?.command;
+  });
+</script>
+```
+
+## Methods
+
+Call these on the `<blossom-carousel>` element to navigate from your own code:
+
+- `prev(options?)` scrolls to the previous snap point or page.
+- `next(options?)` scrolls to the next snap point or page.
+- `goTo(index, options?)` scrolls to the slide at a zero-based `index`, counting slides marked with `data-blossom-slide`.
+
+`options.behavior` accepts `"smooth"` (default), `"instant"` or `"auto"`.
+
+```html
+<blossom-carousel id="my-carousel">
+  <div data-blossom-slide>Slide 1</div>
+  <div data-blossom-slide>Slide 2</div>
+  <div data-blossom-slide>Slide 3</div>
+</blossom-carousel>
+
+<button id="back">Back to start</button>
+
+<script>
+  const carousel = document.getElementById("my-carousel");
+  document.getElementById("back").addEventListener("click", () => {
+    carousel.goTo(0, { behavior: "instant" });
   });
 </script>
 ```

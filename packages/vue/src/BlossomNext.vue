@@ -6,6 +6,7 @@
     :commandfor="props.for"
     :disabled="!state.canNext"
     :aria-controls="props.for"
+    :data-blossom-behavior="props.behavior"
     aria-label="Next slide"
   >
     <slot>›</slot>
@@ -17,7 +18,10 @@ import { toRef } from "vue";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import { useNavigation } from "./useNavigation";
 
-const props = defineProps<{ for: string }>();
+const props = defineProps<{
+  for: string;
+  behavior?: ScrollBehavior;
+}>();
 
 const command = COMMANDS.next;
 const state = useNavigation(toRef(props, "for"));

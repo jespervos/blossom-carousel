@@ -3,9 +3,15 @@ import { COMMANDS } from "@blossom-carousel/navigation";
 import { DotContext } from "./dotContext";
 
 export interface BlossomDotProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "type"> {}
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "type"> {
+  behavior?: ScrollBehavior;
+}
 
-export default function BlossomDot({ children, ...props }: BlossomDotProps) {
+export default function BlossomDot({
+  behavior,
+  children,
+  ...props
+}: BlossomDotProps) {
   const ctx = useContext(DotContext);
   if (!ctx) {
     console.warn("[BlossomDot] Must be used inside a BlossomDots slot.");
@@ -20,6 +26,7 @@ export default function BlossomDot({ children, ...props }: BlossomDotProps) {
       aria-controls={ctx?.forId}
       aria-current={ctx?.active ?? false}
       aria-label={ctx ? `Go to slide ${ctx.index + 1}` : undefined}
+      data-blossom-behavior={behavior ?? ctx?.behavior}
       {...props}
     >
       {children}

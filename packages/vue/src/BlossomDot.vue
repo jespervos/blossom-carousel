@@ -5,6 +5,10 @@ import { DOT_CONTEXT } from "./dotContext";
 
 defineOptions({ inheritAttrs: false });
 
+const props = defineProps<{
+  behavior?: ScrollBehavior;
+}>();
+
 const ctx = inject(DOT_CONTEXT);
 if (!ctx) {
   console.warn("[BlossomDot] Must be used inside a BlossomDots slot.");
@@ -18,6 +22,7 @@ if (!ctx) {
     :command="`${COMMANDS.gotoPrefix}${ctx?.index ?? 0}`"
     :commandfor="ctx?.forId ?? ''"
     :aria-controls="ctx?.forId"
+    :data-blossom-behavior="props.behavior ?? ctx?.behavior"
     :aria-current="ctx?.active ?? false"
     :aria-label="ctx ? `Go to slide ${ctx.index + 1}` : undefined"
     v-bind="$attrs"

@@ -1,4 +1,5 @@
 import { Blossom } from "@blossom-carousel/core";
+import { createCommands, registerCommands } from "@blossom-carousel/navigation";
 import "./style.css";
 import "./BlossomPrev";
 import "./BlossomNext";
@@ -13,6 +14,8 @@ const HTMLElementBase: typeof HTMLElement =
 
 export class BlossomCarousel extends HTMLElementBase {
   private carouselInstance!: ReturnType<typeof Blossom>;
+  private unregisterCommands?: () => void;
+  private readonly commands = createCommands(() => this);
 
   constructor() {
     super();
@@ -23,6 +26,7 @@ export class BlossomCarousel extends HTMLElementBase {
   }
 
   connectedCallback(): void {
+    this.unregisterCommands = registerCommands(this);
     this.carouselInstance = Blossom(this, {
       repeat: this.hasAttribute("repeat"),
     });
@@ -30,15 +34,20 @@ export class BlossomCarousel extends HTMLElementBase {
   }
 
   disconnectedCallback(): void {
+    this.unregisterCommands?.();
     this.carouselInstance.destroy();
   }
 
-  prev(options: { align: string }): void {
-    this.carouselInstance.prev(options);
+  prev(options?: { behavior?: ScrollBehavior }): void {
+    this.commands.prev(options);
   }
 
-  next(options: { align: string }): void {
-    this.carouselInstance.next(options);
+  next(options?: { behavior?: ScrollBehavior }): void {
+    this.commands.next(options);
+  }
+
+  goTo(index: number, options?: { behavior?: ScrollBehavior }): void {
+    this.commands.goTo(index, options);
   }
 }
 
