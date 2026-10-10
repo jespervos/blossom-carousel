@@ -2,6 +2,20 @@
 
 All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
+## 3.0.0 (2026-10-10)
+
+### Added
+
+- Added `goTo(index, options?)` on the carousel instance. It scrolls to the slide at a zero-based index, counting elements marked with `data-blossom-slide`.
+- Added a `behavior` prop (`"smooth"`, `"instant"`, or `"auto"`) on `BlossomPrev`, `BlossomNext`, `BlossomDots`, and `BlossomDot`. Scrolling stays smooth when the prop is omitted. On `BlossomDots` it applies to every dot; a `BlossomDot` can override it.
+- `prev` and `next` accept `{ behavior }`.
+- Programmatic navigation uses native scrolling, so `prev`, `next`, and `goTo` work on touch devices where the drag engine is not loaded.
+- Calling `prev`, `next`, or `goTo` dispatches the same `command` event as the matching navigation control.
+
+### Changed
+
+- **Breaking:** `prev` and `next` no longer accept `{ align }`. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). Pass `{ behavior: "smooth" | "instant" | "auto" }` to control the animation. `"smooth"` is the default.
+
 ## 2.1.2 (2026-07-24)
 
 ### Changed
