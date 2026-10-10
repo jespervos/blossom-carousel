@@ -2,7 +2,7 @@
 
 All notable changes to `@blossom-carousel/vue` are documented in this file.
 
-## 2.0.0 (2026-10-10)
+## 1.7.0 (2026-10-10)
 
 ### Added
 
@@ -14,7 +14,7 @@ All notable changes to `@blossom-carousel/vue` are documented in this file.
 
 ### Changed
 
-- **Breaking:** `prev` and `next` no longer scroll through the drag engine with a forced `align: "center"`. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). Pass `{ behavior: "smooth" | "instant" | "auto" }` to control the animation. `"smooth"` is the default.
+- `prev` and `next` scroll with native snapping. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). `{ behavior }` controls the animation, and `"smooth"` is the default.
 
 ## 1.6.1 (2026-09-07)
 

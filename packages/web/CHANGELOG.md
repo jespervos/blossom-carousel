@@ -2,7 +2,7 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
-## 2.0.0 (2026-10-10)
+## 1.6.0 (2026-10-10)
 
 ### Added
 
@@ -13,7 +13,7 @@ All notable changes to `@blossom-carousel/web` are documented in this file.
 
 ### Changed
 
-- **Breaking:** `prev` and `next` no longer accept `{ align }` or scroll through the drag engine. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). Pass `{ behavior: "smooth" | "instant" | "auto" }` to control the animation. `"smooth"` is the default.
+- `prev` and `next` scroll with native snapping. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). `{ behavior }` controls the animation, and `"smooth"` is the default.
 
 ## 1.5.1 (2026-09-07)
 

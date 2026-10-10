@@ -2,7 +2,7 @@
 
 All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
-## 3.0.0 (2026-10-10)
+## 2.2.0 (2026-10-10)
 
 ### Added
 
@@ -14,7 +14,7 @@ All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
 ### Changed
 
-- **Breaking:** `prev` and `next` no longer accept `{ align }`. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). Pass `{ behavior: "smooth" | "instant" | "auto" }` to control the animation. `"smooth"` is the default.
+- `prev` and `next` scroll with native snapping. Alignment follows each slide's CSS `scroll-snap-align` (or pages the scrollport when nothing snaps). `{ behavior }` controls the animation, and `"smooth"` is the default.
 
 ## 2.1.2 (2026-07-24)
 
