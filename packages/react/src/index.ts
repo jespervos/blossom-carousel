@@ -11,4 +11,5 @@ export type { BlossomPrevProps } from "./BlossomPrev";
 export type { BlossomNextProps } from "./BlossomNext";
 export type { BlossomDotsProps } from "./BlossomDots";
 export type { BlossomDotProps } from "./BlossomDot";
+export { useBlossomNavigation } from "./useNavigation";
 export type { NavigationState } from "./useNavigation";

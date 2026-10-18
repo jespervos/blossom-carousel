@@ -1,15 +1,26 @@
 <script setup>
+import { onMounted, ref } from "vue";
 import BlossomCarousel from "./BlossomCarousel.vue";
 import BlossomPrev from "./BlossomPrev.vue";
 import BlossomNext from "./BlossomNext.vue";
 import BlossomDots from "./BlossomDots.vue";
 import BlossomDot from "./BlossomDot.vue";
+
+const START_INDEX = 4;
+const carousel = ref(null);
+
+// A child's onMounted runs before its parent's, so the carousel has already
+// registered its command listener here and is positioned before the browser
+// paints. No flash of the first slide.
+onMounted(() => {
+  carousel.value?.goTo(START_INDEX, { behavior: "instant" });
+});
 </script>
 
 <template>
   <div class="page">
     <h1>Blossom Vue</h1>
-    <BlossomCarousel id="my-carousel" class="carousel">
+    <BlossomCarousel ref="carousel" id="my-carousel" class="carousel">
       <ul class="track">
         <li v-for="i in 12" :key="`slide${i}`" class="slide" data-blossom-slide>
           {{ i }}

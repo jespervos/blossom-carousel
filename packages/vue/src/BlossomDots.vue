@@ -2,7 +2,7 @@
 import { Comment, toRef, type VNode } from "vue";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import DotScope from "./DotScope.vue";
-import { useNavigation } from "./useNavigation";
+import { useBlossomNavigation } from "./useNavigation";
 
 defineOptions({ inheritAttrs: false });
 
@@ -15,7 +15,7 @@ const slots = defineSlots<{
 }>();
 
 const gotoPrefix = COMMANDS.gotoPrefix;
-const state = useNavigation(toRef(props, "for"));
+const state = useBlossomNavigation(toRef(props, "for"));
 
 /** Slot exists even for comment-only content between tags; ignore those. */
 function usesCustomSlot(): boolean {
