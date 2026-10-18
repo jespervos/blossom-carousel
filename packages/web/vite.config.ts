@@ -8,6 +8,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     dts({
+      // Declarations land at dist/index.d.ts. Without entryRoot the plugin
+      // infers a root from the TypeScript version and flips between dist/ and dist/src/.
+      entryRoot: "src",
       include: ["src/**/*"],
       exclude: ["vite.config.ts", "src/**/*.test.ts"],
     }),

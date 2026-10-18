@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/core` are documented in this file.
 
+## 1.1.9 (2026-10-18)
+
+### Fixed
+
+- Pointed the TypeScript `types` export at `dist/index.d.ts`, matching the declarations the build emits. The declaration root is now pinned so that path no longer follows the TypeScript version (#22, #33, #37).
+
 ## 1.1.8 (2026-07-24)
 
 ### Fixed

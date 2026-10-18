@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.6.1 (2026-10-17)
+
+### Fixed
+
+- Pointed the TypeScript `types` export at `dist/index.d.ts` so consumers resolve declarations after the 1.6.0 bundle layout change (#37).
+
 ## 1.6.0 (2026-10-10)
 
 ### Added
