@@ -1,7 +1,7 @@
 import React, { type ReactNode } from "react";
 import { COMMANDS } from "@blossom-carousel/navigation";
 import DotScope from "./DotScope";
-import { useNavigation } from "./useNavigation";
+import { useBlossomNavigation } from "./useNavigation";
 
 export interface BlossomDotsProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
@@ -26,7 +26,7 @@ export default function BlossomDots({
   children,
   ...props
 }: BlossomDotsProps) {
-  const state = useNavigation(carouselId);
+  const state = useBlossomNavigation(carouselId);
   const custom = usesCustomRender(children);
 
   return (

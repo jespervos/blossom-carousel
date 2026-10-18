@@ -62,7 +62,7 @@ const INITIAL: NavigationState = {
  * navigation state. Never touches a Blossom instance, so it works even when
  * Blossom isn't initialized.
  */
-export function useNavigation(
+export function useBlossomNavigation(
   forId: MaybeRef<string | undefined>,
 ): Ref<NavigationState> {
   const forIdRef = toRef(forId);
@@ -125,3 +125,10 @@ export function useNavigation(
 
   return state;
 }
+
+/**
+ * Alias of {@link useBlossomNavigation}, kept for backward compatibility.
+ * @deprecated Use `useBlossomNavigation`, which doesn't clash with the
+ * `useNavigation` hooks of other libraries.
+ */
+export const useNavigation = useBlossomNavigation;

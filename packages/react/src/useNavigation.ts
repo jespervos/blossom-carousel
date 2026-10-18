@@ -19,11 +19,20 @@ const INITIAL: NavigationState = {
   canNext: false,
 };
 
+function sameState(a: NavigationState, b: NavigationState): boolean {
+  return (
+    a.activeIndex === b.activeIndex &&
+    a.count === b.count &&
+    a.canPrev === b.canPrev &&
+    a.canNext === b.canNext
+  );
+}
+
 function seededState(forId: string): NavigationState {
   return { ...INITIAL, count: getSlideCount(forId) };
 }
 
-export function useNavigation(forId: string): NavigationState {
+export function useBlossomNavigation(forId: string): NavigationState {
   const [state, setState] = useState<NavigationState>(() => seededState(forId));
 
   useEffect(() => {
@@ -37,7 +46,11 @@ export function useNavigation(forId: string): NavigationState {
     if (!scroller) return;
 
     const unregister = registerCommands(scroller);
-    const unobserve = observeNavigationState(scroller, setState);
+    // The observer pushes a fresh object every frame while scrolling. Returning
+    // the previous state when nothing changed lets React skip the re-render.
+    const unobserve = observeNavigationState(scroller, (next) =>
+      setState((prev) => (sameState(prev, next) ? prev : next)),
+    );
 
     return () => {
       unregister();

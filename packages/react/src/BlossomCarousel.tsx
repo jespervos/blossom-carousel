@@ -4,6 +4,7 @@ import React, {
   ReactNode,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   JSXElementConstructor,
 } from "react";
@@ -25,6 +26,10 @@ export interface BlossomCarouselProps extends React.HTMLAttributes<HTMLElement> 
   load?: "always" | "conditional";
 }
 
+// `useLayoutEffect` warns when rendered on the server in React < 19.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
   ({ children, as = "div", repeat = false, load = "conditional", ...props }, parentRef) => {
     const Component = as as JSXElementConstructor<any>;
@@ -39,17 +44,24 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       setSlideCount(props.id, countMarkedSlides(children));
     }
 
+    // Registered in a layout effect so commands work as soon as the carousel is
+    // in the DOM: a parent's `useLayoutEffect` can call `goTo(i, { behavior:
+    // "instant" })` to position the carousel before the first paint.
+    useIsomorphicLayoutEffect(() => {
+      const scroller = localRef.current;
+      if (!scroller) return;
+      return registerCommands(scroller);
+    }, []);
+
     useEffect(() => {
       const scroller = localRef.current;
       if (!scroller) return;
-
-      const unregister = registerCommands(scroller);
 
       const hasMouse = window.matchMedia(
         "(hover: hover) and (pointer: fine)",
       ).matches;
 
-      if (!hasMouse && load !== "always") return unregister;
+      if (!hasMouse && load !== "always") return;
 
       let destroyed = false;
 
@@ -62,7 +74,6 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       });
 
       return () => {
-        unregister();
         destroyed = true;
         blossomRef.current?.destroy();
         blossomRef.current = null;

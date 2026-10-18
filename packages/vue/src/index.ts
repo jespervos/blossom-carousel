@@ -5,7 +5,7 @@ import BlossomNext from "./BlossomNext.vue";
 import BlossomDots from "./BlossomDots.vue";
 import BlossomDot from "./BlossomDot.vue";
 
-export { useNavigation } from "./useNavigation";
+export { useBlossomNavigation, useNavigation } from "./useNavigation";
 export type { NavigationState } from "./useNavigation";
 
 export { BlossomCarousel, BlossomPrev, BlossomNext, BlossomDots, BlossomDot };

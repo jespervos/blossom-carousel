@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { createApp, defineComponent, h, nextTick, ref, type App, type Ref } from "vue";
-import { useNavigation, type NavigationState } from "./index";
+import {
+  useBlossomNavigation,
+  useNavigation,
+  type NavigationState,
+} from "./index";
 
 const INITIAL: NavigationState = {
   activeIndex: -1,
@@ -10,12 +14,12 @@ const INITIAL: NavigationState = {
 };
 
 function mountNavigation(
-  forId: Parameters<typeof useNavigation>[0],
+  forId: Parameters<typeof useBlossomNavigation>[0],
 ): { app: App; state: Ref<NavigationState> } {
   let state!: Ref<NavigationState>;
   const Root = defineComponent({
     setup() {
-      state = useNavigation(forId);
+      state = useBlossomNavigation(forId);
       return () => h("div");
     },
   });
@@ -37,7 +41,11 @@ describe("useNavigation public API", () => {
   });
 
   it("is exported from the package entry", () => {
-    expect(typeof useNavigation).toBe("function");
+    expect(typeof useBlossomNavigation).toBe("function");
+  });
+
+  it("keeps useNavigation as an alias of useBlossomNavigation", () => {
+    expect(useNavigation).toBe(useBlossomNavigation);
   });
 
   it("accepts a plain string id", async () => {

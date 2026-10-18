@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { COMMANDS } from "@blossom-carousel/navigation";
-import { useNavigation } from "./useNavigation";
+import { useBlossomNavigation } from "./useNavigation";
 import "./BlossomNext.css";
 
 export interface BlossomNextProps
@@ -17,7 +17,7 @@ export default function BlossomNext({
   disabled,
   ...props
 }: BlossomNextProps) {
-  const state = useNavigation(carouselId);
+  const state = useBlossomNavigation(carouselId);
 
   return (
     <button

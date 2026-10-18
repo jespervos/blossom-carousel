@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { toRef } from "vue";
 import { COMMANDS } from "@blossom-carousel/navigation";
-import { useNavigation } from "./useNavigation";
+import { useBlossomNavigation } from "./useNavigation";
 
 const props = defineProps<{
   for: string;
@@ -24,7 +24,7 @@ const props = defineProps<{
 }>();
 
 const command = COMMANDS.prev;
-const state = useNavigation(toRef(props, "for"));
+const state = useBlossomNavigation(toRef(props, "for"));
 </script>
 
 <style scoped>
