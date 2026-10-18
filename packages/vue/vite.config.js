@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [
     vue(),
     dts({
+      // Declarations land at dist/index.d.ts. Without entryRoot the plugin
+      // infers a root from the TypeScript version and flips between dist/ and dist/src/.
+      entryRoot: "src",
       include: ["src/**/*.ts", "src/**/*.vue"],
       exclude: ["src/**/*.test.ts"],
     }),
