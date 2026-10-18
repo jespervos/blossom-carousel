@@ -2,6 +2,16 @@
 
 All notable changes to `@blossom-carousel/vue` are documented in this file.
 
+## 1.8.0 (2026-10-18)
+
+### Added
+
+- Exported `useBlossomNavigation`, the new name for `useNavigation`. It avoids a clash with the `useNavigation` hooks of other libraries.
+
+### Deprecated
+
+- `useNavigation` is now a deprecated alias of `useBlossomNavigation`. It keeps working and will be removed in a future major version.
+
 ## 1.7.0 (2026-10-10)
 
 ### Added

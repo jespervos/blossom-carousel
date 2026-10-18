@@ -2,7 +2,18 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
-## 1.6.1 (2026-10-17)
+## 1.7.0 (2026-10-18)
+
+### Added
+
+- Exported `useBlossomNavigation` so custom React controls can read `canPrev`, `canNext`, `activeIndex`, and `count`. The `NavigationState` type was already exported.
+
+### Changed
+
+- `BlossomCarousel` registers its navigation commands in a layout effect instead of an effect. A parent's `useLayoutEffect` can now call `goTo(index, { behavior: "instant" })` to position the carousel before the first paint.
+- `useBlossomNavigation` skips re-renders while scrolling when `activeIndex`, `count`, `canPrev`, and `canNext` have not changed.
+
+## 1.6.1 (2026-10-18)
 
 ### Fixed
 

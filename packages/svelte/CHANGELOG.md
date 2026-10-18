@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
+## 2.3.0 (2026-10-18)
+
+### Added
+
+- Exported `useBlossomNavigation` and the `NavigationState` type, matching the React and Vue packages. Call it during component initialization with a carousel id, or a getter that returns one, to read reactive `canPrev`, `canNext`, `activeIndex`, and `count`.
+
 ## 2.2.0 (2026-10-10)
 
 ### Added
