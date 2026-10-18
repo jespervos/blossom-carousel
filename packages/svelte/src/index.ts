@@ -6,3 +6,6 @@ import BlossomDots from "./BlossomDots.svelte";
 import BlossomDot from "./BlossomDot.svelte";
 
 export { BlossomCarousel, BlossomPrev, BlossomNext, BlossomDots, BlossomDot };
+
+export { useBlossomNavigation } from "./useBlossomNavigation.svelte.js";
+export type { NavigationState } from "./navigation.js";
