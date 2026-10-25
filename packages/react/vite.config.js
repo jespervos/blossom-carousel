@@ -3,7 +3,9 @@ import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import path from "path";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Published bundles must support production React regardless of NODE_ENV.
+  oxc: command === "build" ? { jsx: { development: false } } : undefined,
   plugins: [
     react(),
     dts({
@@ -45,4 +47,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
