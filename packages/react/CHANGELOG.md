@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.7.1 (2026-10-25)
+
+### Fixed
+
+- The published ESM and CommonJS bundles use `react/jsx-runtime` instead of `jsxDEV` from `react/jsx-dev-runtime`. The 1.7.0 bundles failed to render with production React (#44).
+
 ## 1.7.0 (2026-10-18)
 
 ### Added

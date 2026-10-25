@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/vue` are documented in this file.
 
+## 1.8.1 (2026-10-25)
+
+### Fixed
+
+- The published bundles are compiled in production mode. The 1.8.0 bundles included development-only code and absolute `__file` paths from the build machine.
+
 ## 1.8.0 (2026-10-18)
 
 ### Added
