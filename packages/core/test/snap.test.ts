@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { shouldSnap, snapSelect } from "../src/snap";
+import {
+  dragSnap,
+  findSnapPositions,
+  onSnapChanging,
+  shouldSnap,
+  snapSelect,
+} from "../src/snap";
 import { createState } from "../src/state";
 
 describe("shouldSnap", () => {
@@ -47,6 +53,38 @@ describe("shouldSnap", () => {
     state.snapPositions = [{ target: null, x: 250, y: 0 }];
 
     expect(shouldSnap(0, 0, 0.5, state)).toBe(false);
+  });
+});
+
+describe("findSnapPositions", () => {
+  it("keeps the first duplicate position and drops unsupported alignments", () => {
+    const scroller = document.createElement("div");
+    const first = document.createElement("div");
+    const duplicate = document.createElement("div");
+    const unsupported = document.createElement("div");
+    first.style.scrollSnapAlign = "start";
+    duplicate.style.scrollSnapAlign = "start";
+    unsupported.style.scrollSnapAlign = "start end";
+    scroller.append(first, duplicate, unsupported);
+
+    Object.defineProperty(scroller, "getBoundingClientRect", {
+      value: () => rect(0),
+    });
+    Object.defineProperty(first, "getBoundingClientRect", {
+      value: () => rect(10),
+    });
+    Object.defineProperty(duplicate, "getBoundingClientRect", {
+      value: () => rect(10),
+    });
+    Object.defineProperty(unsupported, "getBoundingClientRect", {
+      value: () => rect(20),
+    });
+
+    const state = createState();
+    findSnapPositions(scroller, state);
+
+    expect(state.snapPositions).toHaveLength(1);
+    expect(state.snapPositions[0]).toMatchObject({ target: first, x: 10 });
   });
 });
 
@@ -98,3 +136,65 @@ describe("snapSelect", () => {
     });
   });
 });
+
+describe("scrollsnapchanging events", () => {
+  it("dispatches the selected target on pointer release", () => {
+    const state = createState();
+    const scroller = document.createElement("div");
+    const target = document.createElement("div");
+    const position = { target, x: 100, y: 0 };
+    state.scroller = scroller;
+    state.snapPositions = [position];
+    const events: CustomEvent[] = [];
+
+    scroller.addEventListener("scrollsnapchanging", (event) => {
+      events.push(event as CustomEvent);
+    });
+
+    dragSnap(100, 0, 0.5, state);
+    dragSnap(100, 0, 0.5, state);
+
+    expect(events).toHaveLength(1);
+    expect(events[0].detail).toEqual({
+      snapTargetInline: target,
+      snapTargetBlock: target,
+    });
+  });
+
+  it("dispatches the selected target during drag frames", () => {
+    const state = createState();
+    const scroller = document.createElement("div");
+    const target = document.createElement("div");
+    const position = { target, x: 100, y: 0 };
+    state.scroller = scroller;
+    state.snapPositions = [position];
+    const events: CustomEvent[] = [];
+
+    scroller.addEventListener("scrollsnapchanging", (event) => {
+      events.push(event as CustomEvent);
+    });
+
+    onSnapChanging(100, 0, 0.5, state);
+    onSnapChanging(100, 0, 0.5, state);
+
+    expect(events).toHaveLength(1);
+    expect(events[0].detail).toEqual({
+      snapTargetInline: target,
+      snapTargetBlock: target,
+    });
+  });
+});
+
+function rect(left: number): DOMRect {
+  return {
+    x: left,
+    y: 0,
+    left,
+    top: 0,
+    right: left + 20,
+    bottom: 20,
+    width: 20,
+    height: 20,
+    toJSON: () => ({}),
+  };
+}

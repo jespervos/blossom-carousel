@@ -13,15 +13,10 @@ export interface SnapPosition {
   x: number;
   y: number;
   width?: number | undefined;
-  height?: number | undefined;
 }
 
 export interface CarouselOptions {
   repeat?: boolean;
-}
-
-export interface AxisOption {
-  axis: "x" | "y";
 }
 
 export type AlignOption = "start" | "center" | "end";

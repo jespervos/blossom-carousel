@@ -10,13 +10,7 @@ export type CarouselState = {
   scrollerHeight: number;
   padding: { start: number; end: number };
   scrollPadding: { start: number; end: number };
-  slidePositions: Array<{
-    x: number;
-    y: number;
-    target: HTMLElement | null;
-    width: number;
-    height: number;
-  }>;
+  slidePositions: Array<{ x: number; width: number }>;
   hasSnap: boolean;
   snapMandatory?: boolean;
   snapPositions: SnapPosition[];

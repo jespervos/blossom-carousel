@@ -70,17 +70,14 @@ function createRegistration(scroller: HTMLElement): ObserverRegistration {
     });
   };
 
-  // Scroll/snap settling: nav state changes, snap geometry does not.
-  const emit = () => flush();
-
   // Layout shifts: snap geometry must be recomputed before the next flush.
   const onLayoutChange = () => {
     snapsDirty = true;
     flush();
   };
 
-  scroller.addEventListener("scroll", emit, { passive: true });
-  scroller.addEventListener("scrollend", emit, { passive: true });
+  scroller.addEventListener("scroll", flush, { passive: true });
+  scroller.addEventListener("scrollend", flush, { passive: true });
 
   const resizeObserver = new ResizeObserver(onLayoutChange);
   resizeObserver.observe(scroller);
@@ -90,8 +87,8 @@ function createRegistration(scroller: HTMLElement): ObserverRegistration {
 
   const teardown = () => {
     cancelAnimationFrame(frame);
-    scroller.removeEventListener("scroll", emit);
-    scroller.removeEventListener("scrollend", emit);
+    scroller.removeEventListener("scroll", flush);
+    scroller.removeEventListener("scrollend", flush);
     resizeObserver.disconnect();
     mutationObserver.disconnect();
     clearSnapCache(scroller);

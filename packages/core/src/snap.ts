@@ -7,18 +7,6 @@ import type { CarouselState } from "./state";
 import { FRICTION } from "./constants.js";
 import { clamp, project } from "./utils.js";
 
-export type SnapStore = {
-  positions: SnapPosition[];
-  activePosition: SnapPosition;
-};
-
-export function createSnapStore(): SnapStore {
-  return {
-    positions: [],
-    activePosition: { target: null, x: 0, y: 0 },
-  };
-}
-
 type PositionRestore = {
   el: HTMLElement;
   value: string;
@@ -162,8 +150,8 @@ export function dragSnap(
   const newSnapPosition = snapSelect(target, velocity, friction, state);
   if (newSnapPosition.x !== state.activeSnapPosition.x) {
     dispatchScrollSnapChangingEvent(state.scroller, {
-      snapTargetInline: (newSnapPosition || state.activeSnapPosition).target,
-      snapTargetBlock: (newSnapPosition || state.activeSnapPosition).target,
+      snapTargetInline: newSnapPosition.target,
+      snapTargetBlock: newSnapPosition.target,
     });
   }
   state.activeSnapPosition = newSnapPosition;
@@ -212,8 +200,8 @@ export function onSnapChanging(
   if (newSnapPosition.x !== state.activeSnapPosition.x) {
     state.activeSnapPosition = newSnapPosition;
     dispatchScrollSnapChangingEvent(state.scroller, {
-      snapTargetInline: (newSnapPosition || state.activeSnapPosition).target,
-      snapTargetBlock: (newSnapPosition || state.activeSnapPosition).target,
+      snapTargetInline: newSnapPosition.target,
+      snapTargetBlock: newSnapPosition.target,
     });
   }
 }
