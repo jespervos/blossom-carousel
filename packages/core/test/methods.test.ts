@@ -15,9 +15,9 @@ describe("next", () => {
     const scroller = createFakeScroller(100);
     state.scroller = scroller;
     state.slidePositions = [
-      { x: 20, y: 0, target: null, width: 100, height: 40 },
-      { x: 120, y: 0, target: null, width: 100, height: 40 },
-      { x: 240, y: 0, target: null, width: 100, height: 40 },
+      { x: 20, width: 100 },
+      { x: 120, width: 100 },
+      { x: 240, width: 100 },
     ];
 
     next(state);
@@ -34,8 +34,8 @@ describe("next", () => {
     const scroller = createFakeScroller(10);
     state.scroller = scroller;
     state.slidePositions = [
-      { x: 200, y: 0, target: null, width: 100, height: 40 },
-      { x: 320, y: 0, target: null, width: 100, height: 40 },
+      { x: 200, width: 100 },
+      { x: 320, width: 100 },
     ];
 
     state.snapPositions = [
@@ -57,9 +57,9 @@ describe("next", () => {
     const scroller = createFakeScroller(240);
     state.scroller = scroller;
     state.slidePositions = [
-      { x: 20, y: 0, target: null, width: 100, height: 40 },
-      { x: 120, y: 0, target: null, width: 100, height: 40 },
-      { x: 240, y: 0, target: null, width: 100, height: 40 },
+      { x: 20, width: 100 },
+      { x: 120, width: 100 },
+      { x: 240, width: 100 },
     ];
 
     next(state);
@@ -74,9 +74,9 @@ describe("prev", () => {
     const scroller = createFakeScroller(240);
     state.scroller = scroller;
     state.slidePositions = [
-      { x: 20, y: 0, target: null, width: 100, height: 40 },
-      { x: 120, y: 0, target: null, width: 100, height: 40 },
-      { x: 240, y: 0, target: null, width: 100, height: 40 },
+      { x: 20, width: 100 },
+      { x: 120, width: 100 },
+      { x: 240, width: 100 },
     ];
 
     prev(state);
@@ -92,9 +92,9 @@ describe("prev", () => {
     const scroller = createFakeScroller(20);
     state.scroller = scroller;
     state.slidePositions = [
-      { x: 20, y: 0, target: null, width: 100, height: 40 },
-      { x: 120, y: 0, target: null, width: 100, height: 40 },
-      { x: 240, y: 0, target: null, width: 100, height: 40 },
+      { x: 20, width: 100 },
+      { x: 120, width: 100 },
+      { x: 240, width: 100 },
     ];
 
     prev(state);
