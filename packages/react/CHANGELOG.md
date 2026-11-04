@@ -2,6 +2,16 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.8.0 (2026-11-04)
+
+### Fixed
+
+- `onOverscroll` and `onCommand` on `BlossomCarousel` now work. React DOM doesn't know the `overscroll` and `command` events, so before this release it dropped both props with an "Unknown event handler property" warning. `BlossomCarousel` now attaches them with `addEventListener` on the root element. `onCommand` is attached before the first paint, so it also sees a `goTo` call from a parent's `useLayoutEffect`.
+
+### Added
+
+- Exported the `BlossomOverscrollEvent` and `BlossomCommandEvent` types for the two handlers.
+
 ## 1.7.1 (2026-10-25)
 
 ### Fixed

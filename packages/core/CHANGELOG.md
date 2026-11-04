@@ -2,6 +2,12 @@
 
 All notable changes to `@blossom-carousel/core` are documented in this file.
 
+## 1.1.10 (2026-11-04)
+
+### Fixed
+
+- The `options` argument of `Blossom(element, options)` is optional in the TypeScript signature, so the documented `Blossom(element)` call compiles. It defaults to `{}`.
+
 ## 1.1.9 (2026-10-18)
 
 ### Fixed

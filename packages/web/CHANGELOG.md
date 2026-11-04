@@ -2,6 +2,13 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
+## 1.6.1 (2026-11-04)
+
+### Fixed
+
+- `require("@blossom-carousel/web")` works. The `require` export and `main` pointed at `dist/blossom-carousel-web.umd.cjs`, which the build never emitted. The UMD bundle is now published under that name. `dist/blossom-carousel-web.umd.js` is still shipped for CDN script tags, and the new `unpkg` and `jsdelivr` fields point at it.
+- `<blossom-prev>` and `<blossom-next>` no longer overwrite a custom `aria-label`. An `aria-label` on an author-provided `<button>` is kept. An `aria-label` on the `<blossom-prev>` or `<blossom-next>` element itself is moved onto the inner button, including when it's set after the element connects. The "Previous slide" and "Next slide" defaults only apply when neither is set.
+
 ## 1.6.0 (2026-10-10)
 
 ### Added
