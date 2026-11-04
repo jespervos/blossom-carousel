@@ -144,6 +144,8 @@ Listen for `command` events on the carousel to know when any navigation control 
 
 These events are not fired by drag or free scrolling. Read `event.command` (or `event.detail.command` where the Invoker Commands polyfill applies).
 
+`onCommand` and `onOverscroll` require `@blossom-carousel/react` 1.8.0 or later. Earlier versions passed them to the DOM, where React ignored them.
+
 ```jsx
 <BlossomCarousel onCommand={handleCommand}>
   {Array.from({ length: 12 }, (_, i) => (

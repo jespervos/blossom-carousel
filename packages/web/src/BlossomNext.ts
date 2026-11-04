@@ -1,10 +1,13 @@
 import { COMMANDS } from "@blossom-carousel/navigation";
 import {
+  applyNavLabel,
   connectNavigation,
   ensureNavButton,
   getForId,
   setCommandBehavior,
 } from "./navigation";
+
+const DEFAULT_LABEL = "Next slide";
 
 const HTMLElementBase: typeof HTMLElement =
   typeof HTMLElement === "undefined"
@@ -13,7 +16,7 @@ const HTMLElementBase: typeof HTMLElement =
 
 export class BlossomNext extends HTMLElementBase {
   static get observedAttributes(): string[] {
-    return ["behavior"];
+    return ["behavior", "aria-label"];
   }
 
   private cleanup?: () => void;
@@ -25,7 +28,7 @@ export class BlossomNext extends HTMLElementBase {
     this.button.setAttribute("command", COMMANDS.next);
     this.button.setAttribute("commandfor", forId);
     this.button.setAttribute("aria-controls", forId);
-    this.button.setAttribute("aria-label", "Next slide");
+    applyNavLabel(this, this.button, DEFAULT_LABEL);
     this.applyBehavior();
 
     this.cleanup = connectNavigation(forId, (state) => {
@@ -33,7 +36,11 @@ export class BlossomNext extends HTMLElementBase {
     });
   }
 
-  attributeChangedCallback(): void {
+  attributeChangedCallback(name: string): void {
+    if (name === "aria-label") {
+      if (this.button) applyNavLabel(this, this.button, DEFAULT_LABEL);
+      return;
+    }
     this.applyBehavior();
   }
 

@@ -87,19 +87,19 @@ Slot your own content to replace the default button icon.
 
 #### Custom navigation UI
 
-`useNavigation` exposes the same reactive state the built-in controls use. Pass a string, a `ref`, or `undefined`:
+`useBlossomNavigation` exposes the same reactive state the built-in controls use. Pass a string, a `ref`, or `undefined`:
 
 ```html
 <script setup>
 import { useId } from "vue";
-import { useNavigation } from "@blossom-carousel/vue";
+import { useBlossomNavigation } from "@blossom-carousel/vue";
 
 const carouselId = useId();
-const state = useNavigation(carouselId);
+const state = useBlossomNavigation(carouselId);
 </script>
 ```
 
-`state` is a ref with `canPrev`, `canNext`, `activeIndex`, and `count`.
+`state` is a ref with `canPrev`, `canNext`, `activeIndex`, and `count`. `useNavigation` is a deprecated alias that still works.
 
 #### Dots
 `<BlossomDots>` renders one button per slide marked with `data-blossom-slide`.
@@ -173,7 +173,6 @@ import {
   BlossomNext,
   BlossomDots,
   BlossomDot,
-  useNavigation,
 } from "@blossom-carousel/vue";
 import "@blossom-carousel/vue/style.css";
 
@@ -228,7 +227,7 @@ Tap into Blossom's drag engine's overscroll behavior to create your own style.
 function onOverscroll(event) {
   const overScroll = event.detail.left;
 
-  Array.from(blossomCarousel.value.children).forEach((slide) => {
+  Array.from(event.currentTarget.children).forEach((slide) => {
     slide.style.transform = `scale(${1 - overScroll * 0.1})`;
   });
 }

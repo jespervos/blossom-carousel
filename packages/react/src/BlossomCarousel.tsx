@@ -19,11 +19,27 @@ export interface BlossomCarouselHandle {
   element: HTMLElement | null;
 }
 
-export interface BlossomCarouselProps extends React.HTMLAttributes<HTMLElement> {
+export type BlossomOverscrollEvent = CustomEvent<{ left: number }>;
+
+export type BlossomCommandEvent = CustomEvent<{
+  command?: string;
+  behavior?: ScrollBehavior;
+  source?: Element | null;
+}> & {
+  command?: string;
+  source?: Element | null;
+};
+
+export interface BlossomCarouselProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, "onCommand"> {
   children?: ReactNode | Array<ReactNode>;
   as?: ElementType;
   repeat?: boolean;
   load?: "always" | "conditional";
+  /** Fires while the drag engine rubber-bands past an edge. Call `preventDefault()` to replace the default effect. */
+  onOverscroll?: (event: BlossomOverscrollEvent) => void;
+  /** Fires when a navigation control or `prev`/`next`/`goTo` navigates the carousel. */
+  onCommand?: (event: BlossomCommandEvent) => void;
 }
 
 // `useLayoutEffect` warns when rendered on the server in React < 19.
@@ -31,10 +47,28 @@ const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
-  ({ children, as = "div", repeat = false, load = "conditional", ...props }, parentRef) => {
+  (
+    {
+      children,
+      as = "div",
+      repeat = false,
+      load = "conditional",
+      onOverscroll,
+      onCommand,
+      ...props
+    },
+    parentRef,
+  ) => {
     const Component = as as JSXElementConstructor<any>;
     const localRef = useRef<HTMLElement>(null);
     const blossomRef = useRef<ReturnType<typeof import("@blossom-carousel/core").Blossom> | null>(null);
+
+    // React DOM drops unknown `on*` props on intrinsic elements, so these are
+    // attached natively. Refs keep the latest handlers without re-subscribing.
+    const onOverscrollRef = useRef(onOverscroll);
+    const onCommandRef = useRef(onCommand);
+    onOverscrollRef.current = onOverscroll;
+    onCommandRef.current = onCommand;
 
     // Runs during render (server and client) rather than an effect, so a
     // sibling `BlossomDots` rendered after this carousel — server or client —
@@ -50,7 +84,26 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
     useIsomorphicLayoutEffect(() => {
       const scroller = localRef.current;
       if (!scroller) return;
-      return registerCommands(scroller);
+
+      const handleCommand = (event: Event) =>
+        onCommandRef.current?.(event as BlossomCommandEvent);
+      scroller.addEventListener("command", handleCommand);
+      const unregister = registerCommands(scroller);
+
+      return () => {
+        unregister();
+        scroller.removeEventListener("command", handleCommand);
+      };
+    }, []);
+
+    useEffect(() => {
+      const scroller = localRef.current;
+      if (!scroller) return;
+
+      const handleOverscroll = (event: Event) =>
+        onOverscrollRef.current?.(event as BlossomOverscrollEvent);
+      scroller.addEventListener("overscroll", handleOverscroll);
+      return () => scroller.removeEventListener("overscroll", handleOverscroll);
     }, []);
 
     useEffect(() => {

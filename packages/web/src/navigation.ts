@@ -49,6 +49,34 @@ export function setCommandBehavior(
   }
 }
 
+const LABEL_ATTR = "aria-label";
+const labelOrigin = new WeakMap<Element, "default" | "host">();
+
+/**
+ * Names the inner button. A label the author set on the button wins; otherwise
+ * a host `aria-label` is moved onto the button (a label on the custom element
+ * itself isn't exposed to assistive technology); otherwise the default is used.
+ */
+export function applyNavLabel(
+  host: HTMLElement,
+  button: HTMLElement,
+  defaultLabel: string,
+): void {
+  if (button.hasAttribute(LABEL_ATTR) && !labelOrigin.has(button)) return;
+
+  const hostLabel = host.getAttribute(LABEL_ATTR);
+  if (hostLabel) {
+    button.setAttribute(LABEL_ATTR, hostLabel);
+    labelOrigin.set(button, "host");
+    host.removeAttribute(LABEL_ATTR);
+    return;
+  }
+
+  if (labelOrigin.get(button) === "host") return;
+  button.setAttribute(LABEL_ATTR, defaultLabel);
+  labelOrigin.set(button, "default");
+}
+
 function isAuthorContent(node: Node): boolean {
   if (node.nodeType === Node.ELEMENT_NODE) return true;
   return node.nodeType === Node.TEXT_NODE && Boolean(node.textContent?.trim());

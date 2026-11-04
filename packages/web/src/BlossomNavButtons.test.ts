@@ -11,6 +11,67 @@ class StubResizeObserver {
   StubResizeObserver;
 
 describe.each([
+  { tag: "blossom-next", defaultLabel: "Next slide" },
+  { tag: "blossom-prev", defaultLabel: "Previous slide" },
+] as const)("$tag aria-label", ({ tag, defaultLabel }) => {
+  let control: HTMLElement;
+  const label = () =>
+    control.querySelector(":scope > button")?.getAttribute("aria-label");
+
+  beforeEach(() => {
+    control = document.createElement(tag);
+    control.setAttribute("for", "missing-carousel");
+  });
+
+  afterEach(() => {
+    control.remove();
+  });
+
+  it("uses the default label", () => {
+    document.body.appendChild(control);
+    expect(label()).toBe(defaultLabel);
+  });
+
+  it("keeps a label set on an author-provided button", () => {
+    control.innerHTML = `<button type="button" aria-label="Show more products"></button>`;
+    document.body.appendChild(control);
+    expect(label()).toBe("Show more products");
+  });
+
+  it("moves a host aria-label onto the button", () => {
+    control.setAttribute("aria-label", "More products");
+    document.body.appendChild(control);
+
+    expect(label()).toBe("More products");
+    expect(control.hasAttribute("aria-label")).toBe(false);
+  });
+
+  it("prefers the button's own label over the host label", () => {
+    control.setAttribute("aria-label", "From host");
+    control.innerHTML = `<button type="button" aria-label="From button"></button>`;
+    document.body.appendChild(control);
+    expect(label()).toBe("From button");
+  });
+
+  it("applies a host label set after connecting", () => {
+    document.body.appendChild(control);
+    control.setAttribute("aria-label", "More products");
+
+    expect(label()).toBe("More products");
+    expect(control.hasAttribute("aria-label")).toBe(false);
+  });
+
+  it("keeps the label across a reconnect", () => {
+    control.setAttribute("aria-label", "More products");
+    document.body.appendChild(control);
+    control.remove();
+    document.body.appendChild(control);
+
+    expect(label()).toBe("More products");
+  });
+});
+
+describe.each([
   { tag: "blossom-next", fallback: "Next" },
   { tag: "blossom-prev", fallback: "Previous" },
 ] as const)("$tag content", ({ tag, fallback }) => {

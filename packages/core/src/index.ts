@@ -45,7 +45,7 @@ function registerScrollIntoViewIntercept(
   };
 }
 
-export const Blossom = (scroller: HTMLElement, options: CarouselOptions) => {
+export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) => {
   const state = createState();
   state.scroller = scroller;
   let snap = <boolean>true;

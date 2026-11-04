@@ -16,12 +16,14 @@ import "@blossom-carousel/web/style.css";
 #### CDN
 
 ```html
-<script src="https://unpkg.com/@blossom-carousel/web@latest/dist/blossom-carousel-web.umd.js"></script>
+<script src="https://unpkg.com/@blossom-carousel/web@1/dist/blossom-carousel-web.umd.js"></script>
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@blossom-carousel/web@latest/dist/blossom-carousel-web.css"
+  href="https://unpkg.com/@blossom-carousel/web@1/dist/blossom-carousel-web.css"
 />
 ```
+
+Pin the major version (`@1`) so a future major release can't change the page without you opting in.
 
 ## Usage
 
@@ -60,6 +62,13 @@ Set text or HTML (for example an SVG icon) on the element to replace the default
 <blossom-next for="my-carousel">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4l8 8-8 8" /></svg>
 </blossom-next>
+```
+
+The inner button is named "Previous slide" or "Next slide" by default. Set `aria-label` on the element to use a more specific name; it's moved onto the inner button. An `aria-label` on your own `<button>` child takes precedence.
+
+```html
+<blossom-prev for="my-carousel" aria-label="Previous products"></blossom-prev>
+<blossom-next for="my-carousel" aria-label="Next products"></blossom-next>
 ```
 
 #### Dots
