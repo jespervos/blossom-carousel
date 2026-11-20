@@ -14,6 +14,8 @@ repeat.destroy(); // remove every node and style it added
 
 The real slides stay in their natural layout in the middle of a very long scroll range. Sets of copies sit around them in a fixed DOM order and are shown in other loops with the CSS `translate` property only, and only while they are off screen. From the build to the next rest nothing else changes: no node is inserted or removed, no spacer changes size, the scroll position is not written and scroll snapping is not toggled. At rest the view is moved by whole loops back onto the real slides, which looks the same. With scroll snap, copies do not snap; a fixed lattice of empty markers stands in for them, so the list of snap positions never changes.
 
+While it loops the scroller carries `blossom-repeat="true"` and `blossom-loop="<px>"`, the length of one loop along the inline axis. Navigation reads `blossom-loop` to keep the active dot right while the view is in a loop of copies, and to send a dot to the nearest drawing of its slide.
+
 ## Known limits
 
 - **Very fast flicks.** The module keeps at least 4500 px of copies past each edge of the view at every scroll event (the fastest step recorded on an iPhone was 2722 px between two scroll events, 129 ms apart). A frame drawn more than 4500 px past the last scroll event shows empty space until the next scroll event. iOS draws a frame before it fires its scroll event, so the module cannot prevent this. Raising the margin costs memory (more copies) and nothing else.

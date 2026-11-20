@@ -9,6 +9,19 @@ import {
 export const SLIDE_ATTR = "data-blossom-slide";
 const SLIDE_SELECTOR = `[${SLIDE_ATTR}]`;
 
+/**
+ * Set on a looping scroller (by the repeat add-on): the length of one loop in
+ * px. The slides then repeat every loop along the inline axis, so the active
+ * marker and the dot targets are taken modulo the loop.
+ */
+export const LOOP_ATTR = "blossom-loop";
+
+/** The loop length of a looping scroller, or 0. */
+export function getLoop(scroller: HTMLElement): number {
+  const loop = Number.parseFloat(scroller.getAttribute(LOOP_ATTR) ?? "");
+  return loop > 0 ? loop : 0;
+}
+
 /** Tolerance (px) when comparing the scroll position against snap positions. */
 const EPSILON = 1;
 
@@ -135,9 +148,32 @@ export function selectActiveIndex(
   // order is scroll-invariant, so hosts precompute it in the snap cache; this
   // default only runs on the live (uncached) path.
   sorted: number[] = [...positions].sort((a, b) => a - b),
+  loop = 0,
 ): number {
   if (positions.length === 0) return -1;
   if (positions.length === 1) return 0;
+
+  if (loop > 0) {
+    // The slides repeat every loop: bring the position into the loop that
+    // starts at the first target, and select among that loop and its two
+    // neighbours (so the last target of the previous loop, and the early
+    // activation of the next loop's first one, are seen as they are drawn).
+    const first = sorted[0];
+    const x = first + ((((position - first) % loop) + loop) % loop);
+    const around = [
+      ...sorted.map((p) => p - loop),
+      ...sorted,
+      ...sorted.map((p) => p + loop),
+    ];
+    const at = selectActiveIndex(around, x, scrollportSize, around);
+    const p = around[at];
+    for (const shift of [0, -loop, loop]) {
+      for (let i = 0; i < positions.length; i++) {
+        if (Math.abs(positions[i] + shift - p) <= EPSILON) return i;
+      }
+    }
+    return 0;
+  }
 
   const halfScrollport = scrollportSize / 2;
 
@@ -179,6 +215,8 @@ export interface ActiveIndexGeometry {
   sortedActivePositions: number[];
   /** Whether the scroller's inline axis is right-to-left. */
   rtl: boolean;
+  /** Loop length of a looping scroller (see {@link LOOP_ATTR}), or 0. */
+  loop: number;
 }
 
 /**
@@ -209,5 +247,6 @@ export function getActiveMarkerIndex(
     logicalScrollLeft(scroller, rtl),
     scrollportSize,
     cached?.sortedActivePositions,
+    cached ? cached.loop : getLoop(scroller),
   );
 }

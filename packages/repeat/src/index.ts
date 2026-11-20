@@ -14,6 +14,8 @@
 // The slides belong to the page (or a framework): they are never moved, and nothing is
 // written on them. Everything this module adds is its own, and is all that it moves.
 export const CLONE_ATTR = "data-blossom-clone";
+/** On the scroller while it loops: the length of one loop in px, along the inline axis. */
+export const LOOP_ATTR = "blossom-loop";
 const FOCUSABLE = "a,button,input,select,textarea,summary,iframe,[tabindex],[contenteditable],[controls]";
 const CONTROLS = "button,input,select,textarea,fieldset,output,object";
 const STRIP = ["id", "name", "for", "form", "autofocus", "data-blossom-slide"];
@@ -234,6 +236,7 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
     for (const el of all) if (!watched.has(el)) watched.add(el), ro.observe(el);
     signature = all.map((el) => el.outerHTML).join("");
     scroller.setAttribute("blossom-repeat", "false");
+    scroller.removeAttribute(LOOP_ATTR);
     if (!first) return;
     targets = real.flatMap((el) => [el, ...el.querySelectorAll("*")]).filter((e) => getComputedStyle(e).scrollSnapAlign.split(" ").some((v) => v !== "none"));
     snapping = targets.length > 0;
@@ -265,6 +268,7 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
     (head = first), (i0 = all.indexOf(first));
     if (snapping) lattice(targets);
     scroller.setAttribute("blossom-repeat", "true");
+    scroller.setAttribute(LOOP_ATTR, String(loop)); // navigation wraps its dots by it
     shift(pos(first) - keep);
     follow();
   }
@@ -419,6 +423,7 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
       const keep = real && pos(real);
       still(() => (clear(), real && shift(pos(real) - keep)));
       scroller.removeAttribute("blossom-repeat");
+      scroller.removeAttribute(LOOP_ATTR);
       if (!hadStyle && !scroller.getAttribute("style")) scroller.removeAttribute("style");
     },
   };

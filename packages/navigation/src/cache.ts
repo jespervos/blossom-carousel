@@ -41,6 +41,8 @@ export interface SnapCache {
    * refresh so the hot loop avoids a `getComputedStyle` per frame.
    */
   rtl: boolean;
+  /** Loop length of a looping scroller, or 0. */
+  loop: number;
 }
 
 const store = new WeakMap<HTMLElement, SnapCache>();

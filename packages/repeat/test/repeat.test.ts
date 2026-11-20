@@ -52,6 +52,8 @@ describe("createRepeat", () => {
     createRepeat(s);
 
     expect(s.getAttribute("blossom-repeat")).toBe("true");
+    // the loop length, for navigation: 12 slides of the test layout's width
+    expect(Number(s.getAttribute("blossom-loop"))).toBe(12 * (first.getBoundingClientRect().width));
     // three sets before, four after: (view + 9000 px) / loop rounded up, each side, plus one
     expect(copies(s)).toHaveLength(7 * 12);
     expect(first.getBoundingClientRect().left).toBe(0);
@@ -159,6 +161,7 @@ describe("createRepeat", () => {
     realSlides(s).slice(3).forEach((el) => el.remove());
     await rest();
     expect(s.getAttribute("blossom-repeat")).toBe("false");
+    expect(s.hasAttribute("blossom-loop")).toBe(false);
     expect(copies(s)).toHaveLength(0);
   });
 
