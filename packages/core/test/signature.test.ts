@@ -43,4 +43,8 @@ describe("Blossom signature", () => {
   it("accepts a call without options", () => {
     expect(typeErrors("test/fixtures/blossomWithoutOptions.ts")).toBe("");
   }, 60_000);
+
+  it("still accepts the deprecated repeat option", () => {
+    expect(typeErrors("test/fixtures/blossomWithDeprecatedRepeat.ts")).toBe("");
+  }, 60_000);
 });
