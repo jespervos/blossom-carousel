@@ -1,7 +1,9 @@
 import {
   getActiveMarkerIndex,
+  getLoop,
   getMarkerPositions,
   getMarkerTargets,
+  LOOP_ATTR,
 } from "./markers";
 import { canScroll } from "./scroll";
 import { getMarkerSnaps, getSnapPositions, isRtl } from "./snap";
@@ -36,6 +38,7 @@ function refreshSnapCache(scroller: HTMLElement): void {
     activePositions,
     sortedActivePositions: [...activePositions].sort((a, b) => a - b),
     rtl: isRtl(scroller),
+    loop: getLoop(scroller),
   });
 }
 
@@ -86,7 +89,12 @@ function createRegistration(scroller: HTMLElement): ObserverRegistration {
   resizeObserver.observe(scroller);
 
   const mutationObserver = new MutationObserver(onLayoutChange);
-  mutationObserver.observe(scroller, { childList: true, subtree: true });
+  mutationObserver.observe(scroller, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: [LOOP_ATTR],
+  });
 
   const teardown = () => {
     cancelAnimationFrame(frame);

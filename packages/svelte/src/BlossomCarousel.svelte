@@ -40,6 +40,23 @@
   const commands = createCommands(() => root);
   let unregisterCommands: (() => void) | undefined;
 
+  // Looping works on the scroller itself, with or without the drag engine
+  // (which is not loaded on touch devices). Effects only run in the browser.
+  // Loaded only when repeat is set.
+  $effect(() => {
+    const scroller = root;
+    if (!repeat || !scroller) return;
+    let live = true;
+    let looping: { destroy(): void } | undefined;
+    import("@blossom-carousel/repeat").then(({ createRepeat }) => {
+      if (live) looping = createRepeat(scroller);
+    });
+    return () => {
+      live = false;
+      looping?.destroy();
+    };
+  });
+
   onMount(async () => {
     if (!root) return;
     unregisterCommands = registerCommands(root);
@@ -52,7 +69,7 @@
 
     const { Blossom } = await import("@blossom-carousel/core");
 
-    blossom = Blossom(root, { repeat });
+    blossom = Blossom(root, {}); // options are required before core 1.1.10
     blossom.init();
   });
 

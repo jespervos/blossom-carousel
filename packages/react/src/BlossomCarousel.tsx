@@ -106,6 +106,23 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       return () => scroller.removeEventListener("overscroll", handleOverscroll);
     }, []);
 
+    // Looping works on the scroller itself, with or without the drag engine
+    // (which is not loaded on touch devices). Loaded only when repeat is set.
+    useIsomorphicLayoutEffect(() => {
+      const scroller = localRef.current;
+      if (!repeat || !scroller) return;
+
+      let live = true;
+      let looping: { destroy(): void } | undefined;
+      import("@blossom-carousel/repeat").then(({ createRepeat }) => {
+        if (live) looping = createRepeat(scroller);
+      });
+      return () => {
+        live = false;
+        looping?.destroy();
+      };
+    }, [repeat]);
+
     useEffect(() => {
       const scroller = localRef.current;
       if (!scroller) return;
@@ -121,7 +138,7 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       import("@blossom-carousel/core").then(({ Blossom }) => {
         if (destroyed || !localRef.current) return;
 
-        const blossom = Blossom(localRef.current, { repeat });
+        const blossom = Blossom(localRef.current, {}); // options are required before core 1.1.10
         blossomRef.current = blossom;
         blossom.init();
       });
@@ -131,7 +148,7 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
         blossomRef.current?.destroy();
         blossomRef.current = null;
       };
-    }, [repeat, load]);
+    }, [load]);
 
     useImperativeHandle(
       parentRef,

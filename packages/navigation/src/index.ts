@@ -7,7 +7,13 @@ export {
 } from "./commands";
 export type { CommandOptions } from "./commands";
 export { observeNavigationState, getNavigationState } from "./observe";
-export { getMarkerTargets, getActiveMarkerIndex, SLIDE_ATTR } from "./markers";
+export {
+  getMarkerTargets,
+  getActiveMarkerIndex,
+  getLoop,
+  LOOP_ATTR,
+  SLIDE_ATTR,
+} from "./markers";
 export type { ActiveIndexGeometry } from "./markers";
 export { pageScroll, canScroll } from "./scroll";
 export {

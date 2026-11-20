@@ -152,7 +152,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
     }
 
     scroller.setAttribute("has-snap", snap ? "true" : "false");
-    scroller.setAttribute("has-repeat", options?.repeat ? "true" : "false");
 
     restoreScrollMethods = registerScrollIntoViewIntercept(scroller, (target) => {
       if (target === scroller || scroller.contains(target))
@@ -227,7 +226,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
         };
       });
     }
-    if (options?.repeat) onRepeat(null, null);
   }
 
   function onMutation(): void {
@@ -235,11 +233,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
   }
 
   function onScroll() {
-    if (options?.repeat) {
-      onRepeat(null, null);
-      return;
-    }
-
     if (state.isDragging || !scroller) return;
 
     const scrollStart = scroller.scrollLeft;
@@ -337,59 +330,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
       isTicking.value = false;
   }
 
-  /*********************
-   ******* REPEAT ******
-   *********************/
-
-  function onRepeat(_: null | undefined, x: number | null): void {
-    if (!scroller) return;
-
-    const scrollStart = x ?? scroller.scrollLeft;
-    const distanceToStartEdge = state.padding.start - scrollStart;
-    const distanceToEndEdge =
-      scrollStart -
-      (state.scrollerScrollWidth - state.scrollerWidth - state.padding.end);
-    const slides = Array.from(scroller.children) as HTMLElement[];
-
-    const offsetSlides = (
-      startIdx: number,
-      endIdx: number,
-      threshold: number,
-      isEnd: boolean,
-    ) => {
-      let offset = 0;
-      const step = isEnd ? -1 : 1;
-      const baseOffset = isEnd
-        ? -(state.scrollerScrollWidth - state.scrollerWidth)
-        : state.scrollerScrollWidth - state.scrollerWidth;
-
-      for (let i = startIdx; isEnd ? i >= endIdx : i < endIdx; i += step) {
-        const thresholdCheck = isEnd ? offset > threshold : offset > threshold;
-        slides[i].style.translate = `${thresholdCheck ? 0 : baseOffset}px 0`;
-        offset += slides[i].clientWidth;
-      }
-    };
-
-    offsetSlides(
-      slides.length - 1,
-      slides.length / 2,
-      distanceToStartEdge,
-      true,
-    );
-    offsetSlides(0, slides.length / 2, distanceToEndEdge, false);
-
-    if (state.isDragging) return;
-
-    const left =
-      scrollStart > state.end ? 4 : scrollStart < 4 ? state.end : null;
-    if (!left) return;
-    __scrollingInternally = true;
-    scroller.scrollTo({
-      left,
-      behavior: "instant" as ScrollBehavior,
-    });
-  }
-
   /******************
    ***** Ticker *****
    ******************/
@@ -470,15 +410,6 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
       }
     }
 
-    if (options?.repeat) {
-      if (virtualScroll.x > state.end) {
-        virtualScroll.x = target.x = 4;
-      }
-      if (virtualScroll.x < 4) {
-        virtualScroll.x = target.x = state.end;
-      }
-    }
-
     __scrollingInternally = true;
     scroller.scrollTo({
       left: virtualScroll.x,
@@ -498,11 +429,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
       }
     }
 
-    if (!options?.repeat) {
-      applyRubberBanding(round(virtualScroll.x, 2));
-    } else {
-      onRepeat(null, virtualScroll.x);
-    }
+    applyRubberBanding(round(virtualScroll.x, 2));
 
     lastTick = t;
   }

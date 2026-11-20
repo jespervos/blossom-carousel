@@ -1,5 +1,6 @@
 import { Blossom } from "@blossom-carousel/core";
 import { createCommands, registerCommands } from "@blossom-carousel/navigation";
+import type { Repeat } from "@blossom-carousel/repeat";
 import "./style.css";
 import "./BlossomPrev";
 import "./BlossomNext";
@@ -13,8 +14,14 @@ const HTMLElementBase: typeof HTMLElement =
     : HTMLElement;
 
 export class BlossomCarousel extends HTMLElementBase {
+  static observedAttributes = ["repeat"];
+
   private carouselInstance!: ReturnType<typeof Blossom>;
   private unregisterCommands?: () => void;
+  private looping?: Repeat;
+  private repeating = false;
+  private repeatTicket = 0;
+  private connected = false;
   private readonly commands = createCommands(() => this);
 
   constructor() {
@@ -27,15 +34,39 @@ export class BlossomCarousel extends HTMLElementBase {
 
   connectedCallback(): void {
     this.unregisterCommands = registerCommands(this);
-    this.carouselInstance = Blossom(this, {
-      repeat: this.hasAttribute("repeat"),
-    });
+    this.carouselInstance = Blossom(this, {}); // options are required before core 1.1.10
     this.carouselInstance.init();
+    this.connected = true;
+    this.updateRepeat();
   }
 
   disconnectedCallback(): void {
+    this.connected = false;
+    this.updateRepeat();
     this.unregisterCommands?.();
     this.carouselInstance.destroy();
+  }
+
+  attributeChangedCallback(): void {
+    // Also called on upgrade, before connectedCallback: that one starts it.
+    if (this.connected) this.updateRepeat();
+  }
+
+  /**
+   * Looping (the `repeat` attribute) works on the element itself, beside core.
+   * Loaded only when repeat is set.
+   */
+  private updateRepeat(): void {
+    const on = this.connected && this.hasAttribute("repeat");
+    if (on === this.repeating) return;
+    this.repeating = on;
+    const ticket = ++this.repeatTicket;
+    this.looping?.destroy();
+    this.looping = undefined;
+    if (!on) return;
+    import("@blossom-carousel/repeat").then(({ createRepeat }) => {
+      if (ticket === this.repeatTicket) this.looping = createRepeat(this);
+    });
   }
 
   prev(options?: { behavior?: ScrollBehavior }): void {

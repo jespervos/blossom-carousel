@@ -61,6 +61,7 @@
   "devDependencies": {
     "@blossom-carousel/core": "^1.1.8",
     "@blossom-carousel/navigation": "workspace:*",
+    "@blossom-carousel/repeat": "workspace:*",
     "@types/node": "^25.8.0",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",

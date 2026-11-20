@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@blossom-carousel/navigation": "workspace:*",
+    "@blossom-carousel/repeat": "workspace:*",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/language-core": "^3.3.11",
     "vite": "^8.2.2",

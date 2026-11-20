@@ -36,6 +36,27 @@ Pin the major version (`@1`) so a future major release can't change the page wit
 </blossom-carousel>
 ```
 
+### repeat (experimental)
+
+Loops the carousel infinitely. Turn it on with the `repeat` attribute (add or remove it at any time):
+
+```html
+<blossom-carousel repeat>
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+  ...
+</blossom-carousel>
+```
+
+It is provided by a small add-on that is loaded only when `repeat` is set, and works on the carousel element itself, so it also loops on touch devices, where the drag engine is not loaded. The slides stay in place in the middle of a long scroll range, with copies of them around it; whenever the scroll comes to rest, the view is moved by whole loops back onto the real slides, which looks the same. Known limits:
+
+- Horizontal carousels only, and only when the slides together are wider than the carousel; otherwise it stays a plain strip.
+- The slides must sit side by side as direct children of the carousel: inline blocks (the default), flex, or a grid that flows in columns (`grid-auto-flow: column`, with fixed or auto-sized columns).
+- Copies are look-alikes: hidden from assistive technology, not focusable, without `id`s or `name`s, and outside any form. A click on a copy is forwarded to the same element in its slide; other events (hover, input) are not.
+- Changes to the slides (added, removed, reordered, new content or size) reach the copies when the scroll comes to rest.
+- The carousel gets extra boxes around the slides: `:nth-child(odd/even)` still matches the same slides, other structural selectors (`:first-child`, `:nth-child(3n)`) do not, and `scrollLeft` / `scrollWidth` are large values.
+
 ### Navigation controls
 
 `<blossom-prev>`, `<blossom-next>`, and `<blossom-dots>` automatically wire up prev/next and dot navigation using the native Invoker Commands API. Give the carousel an `id`, mark slides with `data-blossom-slide`, and point controls at that id with the `for` attribute.

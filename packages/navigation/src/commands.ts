@@ -1,6 +1,6 @@
 import { pageScroll } from "./scroll";
-import { getMarkerTargets } from "./markers";
-import { resolveInlineAlign } from "./snap";
+import { getLoop, getMarkerPositions, getMarkerTargets } from "./markers";
+import { isRtl, logicalScrollLeft, resolveInlineAlign } from "./snap";
 import { getSnapCache } from "./cache";
 
 const COMMAND_NAMESPACE = "--blossom-";
@@ -98,6 +98,17 @@ function runCommand(
     const fresh = cached?.el.isConnected ? cached : undefined;
     const target = fresh?.el ?? getMarkerTargets(scroller)[index];
     if (!target) return;
+
+    // A looping scroller draws every target once per loop: go to the nearest one.
+    const loop = getLoop(scroller);
+    if (loop > 0) {
+      const rtl = isRtl(scroller);
+      const [to] = getMarkerPositions(scroller, [target]);
+      let delta = to - logicalScrollLeft(scroller, rtl);
+      delta -= loop * Math.round(delta / loop);
+      scroller.scrollBy({ left: rtl ? -delta : delta, behavior });
+      return;
+    }
 
     const inline =
       fresh?.align ?? resolveInlineAlign(getComputedStyle(target).scrollSnapAlign);

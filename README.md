@@ -18,7 +18,7 @@ Blossom Carousel is the first carousel library that builds on native browser scr
 <li>💡 <strong>Configure with CSS</strong>: Works with CSS scroll-snap, position sticky and scroll-driven animations and more.</li>
 <li>🪶 <strong>0kb on touch devices</strong>: Blossom only loads when a fine pointer device is detected.</li>
 <li>🧱 <strong>Framework ready</strong>: Components for React, Vue, Svelte and Web Components.</li>
-<li>🚧 <strong>Experimental cyclical scrolling</strong>: Allows the carousel to infinitely loop.</li>
+<li>🚧 <strong>Experimental cyclical scrolling</strong>: The <code>repeat</code> option of the framework components lets the carousel loop infinitely, with native scrolling, on touch devices too. It comes from a separate add-on, so core stays a plain scroller.</li>
 </ul>
 
 ## Installation

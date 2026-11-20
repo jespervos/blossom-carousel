@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.vendor.json",
+  "compilerOptions": {
+    "rootDir": "../repeat/src",
+    "outDir": "dist/vendor/repeat"
+  },
+  "include": ["../repeat/src/**/*.ts"]
+}
