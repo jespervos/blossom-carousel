@@ -1,6 +1,6 @@
 # @blossom-carousel/repeat
 
-Private workspace package: the looping add-on behind the `repeat` option of the framework packages. It is bundled into each of them at build time and is not published on its own.
+Private workspace package: the looping add-on behind the `repeat` option of the framework packages. It is bundled into each of them at build time, in a chunk of its own that they import only when `repeat` is set, and is not published on its own.
 
 ```ts
 import { createRepeat } from "@blossom-carousel/repeat";
@@ -25,6 +25,6 @@ While it loops the scroller carries `blossom-repeat="true"` and `blossom-loop="<
 - **Home and End** on a focused carousel go to the first or last slide of the loop the view is in, in every engine. In a plain strip only WebKit scrolls the carousel on these keys; Chromium and Firefox leave the carousel alone, and the key can scroll the page instead. Page Up and Page Down do not scroll a horizontal carousel in any engine and are left alone. A key pressed in a text field is left to the field. WebKit on macOS hands Home and End in a single-line field to the scroller, which then goes to an empty end of the range.
 - **Desktop Safari, a mouse wheel without phases, with scroll snap.** Any style change inside a snapping scroller makes WebKit snap at once, mid-wheel. The module moves copies when the view is on a snap position, or within 12 px of one. It moves them anywhere else only when it runs short of copies. Measured over a 20,000 px wheel: 2–3 such snaps, each 4–11 px. Before this change there were 2–3 snaps of 67–125 px.
 - **Scroll-driven animations.** `animation-timeline: view()` uses where a copy is laid out, not where `translate` shows it. A translated copy on screen gets the progress of a box far away, for example opacity 1 or 0 where the real slide at the same place has 0.54. This cannot be fixed from outside the layout without moving copies in the layout, which would break the rule that nothing changes during a scroll.
-- **Layouts that do not loop.** Grids with fixed track sizes (`grid-auto-columns: 300px`), and slides that are not direct children of the scroller, stay a plain strip.
+- **Layouts that do not loop.** Slides that are not direct children of the scroller stay a plain strip. In a grid with fixed tracks (`grid-auto-columns: 300px`) the spacers span tracks instead of taking a width, so the range is a whole number of tracks.
 - **Copies are look-alikes.** Only clicks on a copy are forwarded to the real slide. Other events (`pointerdown`, `contextmenu`, keys) are not.
 - **CSS-only layout changes** with no DOM change and no resize of a slide or the scroller need `refresh()`.

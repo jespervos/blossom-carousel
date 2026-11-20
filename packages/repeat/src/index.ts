@@ -263,7 +263,16 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
     scroller.prepend(spacers[0], spacers[2]);
     scroller.append(spacers[1]);
     at0 = off(first);
-    // a layout where a box before the slides does not push them (fixed grid tracks): no loop
+    // Fixed grid tracks: a box does not widen its track, so the spacers span tracks instead
+    if (at0 < room - loop && getComputedStyle(scroller).display.includes("grid")) {
+      const pitch = loop / real.length; // a track and its gap
+      spacers.slice(0, 2).forEach((e, i) => {
+        e.style.setProperty("grid-column", `span ${Math.max(1, Math.round((room - (side + 2 * i) * loop) / pitch))}`, "important");
+        e.style.setProperty("inline-size", "auto", "important");
+      });
+      at0 = off(first);
+    }
+    // a layout where a box before the slides does not push them: no loop
     if (at0 < room - loop) return clear(), void shift(pos(first) - keep);
     (head = first), (i0 = all.indexOf(first));
     if (snapping) lattice(targets);
