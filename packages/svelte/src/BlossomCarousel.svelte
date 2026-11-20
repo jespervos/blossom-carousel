@@ -3,6 +3,7 @@
   import type { Snippet } from "svelte";
   import type { Blossom } from "@blossom-carousel/core";
   import { createCommands, registerCommands } from "@blossom-carousel/navigation";
+  import { createRepeat } from "@blossom-carousel/repeat";
   import { registerSlideCountFromSnippet } from "./ssrSlideCount.js";
   import { deleteSlideCount } from "./slideRegistry.js";
 
@@ -40,6 +41,14 @@
   const commands = createCommands(() => root);
   let unregisterCommands: (() => void) | undefined;
 
+  // Looping works on the scroller itself, with or without the drag engine
+  // (which is not loaded on touch devices). Effects only run in the browser.
+  $effect(() => {
+    if (!repeat || !root) return;
+    const looping = createRepeat(root);
+    return () => looping.destroy();
+  });
+
   onMount(async () => {
     if (!root) return;
     unregisterCommands = registerCommands(root);
@@ -52,7 +61,7 @@
 
     const { Blossom } = await import("@blossom-carousel/core");
 
-    blossom = Blossom(root, { repeat });
+    blossom = Blossom(root, {}); // options are required before core 1.1.10
     blossom.init();
   });
 

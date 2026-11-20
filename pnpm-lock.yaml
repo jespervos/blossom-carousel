@@ -69,6 +69,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@blossom-carousel/repeat':
+        specifier: workspace:*
+        version: link:../repeat
       '@types/react':
         specifier: ^19.2.18
         version: 19.2.18
@@ -91,6 +94,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@blossom-carousel/repeat':
+        specifier: workspace:*
+        version: link:../repeat
       '@sveltejs/package':
         specifier: ^2.5.8
         version: 2.5.8(svelte@5.57.0(@typescript-eslint/types@8.58.1))(typescript@6.0.3)
@@ -119,6 +125,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@blossom-carousel/repeat':
+        specifier: workspace:*
+        version: link:../repeat
       '@vitejs/plugin-vue':
         specifier: ^6.0.8
         version: 6.0.8(vite@8.2.2(@types/node@25.8.0)(esbuild@0.28.1))(vue@3.5.44(typescript@6.0.3))
@@ -140,6 +149,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@blossom-carousel/repeat':
+        specifier: workspace:*
+        version: link:../repeat
       '@types/node':
         specifier: ^25.8.0
         version: 25.8.0

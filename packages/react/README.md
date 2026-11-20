@@ -65,6 +65,26 @@ Renders as
 </ul>
 ```
 
+### repeat (experimental)
+
+Loops the carousel infinitely. Turn it on with the `repeat` prop:
+
+```jsx
+<BlossomCarousel repeat>
+  {Array.from({ length: 12 }, (_, i) => (
+    <div key={i}>Slide {i + 1}</div>
+  ))}
+</BlossomCarousel>
+```
+
+It is provided by a small add-on that is bundled with this package and works on the carousel element itself, so it also loops on touch devices, where the drag engine is not loaded. The slides stay in place in the middle of a long scroll range, with copies of them around it; whenever the scroll comes to rest, the view is moved by whole loops back onto the real slides, which looks the same. Known limits:
+
+- Horizontal carousels only, and only when the slides together are wider than the carousel; otherwise it stays a plain strip.
+- The slides must sit side by side as direct children of the carousel, in a layout where a box before them pushes them along: inline blocks (the default), flex, or a grid with auto-sized columns (`grid-auto-columns: max-content`). A grid with fixed column sizes (`grid-auto-columns: 300px`) also stays a plain strip.
+- Copies are look-alikes: hidden from assistive technology, not focusable, without `id`s or `name`s, and outside any form. A click on a copy is forwarded to the same element in its slide; other events (hover, input) are not.
+- Changes to the slides (added, removed, reordered, new content or size) reach the copies when the scroll comes to rest.
+- The carousel gets extra boxes around the slides: `:nth-child(odd/even)` still matches the same slides, other structural selectors (`:first-child`, `:nth-child(3n)`) do not, and `scrollLeft` / `scrollWidth` are large values.
+
 ### Navigation controls
 
 Place previous, next, and dot controls outside the carousel with `<BlossomPrev>`, `<BlossomNext>`, and `<BlossomDots>`. Link them to the carousel with an `id` on `<BlossomCarousel>`, and a matching `for` prop on each control and mark slides with `data-blossom-slide`.

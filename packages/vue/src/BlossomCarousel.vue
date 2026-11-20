@@ -60,9 +60,11 @@ import {
   shallowRef,
   useAttrs,
   useSlots,
+  watch,
   watchEffect,
 } from "vue";
 import { createCommands, registerCommands } from "@blossom-carousel/navigation";
+import { createRepeat, type Repeat } from "@blossom-carousel/repeat";
 import { setSlideCount } from "./useNavigation";
 
 const props = defineProps({
@@ -97,6 +99,18 @@ watchEffect(() => {
 const commands = createCommands(() => root.value);
 let unregisterCommands: (() => void) | undefined;
 
+// Looping works on the scroller itself, with or without the drag engine
+// (which is not loaded on touch devices).
+let looping: Repeat | undefined;
+function setRepeat(on: boolean) {
+  looping?.destroy();
+  looping = on && root.value ? createRepeat(root.value) : undefined;
+}
+watch(
+  () => props.repeat,
+  (on) => setRepeat(on),
+);
+
 defineExpose({
   el: root,
   prev: commands.prev,
@@ -106,6 +120,7 @@ defineExpose({
 
 onMounted(async () => {
   if (root.value) unregisterCommands = registerCommands(root.value);
+  setRepeat(props.repeat);
 
   const hasMouse = window.matchMedia(
     "(hover: hover) and (pointer: fine)",
@@ -118,13 +133,14 @@ onMounted(async () => {
   const { Blossom } = await import("@blossom-carousel/core");
 
   if (root.value) {
-    blossom = Blossom(root.value, { repeat: props.repeat });
+    blossom = Blossom(root.value, {}); // options are required before core 1.1.10
     blossom.init();
   }
 });
 
 onBeforeUnmount(() => {
   unregisterCommands?.();
+  setRepeat(false);
   blossom?.destroy();
 });
 </script>

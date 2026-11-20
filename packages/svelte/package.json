@@ -64,11 +64,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && svelte-package --input src --output dist --tsconfig tsconfig.build.json && node scripts/vendorNavigation.mjs",
+    "build": "rm -rf dist && svelte-package --input src --output dist --tsconfig tsconfig.build.json && node scripts/vendorPackages.mjs",
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@blossom-carousel/navigation": "workspace:*",
+    "@blossom-carousel/repeat": "workspace:*",
     "@sveltejs/package": "^2.5.8",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "svelte": "^5.57.0",

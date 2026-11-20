@@ -70,23 +70,36 @@ describe("packaging", () => {
     }
   });
 
-  it("contains no bare imports of the private navigation package", () => {
-    const files: string[] = [];
-    const walk = (dir: string) => {
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const fullPath = path.join(dir, entry.name);
-        if (entry.isDirectory()) walk(fullPath);
-        else files.push(fullPath);
-      }
-    };
-    walk(distDir);
+  it.each(["navigation", "repeat"])(
+    "contains no bare imports of the private %s package",
+    (name) => {
+      const files: string[] = [];
+      const walk = (dir: string) => {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          const fullPath = path.join(dir, entry.name);
+          if (entry.isDirectory()) walk(fullPath);
+          else files.push(fullPath);
+        }
+      };
+      walk(distDir);
 
-    for (const file of files) {
-      expect(
-        fs.readFileSync(file, "utf8").includes("@blossom-carousel/navigation"),
-        `${file} imports the unpublished navigation package`,
-      ).toBe(false);
-    }
+      for (const file of files) {
+        expect(
+          fs.readFileSync(file, "utf8").includes(`@blossom-carousel/${name}`),
+          `${file} imports the unpublished ${name} package`,
+        ).toBe(false);
+      }
+    },
+  );
+
+  it("ships the vendored repeat add-on and points the carousel at it", () => {
+    expect(fs.existsSync(path.join(distDir, "vendor/repeat/index.js"))).toBe(true);
+    expect(fs.existsSync(path.join(distDir, "vendor/repeat/index.d.ts"))).toBe(true);
+    const component = fs.readFileSync(
+      path.join(distDir, "BlossomCarousel.svelte"),
+      "utf8",
+    );
+    expect(component).toContain('from "./vendor/repeat/index.js"');
   });
 
   it("server-renders carousel and seeded dots from the built dist", async () => {

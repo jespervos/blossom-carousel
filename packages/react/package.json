@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@blossom-carousel/navigation": "workspace:*",
+    "@blossom-carousel/repeat": "workspace:*",
     "@types/react": "^19.2.18",
     "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.2.2",

@@ -9,6 +9,7 @@ import React, {
   JSXElementConstructor,
 } from "react";
 import { createCommands, registerCommands } from "@blossom-carousel/navigation";
+import { createRepeat } from "@blossom-carousel/repeat";
 import { countMarkedSlides } from "./countMarkedSlides";
 import { setSlideCount } from "./slideRegistry";
 
@@ -106,6 +107,17 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       return () => scroller.removeEventListener("overscroll", handleOverscroll);
     }, []);
 
+    // Looping works on the scroller itself, with or without the drag engine
+    // (which is not loaded on touch devices). In a layout effect, so the
+    // copies are in before the first paint.
+    useIsomorphicLayoutEffect(() => {
+      const scroller = localRef.current;
+      if (!repeat || !scroller) return;
+
+      const looping = createRepeat(scroller);
+      return () => looping.destroy();
+    }, [repeat]);
+
     useEffect(() => {
       const scroller = localRef.current;
       if (!scroller) return;
@@ -121,7 +133,7 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
       import("@blossom-carousel/core").then(({ Blossom }) => {
         if (destroyed || !localRef.current) return;
 
-        const blossom = Blossom(localRef.current, { repeat });
+        const blossom = Blossom(localRef.current, {}); // options are required before core 1.1.10
         blossomRef.current = blossom;
         blossom.init();
       });
@@ -131,7 +143,7 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
         blossomRef.current?.destroy();
         blossomRef.current = null;
       };
-    }, [repeat, load]);
+    }, [load]);
 
     useImperativeHandle(
       parentRef,
