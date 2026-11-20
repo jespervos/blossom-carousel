@@ -61,7 +61,7 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
   let signature = "";
   let touching = false, lastTouch = -1e9, lastScroll = 0, timer = 0, dead = false;
   let pressed = 0; // when a touch pointer went down, while it is down
-  let speed = 0, lastPos = 0; // px/s of the last step of the scroll
+  let speed = 0, recent: number[][] = []; // px/s of the last steps of the scroll, from its [time, scrollLeft] of the last 130 ms
   let ended = true; // the browser said scrollend since the last scroll
   let stale = false; // a slide or the scroller resized while not at rest
   let anchoring: string | null = null;
@@ -80,7 +80,9 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
   const quiet = () => performance.now() - lastScroll;
   // A touch scroll that stopped dead, not slowing down: a finger most likely caught it and holds
   // still, which iOS may not tell the page (no touch or pointer event at all): wait longer for it.
-  const need = () => (ended ? 140 : 500) + (lastTouch > -1e9 && speed > 300 ? HOLD : 0);
+  // A momentum that runs out ends in steps of a device px or so: 9-30 px/s on an iPhone (3 device
+  // px per px), up to 150 px/s in Chromium at 1 device px per px.
+  const need = () => (ended ? 140 : 500) + (lastTouch > -1e9 && speed > 180 / (devicePixelRatio || 1) ? HOLD : 0);
   const atRest = () =>
     !touching && !(pressed && performance.now() - pressed < 5000) &&
     performance.now() - lastTouch > 150 && // momentum starts a moment after the finger lifts
@@ -161,8 +163,11 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
   // now: a slide may have changed size since the build, and only at rest is it all built again.
   function places() {
     const lay = (s: CopySet) => off(s.els[i0]) - s.t; // where the set is laid out
-    const p0 = head.isConnected ? off(head) : at0, r =lay(sets[0]) - p0, l = lay(sets[1]) - lay(sets[0]); // the slides' loop, a set's
-    return { lay, at: (w: number) => p0 + (w > 0 ? r + (w - 1) * l : w * l) };
+    const p0 = head.isConnected ? off(head) : at0, r = lay(sets[0]) - p0, l = lay(sets[1]) - lay(sets[0]); // the slides' loop, a set's
+    const at = (w: number) => p0 + (w > 0 ? r + (w - 1) * l : w * l);
+    // the loop that x (from the lead's start edge) is in
+    const of = (x: number) => (x -= p0) < 0 ? Math.floor(x / l) : x < r ? 0 : 1 + Math.floor((x - r) / l);
+    return { lay, at, of };
   }
 
   /**
@@ -291,19 +296,18 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
   // near one (that snap moves the view by a few px); and only when they run short anywhere else.
   function follow() {
     if (!loop) return;
-    const x = viewStart() - pos(spacers[0]) - at0;
-    const out = Math.max(cur * loop - x, x - (cur + 1) * loop); // how far the view is past loop cur
+    // from the sizes the slides and copies have now (all of them may have changed since the build)
+    const { at, of } = places(), x = viewStart() - pos(spacers[0]);
+    const out = Math.max(at(cur) - x, x - at(cur + 1)); // how far the view is past loop cur
     if (out > (snapping ? REACH : AHEAD) - MARGIN || (snapping && out > loop / 4 && aligned(out > REACH - MARGIN - 1500 ? 12 : 0.5)))
-      arrange(Math.floor((x + 0.5) / loop));
+      arrange(of(x + 0.5));
     else if (stale) arrange(cur); // a set off its place, now off screen
   }
 
-  // At rest: move the scroll by whole loops, so that what is aligned is a real slide. Off a snap
-  // position (WebKit's keyboard scroll, a proximity rest) every engine snaps a scroll we make (or
-  // snapping turned back on), so it waits for a rest on one, unless it must happen now.
-  function home(now = false) {
+  // At rest: move the scroll by whole loops, so that what is aligned is a real slide.
+  function home() {
     const first = drawn()[0];
-    if (!loop || !first || (snapping && !now && !aligned())) return;
+    if (!loop || !first) return;
     const d = offset(first);
     // within half a slide of its place, the first slide is the aligned one
     const k = Math.floor(((rtl() ? d : -d) + first.getBoundingClientRect().width / 2) / loop);
@@ -323,14 +327,22 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
       if (!touching && wait > 0) clearTimeout(timer), (timer = window.setTimeout(sync, wait));
       return;
     }
+    // Off a snap position (WebKit's keyboard scroll, a proximity rest, a fractional one) the engine
+    // may still snap by itself: wait a little more. Then home anyway, rather than leave the view on
+    // copies: snapping turned back on snaps it, as the engine would on any style change.
+    const wait = snapping && !aligned(1) ? need() + 600 - quiet() : 0;
+    if (wait > 0) return void (clearTimeout(timer), (timer = window.setTimeout(sync, wait + 20)));
     home();
-    if (stale || slides().map((el) => el.outerHTML).join("") !== signature) home(true), still(build);
+    if (stale || slides().map((el) => el.outerHTML).join("") !== signature) still(build);
   }
 
   const later = () => (clearTimeout(timer), (timer = window.setTimeout(sync, 150)));
   const onScroll = () => {
     const t = performance.now(), p = scroller.scrollLeft;
-    (speed = t - lastScroll < 100 ? (Math.abs(p - lastPos) / Math.max(1, t - lastScroll)) * 1000 : 0), (lastPos = p), (lastScroll = t);
+    // over 30 ms when it can: steps of whole px (and two events in a frame) make single steps noisy
+    recent = recent.filter(([u]) => t - u < 130);
+    const [u, q] = recent.filter(([u]) => t - u >= 30).pop() ?? recent[0] ?? [t, p];
+    (speed = t > u ? (Math.abs(p - q) / (t - u)) * 1000 : 0), recent.push([t, p]), (lastScroll = t);
     follow(), (ended = !("onscrollend" in window)), later();
   };
   const onEnd = () => ((ended = true), later());
@@ -380,7 +392,7 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
     if (!observed) return void (observed = true);
     // never move the scroll under a finger: the copies off screen are put in place, the rest waits
     if (!atRest()) return void ((stale = true), loop && arrange(cur), later());
-    home(true), still(build);
+    home(), still(build);
   });
   ro.observe(scroller);
   still(build);
@@ -402,7 +414,7 @@ export function createRepeat(scroller: HTMLElement, _options: RepeatOptions = {}
       if (active.get(scroller) === self) active.delete(scroller);
       mo.disconnect(), ro.disconnect(), clearTimeout(timer);
       for (const [t, f, capture] of listeners) scroller.removeEventListener(t, f as EventListener, capture);
-      home(true);
+      home();
       const real = drawn()[0];
       const keep = real && pos(real);
       still(() => (clear(), real && shift(pos(real) - keep)));
