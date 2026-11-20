@@ -39,7 +39,7 @@ describe("<blossom-carousel repeat>", () => {
     expect(vi.mocked(Blossom).mock.invocationCallOrder[0]).toBeLessThan(
       vi.mocked(createRepeat).mock.invocationCallOrder[0],
     );
-    expect(copies(el)).toHaveLength(3 * 12);
+    expect(copies(el)).toHaveLength(7 * 12);
   });
 
   it("does not loop without it", () => {
@@ -52,7 +52,7 @@ describe("<blossom-carousel repeat>", () => {
     const el = render();
     const plain = el.innerHTML;
     el.setAttribute("repeat", "");
-    expect(copies(el)).toHaveLength(3 * 12);
+    expect(copies(el)).toHaveLength(7 * 12);
     el.setAttribute("repeat", "true"); // still on: no second instance
     expect(createRepeat).toHaveBeenCalledTimes(1);
     const first = vi.spyOn(vi.mocked(createRepeat).mock.results[0].value, "destroy");
@@ -66,6 +66,6 @@ describe("<blossom-carousel repeat>", () => {
     expect(el.innerHTML).toBe(plain);
     document.body.append(el); // and starts again when it comes back
     expect(createRepeat).toHaveBeenCalledTimes(3);
-    expect(copies(el)).toHaveLength(3 * 12);
+    expect(copies(el)).toHaveLength(7 * 12);
   });
 });

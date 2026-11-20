@@ -55,7 +55,7 @@ describe("BlossomCarousel repeat", () => {
     expect(createRepeat).toHaveBeenCalledWith(scroller);
     expect(Blossom).not.toHaveBeenCalled();
     expect(scroller.getAttribute("blossom-repeat")).toBe("true");
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("does not create it without the repeat prop", async () => {
@@ -74,7 +74,7 @@ describe("BlossomCarousel repeat", () => {
     expect(scroller.innerHTML).toBe(plain);
     await render({ repeat: true });
     expect(createRepeat).toHaveBeenCalledTimes(2);
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("destroys it on unmount", async () => {
@@ -88,7 +88,7 @@ describe("BlossomCarousel repeat", () => {
     const scroller = await render({ repeat: true, load: "always" });
     await act(() => wait(0)); // the engine is imported dynamically
     expect(Blossom).toHaveBeenCalledWith(scroller, {});
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("follows React adding, removing and reordering slides", async () => {
@@ -97,7 +97,7 @@ describe("BlossomCarousel repeat", () => {
       await render({ repeat: true }, ids);
       await act(rest);
       expect(realSlides(scroller).map((el) => (el as HTMLElement).dataset.i)).toEqual(ids.map(String));
-      expect(copies(scroller)).toHaveLength(3 * ids.length);
+      expect(copies(scroller)).toHaveLength(7 * ids.length);
       expect(realSlides(scroller)[0].getBoundingClientRect().left).toBe(0);
     }
     expect(createRepeat).toHaveBeenCalledTimes(1);

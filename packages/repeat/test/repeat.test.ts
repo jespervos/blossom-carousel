@@ -39,6 +39,12 @@ const touches = (log: MutationRecord[], nodes: Node[]) =>
       [...r.addedNodes, ...r.removedNodes].some((n) => nodes.includes(n)),
   );
 
+const touch = (s: Element, type: string, touches: number) => {
+  const e = new Event(type);
+  Object.defineProperty(e, "touches", { value: { length: touches } });
+  s.dispatchEvent(e);
+};
+
 describe("createRepeat", () => {
   it("lays copies around the slides and puts the view on the real ones", () => {
     const s = scrollerWith(12);
@@ -46,8 +52,8 @@ describe("createRepeat", () => {
     createRepeat(s);
 
     expect(s.getAttribute("blossom-repeat")).toBe("true");
-    // one set before, two after: (view + 1500 px) / loop rounded up, each side, plus one
-    expect(copies(s)).toHaveLength(3 * 12);
+    // three sets before, four after: (view + 9000 px) / loop rounded up, each side, plus one
+    expect(copies(s)).toHaveLength(7 * 12);
     expect(first.getBoundingClientRect().left).toBe(0);
     expect(s.scrollLeft).toBeGreaterThan(100000);
   });
@@ -172,7 +178,7 @@ describe("createRepeat", () => {
       // the first set after the slides copies them in their new order
       const after = copies(s).filter((c) => c.compareDocumentPosition(realSlides(s).at(-1)!) & Node.DOCUMENT_POSITION_PRECEDING);
       expect(after.slice(0, order.length).map((c) => c.textContent)).toEqual(order);
-      expect(copies(s)).toHaveLength(3 * order.length);
+      expect(copies(s)).toHaveLength(7 * order.length);
       expect(at()).toBe(0);
     };
     const nums = (...n: number[]) => n.map(String);
@@ -193,9 +199,9 @@ describe("createRepeat", () => {
     createRepeat(s);
     const home = s.scrollLeft;
     const kids = Array.from(s.childNodes);
-    const log = await mutations(s, () => userScroll(s, home + LOOP + VIEW));
+    const log = await mutations(s, () => userScroll(s, home + 3 * LOOP + VIEW));
     // under way: the scroll stays where the user put it, no node comes or goes, only copies' style changes
-    expect(s.scrollLeft).toBe(home + LOOP + VIEW);
+    expect(s.scrollLeft).toBe(home + 3 * LOOP + VIEW);
     expect(Array.from(s.childNodes)).toEqual(kids);
     expect(log.every((r) => r.type === "attributes" && r.attributeName === "style" && (r.target as Element).hasAttribute(CLONE_ATTR))).toBe(true);
     expect(log.length).toBeGreaterThan(0);
@@ -206,7 +212,7 @@ describe("createRepeat", () => {
     });
     expect(onScreen.every((c) => !c.style.getPropertyValue("translate"))).toBe(true);
     await rest();
-    // at rest, one whole loop back: the same slides on screen, now the real ones
+    // at rest, three whole loops back: the same slides on screen, now the real ones
     expect(s.scrollLeft).toBe(home + VIEW);
     expect(realSlides(s)[0].getBoundingClientRect().left).toBe(-VIEW);
     expect(copies(s).every((c) => !c.style.getPropertyValue("translate"))).toBe(true);
@@ -243,6 +249,59 @@ describe("createRepeat", () => {
     expect(slide.getBoundingClientRect().left).toBe(0);
   });
 
+  it("puts the copies back in place, off screen, when a slide resizes while a scroll is under way", () => {
+    const s = scrollerWith(12);
+    createRepeat(s);
+    resized(s); // the first notification is the observer's initial one
+    const start = s.scrollLeft;
+    touch(s, "touchstart", 1);
+    userScroll(s, start + 3 * LOOP + VIEW); // the sets from before the slides are now after them
+    const slide = realSlides(s)[2];
+    slide.dataset.w = "420";
+    resized(slide);
+    expect(s.scrollLeft).toBe(start + 3 * LOOP + VIEW); // under a finger: no scroll write
+    // in the order drawn, every box starts where the one before it ends: no gap, no overlap
+    const boxes = [...realSlides(s), ...copies(s)].map((el) => el.getBoundingClientRect()).sort((a, b) => a.left - b.left);
+    for (let i = 1; i < boxes.length; i++) expect(boxes[i].left).toBe(boxes[i - 1].right);
+  });
+
+  it("goes to the first and the last slide on Home and End, not to the empty ends of the range", async () => {
+    const s = scrollerWith(12);
+    createRepeat(s);
+    const start = s.scrollLeft;
+    userScroll(s, start + 2 * LOOP + 5 * 300); // slide 6, in another loop
+    const key = (k: string, target: Element = s) => target.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true }));
+    const drawnAt = (i: number) => [...realSlides(s), ...copies(s)].filter((el) => (el as HTMLElement).dataset.i === String(i)).map((el) => el.getBoundingClientRect().left);
+    expect(key("Home")).toBe(false); // handled
+    expect(s.scrollLeft).toBe(start + 2 * LOOP);
+    expect(drawnAt(0)).toContain(0);
+    key("End");
+    expect(drawnAt(11).some((x) => x >= 0 && x + 300 <= VIEW)).toBe(true);
+    expect(Math.abs(s.scrollLeft - start)).toBeLessThan(3 * LOOP);
+    // a key in a field is the field's
+    const field = document.createElement("input");
+    realSlides(s)[0].append(field);
+    const before = s.scrollLeft;
+    expect(key("Home", field)).toBe(true);
+    expect(s.scrollLeft).toBe(before);
+  });
+
+  it("waits longer before it moves the view when a touch scroll stops dead (a finger the page does not hear)", async () => {
+    const s = scrollerWith(12);
+    createRepeat(s);
+    const start = s.scrollLeft;
+    touch(s, "touchstart", 1);
+    touch(s, "touchend", 0);
+    userScroll(s, start + LOOP);
+    await wait(16);
+    userScroll(s, start + LOOP + VIEW); // 1000 px in 16 ms, then nothing
+    await rest();
+    await wait(300);
+    expect(s.scrollLeft).toBe(start + LOOP + VIEW);
+    await wait(2200);
+    expect(s.scrollLeft).toBe(start + VIEW);
+  });
+
   it("measures from slides with a box, and copies hidden ones too", () => {
     const s = scrollerWith(12);
     const hidden = realSlides(s)[0];
@@ -261,10 +320,10 @@ describe("createRepeat", () => {
     const before = s.outerHTML;
     const a = createRepeat(s);
     const b = createRepeat(s);
-    expect(copies(s)).toHaveLength(3 * 12);
+    expect(copies(s)).toHaveLength(7 * 12);
     expect(copies(s).some((c) => c.parentElement?.closest(`[${CLONE_ATTR}]`))).toBe(false);
     a.destroy(); // already replaced: no effect
-    expect(copies(s)).toHaveLength(3 * 12);
+    expect(copies(s)).toHaveLength(7 * 12);
     b.destroy();
     expect(s.outerHTML).toBe(before);
   });

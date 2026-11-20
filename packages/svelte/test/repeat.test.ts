@@ -49,7 +49,7 @@ describe("BlossomCarousel repeat", () => {
     expect(createRepeat).toHaveBeenCalledTimes(1);
     expect(createRepeat).toHaveBeenCalledWith(scroller);
     expect(Blossom).not.toHaveBeenCalled();
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("does not create it without the repeat prop", () => {
@@ -64,7 +64,7 @@ describe("BlossomCarousel repeat", () => {
     view!.update({ repeat: true });
     flushSync();
     expect(createRepeat).toHaveBeenCalledTimes(1);
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
     const first = vi.spyOn(vi.mocked(createRepeat).mock.results[0].value, "destroy");
     view!.update({ repeat: false });
     flushSync();
@@ -82,7 +82,7 @@ describe("BlossomCarousel repeat", () => {
     const scroller = render({ initialRepeat: true, load: "always" });
     await wait(0); // the engine is imported dynamically
     expect(Blossom).toHaveBeenCalledWith(scroller, {});
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("follows Svelte adding, removing and reordering slides", async () => {
@@ -92,7 +92,7 @@ describe("BlossomCarousel repeat", () => {
       flushSync();
       await rest();
       expect(realSlides(scroller).map((el) => (el as HTMLElement).dataset.i)).toEqual(ids.map(String));
-      expect(copies(scroller)).toHaveLength(3 * ids.length);
+      expect(copies(scroller)).toHaveLength(7 * ids.length);
       expect(realSlides(scroller)[0].getBoundingClientRect().left).toBe(0);
     }
   });

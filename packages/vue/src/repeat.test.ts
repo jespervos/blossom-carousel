@@ -57,7 +57,7 @@ describe("BlossomCarousel repeat", () => {
     expect(createRepeat).toHaveBeenCalledTimes(1);
     expect(createRepeat).toHaveBeenCalledWith(scroller);
     expect(Blossom).not.toHaveBeenCalled();
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("does not create it without the repeat prop", async () => {
@@ -72,7 +72,7 @@ describe("BlossomCarousel repeat", () => {
     repeat.value = true;
     await nextTick();
     expect(createRepeat).toHaveBeenCalledTimes(1);
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
     const first = vi.spyOn(vi.mocked(createRepeat).mock.results[0].value, "destroy");
     repeat.value = false;
     await nextTick();
@@ -90,7 +90,7 @@ describe("BlossomCarousel repeat", () => {
     const { scroller } = await mount({ repeat: true, load: "always" });
     await wait(0); // the engine is imported dynamically
     expect(Blossom).toHaveBeenCalledWith(scroller, {});
-    expect(copies(scroller)).toHaveLength(3 * 12);
+    expect(copies(scroller)).toHaveLength(7 * 12);
   });
 
   it("follows Vue adding, removing and reordering slides", async () => {
@@ -100,7 +100,7 @@ describe("BlossomCarousel repeat", () => {
       await nextTick();
       await rest();
       expect(realSlides(scroller).map((el) => (el as HTMLElement).dataset.i)).toEqual(next.map(String));
-      expect(copies(scroller)).toHaveLength(3 * next.length);
+      expect(copies(scroller)).toHaveLength(7 * next.length);
       expect(realSlides(scroller)[0].getBoundingClientRect().left).toBe(0);
     }
   });

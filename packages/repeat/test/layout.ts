@@ -63,6 +63,11 @@ const patched: Record<string, PropertyDescriptor> = {
       if (isScroller(this)) this.scrollLeft = o.left ?? this.scrollLeft;
     },
   },
+  scrollBy: {
+    value(this: HTMLElement, o: ScrollToOptions) {
+      if (isScroller(this)) this.scrollLeft += o.left ?? 0;
+    },
+  },
 };
 
 /** A user scroll that ends at once: moves the scroll position, fires `scroll` and `scrollend`. */
