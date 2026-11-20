@@ -44,8 +44,9 @@ describe("BlossomCarousel repeat", () => {
     return target.querySelector("[blossom-carousel]") as HTMLElement;
   }
 
-  it("loops on a touch device, without the drag engine", () => {
+  it("loops on a touch device, without the drag engine", async () => {
     const scroller = render({ initialRepeat: true });
+    await wait(0); // the add-on is imported only when repeat is set
     expect(createRepeat).toHaveBeenCalledTimes(1);
     expect(createRepeat).toHaveBeenCalledWith(scroller);
     expect(Blossom).not.toHaveBeenCalled();
@@ -58,11 +59,12 @@ describe("BlossomCarousel repeat", () => {
     expect(copies(scroller)).toHaveLength(0);
   });
 
-  it("destroys it when repeat turns off, creates it when it turns on, and destroys it on unmount", () => {
+  it("destroys it when repeat turns off, creates it when it turns on, and destroys it on unmount", async () => {
     const scroller = render({});
     const plain = scroller.innerHTML;
     view!.update({ repeat: true });
     flushSync();
+    await wait(0); // the add-on is imported only when repeat is set
     expect(createRepeat).toHaveBeenCalledTimes(1);
     expect(copies(scroller)).toHaveLength(7 * 12);
     const first = vi.spyOn(vi.mocked(createRepeat).mock.results[0].value, "destroy");
@@ -72,6 +74,7 @@ describe("BlossomCarousel repeat", () => {
     expect(scroller.innerHTML).toBe(plain);
     view!.update({ repeat: true });
     flushSync();
+    await wait(0); // the add-on is imported only when repeat is set
     const second = vi.spyOn(vi.mocked(createRepeat).mock.results[1].value, "destroy");
     unmount(view!);
     view = undefined;

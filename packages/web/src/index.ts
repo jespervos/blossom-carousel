@@ -1,6 +1,6 @@
 import { Blossom } from "@blossom-carousel/core";
 import { createCommands, registerCommands } from "@blossom-carousel/navigation";
-import { createRepeat, type Repeat } from "@blossom-carousel/repeat";
+import type { Repeat } from "@blossom-carousel/repeat";
 import "./style.css";
 import "./BlossomPrev";
 import "./BlossomNext";
@@ -19,6 +19,8 @@ export class BlossomCarousel extends HTMLElementBase {
   private carouselInstance!: ReturnType<typeof Blossom>;
   private unregisterCommands?: () => void;
   private looping?: Repeat;
+  private repeating = false;
+  private repeatTicket = 0;
   private connected = false;
   private readonly commands = createCommands(() => this);
 
@@ -50,12 +52,21 @@ export class BlossomCarousel extends HTMLElementBase {
     if (this.connected) this.updateRepeat();
   }
 
-  /** Looping (the `repeat` attribute) works on the element itself, beside core. */
+  /**
+   * Looping (the `repeat` attribute) works on the element itself, beside core.
+   * Loaded only when repeat is set.
+   */
   private updateRepeat(): void {
     const on = this.connected && this.hasAttribute("repeat");
-    if (on === !!this.looping) return;
+    if (on === this.repeating) return;
+    this.repeating = on;
+    const ticket = ++this.repeatTicket;
     this.looping?.destroy();
-    this.looping = on ? createRepeat(this) : undefined;
+    this.looping = undefined;
+    if (!on) return;
+    import("@blossom-carousel/repeat").then(({ createRepeat }) => {
+      if (ticket === this.repeatTicket) this.looping = createRepeat(this);
+    });
   }
 
   prev(options?: { behavior?: ScrollBehavior }): void {

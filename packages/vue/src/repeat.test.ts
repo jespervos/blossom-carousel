@@ -49,6 +49,7 @@ describe("BlossomCarousel repeat", () => {
     });
     app.mount(host);
     await nextTick();
+    await wait(0); // the add-on is imported only when repeat is set
     return { scroller: host.firstElementChild as HTMLElement, repeat, ids };
   }
 
@@ -71,6 +72,7 @@ describe("BlossomCarousel repeat", () => {
     const plain = scroller.innerHTML;
     repeat.value = true;
     await nextTick();
+    await wait(0); // the add-on is imported only when repeat is set
     expect(createRepeat).toHaveBeenCalledTimes(1);
     expect(copies(scroller)).toHaveLength(7 * 12);
     const first = vi.spyOn(vi.mocked(createRepeat).mock.results[0].value, "destroy");
@@ -80,6 +82,7 @@ describe("BlossomCarousel repeat", () => {
     expect(scroller.innerHTML).toBe(plain);
     repeat.value = true;
     await nextTick();
+    await wait(0); // the add-on is imported only when repeat is set
     const second = vi.spyOn(vi.mocked(createRepeat).mock.results[1].value, "destroy");
     app!.unmount();
     app = undefined;

@@ -32,8 +32,9 @@ describe("<blossom-carousel repeat>", () => {
     return document.body.firstElementChild as HTMLElement;
   }
 
-  it("loops with the repeat attribute, after core is set up", () => {
+  it("loops with the repeat attribute, after core is set up", async () => {
     const el = render("repeat");
+    await wait(0); // the add-on is imported only when repeat is set
     expect(createRepeat).toHaveBeenCalledTimes(1);
     expect(createRepeat).toHaveBeenCalledWith(el);
     expect(vi.mocked(Blossom).mock.invocationCallOrder[0]).toBeLessThan(
@@ -48,10 +49,11 @@ describe("<blossom-carousel repeat>", () => {
     expect(copies(el)).toHaveLength(0);
   });
 
-  it("follows the attribute, and stops when the element leaves the page", () => {
+  it("follows the attribute, and stops when the element leaves the page", async () => {
     const el = render();
     const plain = el.innerHTML;
     el.setAttribute("repeat", "");
+    await wait(0); // the add-on is imported only when repeat is set
     expect(copies(el)).toHaveLength(7 * 12);
     el.setAttribute("repeat", "true"); // still on: no second instance
     expect(createRepeat).toHaveBeenCalledTimes(1);
@@ -60,11 +62,13 @@ describe("<blossom-carousel repeat>", () => {
     expect(first).toHaveBeenCalledTimes(1);
     expect(el.innerHTML).toBe(plain);
     el.toggleAttribute("repeat", true);
+    await wait(0); // the add-on is imported only when repeat is set
     const second = vi.spyOn(vi.mocked(createRepeat).mock.results[1].value, "destroy");
     el.remove();
     expect(second).toHaveBeenCalledTimes(1);
     expect(el.innerHTML).toBe(plain);
     document.body.append(el); // and starts again when it comes back
+    await wait(0); // the add-on is imported only when repeat is set
     expect(createRepeat).toHaveBeenCalledTimes(3);
     expect(copies(el)).toHaveLength(7 * 12);
   });

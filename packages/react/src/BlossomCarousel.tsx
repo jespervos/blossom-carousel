@@ -9,7 +9,6 @@ import React, {
   JSXElementConstructor,
 } from "react";
 import { createCommands, registerCommands } from "@blossom-carousel/navigation";
-import { createRepeat } from "@blossom-carousel/repeat";
 import { countMarkedSlides } from "./countMarkedSlides";
 import { setSlideCount } from "./slideRegistry";
 
@@ -108,14 +107,20 @@ const BlossomCarousel = forwardRef<BlossomCarouselHandle, BlossomCarouselProps>(
     }, []);
 
     // Looping works on the scroller itself, with or without the drag engine
-    // (which is not loaded on touch devices). In a layout effect, so the
-    // copies are in before the first paint.
+    // (which is not loaded on touch devices). Loaded only when repeat is set.
     useIsomorphicLayoutEffect(() => {
       const scroller = localRef.current;
       if (!repeat || !scroller) return;
 
-      const looping = createRepeat(scroller);
-      return () => looping.destroy();
+      let live = true;
+      let looping: { destroy(): void } | undefined;
+      import("@blossom-carousel/repeat").then(({ createRepeat }) => {
+        if (live) looping = createRepeat(scroller);
+      });
+      return () => {
+        live = false;
+        looping?.destroy();
+      };
     }, [repeat]);
 
     useEffect(() => {

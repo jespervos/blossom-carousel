@@ -64,7 +64,7 @@ import {
   watchEffect,
 } from "vue";
 import { createCommands, registerCommands } from "@blossom-carousel/navigation";
-import { createRepeat, type Repeat } from "@blossom-carousel/repeat";
+import type { Repeat } from "@blossom-carousel/repeat";
 import { setSlideCount } from "./useNavigation";
 
 const props = defineProps({
@@ -100,11 +100,18 @@ const commands = createCommands(() => root.value);
 let unregisterCommands: (() => void) | undefined;
 
 // Looping works on the scroller itself, with or without the drag engine
-// (which is not loaded on touch devices).
+// (which is not loaded on touch devices). Loaded only when repeat is set.
 let looping: Repeat | undefined;
+let wanted = 0;
 function setRepeat(on: boolean) {
+  const ticket = ++wanted;
   looping?.destroy();
-  looping = on && root.value ? createRepeat(root.value) : undefined;
+  looping = undefined;
+  const el = root.value;
+  if (!on || !el) return;
+  import("@blossom-carousel/repeat").then(({ createRepeat }) => {
+    if (ticket === wanted) looping = createRepeat(el);
+  });
 }
 watch(
   () => props.repeat,

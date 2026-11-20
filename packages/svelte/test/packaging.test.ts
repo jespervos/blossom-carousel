@@ -99,7 +99,8 @@ describe("packaging", () => {
       path.join(distDir, "BlossomCarousel.svelte"),
       "utf8",
     );
-    expect(component).toContain('from "./vendor/repeat/index.js"');
+    // loaded only when repeat is set
+    expect(component).toContain('import("./vendor/repeat/index.js")');
   });
 
   it("server-renders carousel and seeded dots from the built dist", async () => {
