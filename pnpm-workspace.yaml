@@ -1,6 +1,7 @@
 packages:
   - "packages/core"
   - "packages/navigation"
+  - "packages/repeat"
   - "packages/vue"
   - "packages/react"
   - "packages/svelte"

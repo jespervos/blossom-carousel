@@ -1,0 +1,15 @@
+{
+  "name": "@blossom-carousel/repeat",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Jesper Vos",
+  "license": "MIT",
+  "description": "Framework-agnostic looping (the repeat option) for Blossom carousel framework packages. Works from outside the scroller, without core. Bundled into each framework package at build time; not published.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
