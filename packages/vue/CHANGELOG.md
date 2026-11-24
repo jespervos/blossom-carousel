@@ -2,6 +2,14 @@
 
 All notable changes to `@blossom-carousel/vue` are documented in this file.
 
+## 1.8.2 (2026-11-24)
+
+### Fixed
+
+- TypeScript types resolve under `"moduleResolution": "node16"` and `"nodenext"`. The declarations used extensionless relative imports, which those modes reject, so most exports were typed as `any` ([#48](https://github.com/jespervos/blossom-carousel/issues/48)). Declarations now ship as one self-contained `dist/index.d.ts`. It also replaces the `./BlossomCarousel.vue` style imports that only resolved with a `*.vue` module shim.
+- `require("@blossom-carousel/vue")` gets CommonJS type declarations (`dist/index.d.cts`) instead of the ESM ones.
+- Types that came from the internal navigation package (the options of `prev`, `next`, and `goTo` on a `BlossomCarousel` ref) are now included in the published declarations. They pointed at `@blossom-carousel/navigation`, which isn't published, so they were `any` under every module resolution mode.
+
 ## 1.8.1 (2026-10-25)
 
 ### Fixed

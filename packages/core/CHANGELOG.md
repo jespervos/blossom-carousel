@@ -2,6 +2,18 @@
 
 All notable changes to `@blossom-carousel/core` are documented in this file.
 
+## 1.2.0 (2026-11-24)
+
+### Added
+
+- Exported the `CarouselOptions`, `HasOverflow`, and `AlignOption` types.
+
+### Fixed
+
+- TypeScript types resolve under `"moduleResolution": "node16"` and `"nodenext"`. The declarations used extensionless relative imports, which those modes reject, so most exports were typed as `any` ([#48](https://github.com/jespervos/blossom-carousel/issues/48)). Declarations now ship as one self-contained `dist/index.d.ts`.
+- `require("@blossom-carousel/core")` gets CommonJS type declarations (`dist/index.d.cts`) instead of the ESM ones.
+- The `align` option of `prev` and `next` is typed as `"start" | "center" | "end"` instead of `any`.
+
 ## 1.1.10 (2026-11-04)
 
 ### Fixed

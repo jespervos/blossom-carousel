@@ -2,6 +2,13 @@
 
 All notable changes to `@blossom-carousel/react` are documented in this file.
 
+## 1.8.1 (2026-11-24)
+
+### Fixed
+
+- TypeScript types resolve under `"moduleResolution": "node16"` and `"nodenext"`. The declarations used extensionless relative imports, which those modes reject, so most exports were typed as `any` ([#48](https://github.com/jespervos/blossom-carousel/issues/48)). Declarations now ship as one self-contained `dist/index.d.ts`. For example, the `BlossomDots` render prop no longer reports `index` and `active` as implicitly `any`.
+- `require("@blossom-carousel/react")` gets CommonJS type declarations (`dist/index.d.cts`) instead of the ESM ones.
+
 ## 1.8.0 (2026-11-04)
 
 ### Fixed

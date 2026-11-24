@@ -2,6 +2,13 @@
 
 All notable changes to `@blossom-carousel/svelte` are documented in this file.
 
+## 2.3.1 (2026-11-24)
+
+### Fixed
+
+- The declarations no longer contain `import "./style.css"`, which TypeScript reports as an error (TS2882) when `skipLibCheck` is off. The stylesheet is still imported by the JavaScript entry.
+- The package no longer ships a compiled test file from the internal navigation package, which imported `vitest`.
+
 ## 2.3.0 (2026-10-18)
 
 ### Added

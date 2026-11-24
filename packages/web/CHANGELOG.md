@@ -2,6 +2,14 @@
 
 All notable changes to `@blossom-carousel/web` are documented in this file.
 
+## 1.6.2 (2026-11-24)
+
+### Fixed
+
+- TypeScript types resolve under `"moduleResolution": "node16"` and `"nodenext"`. The declarations used extensionless relative imports, which those modes reject, so most exports were typed as `any` ([#48](https://github.com/jespervos/blossom-carousel/issues/48)). Declarations now ship as one self-contained `dist/index.d.ts`.
+- `require("@blossom-carousel/web")` gets CommonJS type declarations (`dist/index.d.cts`) instead of the ESM ones.
+- Types that came from the internal navigation package are now included in the published declarations. They pointed at `@blossom-carousel/navigation`, which isn't published, so they were `any` under every module resolution mode.
+
 ## 1.6.1 (2026-11-04)
 
 ### Fixed
