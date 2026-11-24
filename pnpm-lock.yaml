@@ -30,6 +30,9 @@ importers:
       turbo:
         specifier: ^2.10.12
         version: 2.10.12
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
       vitest:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@25.8.0)(jsdom@29.1.1)(vite@8.2.2(@types/node@25.8.0)(esbuild@0.28.1))
@@ -40,6 +43,9 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2
     devDependencies:
+      '@microsoft/api-extractor':
+        specifier: ^7.58.1
+        version: 7.58.1(@types/node@25.8.0)
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(@microsoft/api-extractor@7.58.1(@types/node@25.8.0))(postcss@8.5.23)(typescript@6.0.3)
@@ -67,6 +73,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@microsoft/api-extractor':
+        specifier: ^7.58.1
+        version: 7.58.1(@types/node@25.8.0)
       '@types/react':
         specifier: ^19.2.18
         version: 19.2.18
@@ -117,6 +126,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@microsoft/api-extractor':
+        specifier: ^7.58.1
+        version: 7.58.1(@types/node@25.8.0)
       '@vitejs/plugin-vue':
         specifier: ^6.0.8
         version: 6.0.8(vite@8.2.2(@types/node@25.8.0)(esbuild@0.28.1))(vue@3.5.44(typescript@6.0.3))
@@ -138,6 +150,9 @@ importers:
       '@blossom-carousel/navigation':
         specifier: workspace:*
         version: link:../navigation
+      '@microsoft/api-extractor':
+        specifier: ^7.58.1
+        version: 7.58.1(@types/node@25.8.0)
       '@types/node':
         specifier: ^25.8.0
         version: 25.8.0
@@ -1964,7 +1979,6 @@ snapshots:
       '@rushstack/node-core-library': 5.21.0(@types/node@25.8.0)
     transitivePeerDependencies:
       - '@types/node'
-    optional: true
 
   '@microsoft/api-extractor@7.58.1(@types/node@25.8.0)':
     dependencies:
@@ -1984,7 +1998,6 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@types/node'
-    optional: true
 
   '@microsoft/tsdoc-config@0.18.1':
     dependencies:
@@ -1992,10 +2005,8 @@ snapshots:
       ajv: 8.18.0
       jju: 1.4.0
       resolve: 1.22.12
-    optional: true
 
-  '@microsoft/tsdoc@0.16.0':
-    optional: true
+  '@microsoft/tsdoc@0.16.0': {}
 
   '@oxc-project/types@0.148.0': {}
 
@@ -2141,18 +2152,15 @@ snapshots:
       semver: 7.5.4
     optionalDependencies:
       '@types/node': 25.8.0
-    optional: true
 
   '@rushstack/problem-matcher@0.2.1(@types/node@25.8.0)':
     optionalDependencies:
       '@types/node': 25.8.0
-    optional: true
 
   '@rushstack/rig-package@0.7.2':
     dependencies:
       resolve: 1.22.12
       strip-json-comments: 3.1.1
-    optional: true
 
   '@rushstack/terminal@0.22.4(@types/node@25.8.0)':
     dependencies:
@@ -2161,7 +2169,6 @@ snapshots:
       supports-color: 8.1.1
     optionalDependencies:
       '@types/node': 25.8.0
-    optional: true
 
   '@rushstack/ts-command-line@5.3.4(@types/node@25.8.0)':
     dependencies:
@@ -2171,7 +2178,6 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
-    optional: true
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -2217,8 +2223,7 @@ snapshots:
   '@turbo/windows-arm64@2.10.12':
     optional: true
 
-  '@types/argparse@1.0.38':
-    optional: true
+  '@types/argparse@1.0.38': {}
 
   '@types/chai@5.2.3':
     dependencies:
@@ -2390,12 +2395,10 @@ snapshots:
   ajv-draft-04@1.0.0(ajv@8.18.0):
     optionalDependencies:
       ajv: 8.18.0
-    optional: true
 
   ajv-formats@3.0.1(ajv@8.18.0):
     optionalDependencies:
       ajv: 8.18.0
-    optional: true
 
   ajv@8.18.0:
     dependencies:
@@ -2403,7 +2406,6 @@ snapshots:
       fast-uri: 3.1.8
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
-    optional: true
 
   alien-signals@3.2.1: {}
 
@@ -2412,7 +2414,6 @@ snapshots:
   argparse@1.0.10:
     dependencies:
       sprintf-js: 1.0.3
-    optional: true
 
   aria-query@5.3.1: {}
 
@@ -2420,8 +2421,7 @@ snapshots:
 
   axobject-query@4.1.0: {}
 
-  balanced-match@4.0.4:
-    optional: true
+  balanced-match@4.0.4: {}
 
   bidi-js@1.0.3:
     dependencies:
@@ -2430,7 +2430,6 @@ snapshots:
   brace-expansion@5.0.12:
     dependencies:
       balanced-match: 4.0.4
-    optional: true
 
   bundle-require@5.1.0(esbuild@0.28.1):
     dependencies:
@@ -2491,15 +2490,13 @@ snapshots:
 
   devalue@5.9.4: {}
 
-  diff@8.0.4:
-    optional: true
+  diff@8.0.4: {}
 
   entities@7.0.1: {}
 
   entities@8.0.0: {}
 
-  es-errors@1.3.0:
-    optional: true
+  es-errors@1.3.0: {}
 
   es-module-lexer@2.1.0: {}
 
@@ -2550,11 +2547,9 @@ snapshots:
 
   exsolve@1.0.8: {}
 
-  fast-deep-equal@3.1.3:
-    optional: true
+  fast-deep-equal@3.1.3: {}
 
-  fast-uri@3.1.8:
-    optional: true
+  fast-uri@3.1.8: {}
 
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
@@ -2571,26 +2566,21 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 6.2.1
       universalify: 2.0.1
-    optional: true
 
   fsevents@2.3.3:
     optional: true
 
-  function-bind@1.1.2:
-    optional: true
+  function-bind@1.1.2: {}
 
   glob-to-regexp@0.4.1: {}
 
-  graceful-fs@4.2.11:
-    optional: true
+  graceful-fs@4.2.11: {}
 
-  has-flag@4.0.0:
-    optional: true
+  has-flag@4.0.0: {}
 
   hasown@2.0.4:
     dependencies:
       function-bind: 1.1.2
-    optional: true
 
   html-encoding-sniffer@6.0.0:
     dependencies:
@@ -2598,13 +2588,11 @@ snapshots:
     transitivePeerDependencies:
       - '@noble/hashes'
 
-  import-lazy@4.0.0:
-    optional: true
+  import-lazy@4.0.0: {}
 
   is-core-module@2.16.2:
     dependencies:
       hasown: 2.0.4
-    optional: true
 
   is-potential-custom-element-name@1.0.1: {}
 
@@ -2612,8 +2600,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.9
 
-  jju@1.4.0:
-    optional: true
+  jju@1.4.0: {}
 
   joycon@3.1.1: {}
 
@@ -2643,15 +2630,13 @@ snapshots:
     transitivePeerDependencies:
       - '@noble/hashes'
 
-  json-schema-traverse@1.0.0:
-    optional: true
+  json-schema-traverse@1.0.0: {}
 
   jsonfile@6.2.1:
     dependencies:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
-    optional: true
 
   kleur@4.1.5: {}
 
@@ -2720,8 +2705,7 @@ snapshots:
 
   locate-character@3.0.0: {}
 
-  lodash@4.18.1:
-    optional: true
+  lodash@4.18.1: {}
 
   lru-cache@11.3.6: {}
 
@@ -2742,7 +2726,6 @@ snapshots:
   minimatch@10.2.3:
     dependencies:
       brace-expansion: 5.0.12
-    optional: true
 
   mlly@1.8.2:
     dependencies:
@@ -2777,8 +2760,7 @@ snapshots:
 
   path-browserify@1.0.1: {}
 
-  path-parse@1.0.7:
-    optional: true
+  path-parse@1.0.7: {}
 
   pathe@2.0.3: {}
 
@@ -2810,7 +2792,7 @@ snapshots:
 
   postcss@8.5.23:
     dependencies:
-      nanoid: 3.3.18
+      nanoid: 3.3.20
       picocolors: 1.1.1
       source-map-js: 1.2.2
     optional: true
@@ -2852,7 +2834,6 @@ snapshots:
       is-core-module: 2.16.2
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
-    optional: true
 
   rolldown@1.2.7:
     dependencies:
@@ -2926,23 +2907,19 @@ snapshots:
 
   source-map-js@1.2.2: {}
 
-  source-map@0.6.1:
-    optional: true
+  source-map@0.6.1: {}
 
   source-map@0.7.6: {}
 
-  sprintf-js@1.0.3:
-    optional: true
+  sprintf-js@1.0.3: {}
 
   stackback@0.0.2: {}
 
   std-env@4.1.0: {}
 
-  string-argv@0.3.2:
-    optional: true
+  string-argv@0.3.2: {}
 
-  strip-json-comments@3.1.1:
-    optional: true
+  strip-json-comments@3.1.1: {}
 
   sucrase@3.35.1:
     dependencies:
@@ -2957,10 +2934,8 @@ snapshots:
   supports-color@8.1.1:
     dependencies:
       has-flag: 4.0.0
-    optional: true
 
-  supports-preserve-symlinks-flag@1.0.0:
-    optional: true
+  supports-preserve-symlinks-flag@1.0.0: {}
 
   svelte2tsx@0.7.57(svelte@5.57.0(@typescript-eslint/types@8.58.1))(typescript@6.0.3):
     dependencies:
@@ -3073,8 +3048,7 @@ snapshots:
       '@turbo/windows-64': 2.10.12
       '@turbo/windows-arm64': 2.10.12
 
-  typescript@5.9.3:
-    optional: true
+  typescript@5.9.3: {}
 
   typescript@6.0.3: {}
 
@@ -3084,8 +3058,7 @@ snapshots:
 
   undici@7.30.1: {}
 
-  universalify@2.0.1:
-    optional: true
+  universalify@2.0.1: {}
 
   unplugin-dts@1.1.0(@microsoft/api-extractor@7.58.1(@types/node@25.8.0))(@vue/language-core@3.3.11)(esbuild@0.28.1)(rolldown@1.2.7)(rollup@4.60.4)(typescript@6.0.3)(vite@8.2.2(@types/node@25.8.0)(esbuild@0.28.1)):
     dependencies:

@@ -22,9 +22,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/blossom-carousel-core.js",
-      "require": "./dist/blossom-carousel-core.umd.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/blossom-carousel-core.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/blossom-carousel-core.umd.cjs"
+      }
     },
     "./style.css": "./dist/blossom-carousel-core.css"
   },
@@ -38,6 +43,7 @@
     "test": "vitest run src"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.58.1",
     "tsup": "^8.5.1",
     "vite": "^8.2.2",
     "vite-plugin-dts": "^5.1.0"

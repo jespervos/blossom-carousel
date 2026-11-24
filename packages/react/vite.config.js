@@ -2,19 +2,19 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import path from "path";
+import { bundledDeclarations } from "../../scripts/bundledDeclarations.js";
 
 export default defineConfig(({ command }) => ({
   // Published bundles must support production React regardless of NODE_ENV.
   oxc: command === "build" ? { jsx: { development: false } } : undefined,
   plugins: [
     react(),
-    dts({
-      // Declarations land at dist/index.d.ts. Without entryRoot the plugin
-      // infers a root from the TypeScript version and flips between dist/ and dist/src/.
-      entryRoot: "src",
-      include: ["src/**/*.ts", "src/**/*.tsx"],
-      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx"],
-    }),
+    dts(
+      bundledDeclarations(__dirname, {
+        include: ["src/**/*.ts", "src/**/*.tsx"],
+        exclude: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+      }),
+    ),
   ],
   build: {
     lib: {

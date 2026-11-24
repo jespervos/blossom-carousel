@@ -8,6 +8,9 @@ defineOptions({ inheritAttrs: false });
 const props = defineProps<{
   behavior?: ScrollBehavior;
 }>();
+// Declared explicitly: the inferred slot type refers to a generated helper
+// variable that the declaration bundler drops, leaving a dangling name.
+defineSlots<{ default?: () => unknown }>();
 
 const ctx = inject(DOT_CONTEXT);
 if (!ctx) {

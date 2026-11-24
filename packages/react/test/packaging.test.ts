@@ -25,7 +25,7 @@ describe.each(["production", "development"])("React packaging built with NODE_EN
   it.each([
     {
       loader: "module",
-      entry: pkg.exports["."].import,
+      entry: pkg.exports["."].import.default,
       imports: `
         import React from "react";
         import { renderToString } from "react-dom/server";
@@ -34,7 +34,7 @@ describe.each(["production", "development"])("React packaging built with NODE_EN
     },
     {
       loader: "commonjs",
-      entry: pkg.exports["."].require,
+      entry: pkg.exports["."].require.default,
       imports: `
         const React = require("react");
         const { renderToString } = require("react-dom/server");

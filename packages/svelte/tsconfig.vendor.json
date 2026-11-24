@@ -9,5 +9,6 @@
     "rootDir": "../navigation/src",
     "outDir": "dist/vendor/navigation"
   },
-  "include": ["../navigation/src/**/*.ts"]
+  "include": ["../navigation/src/**/*.ts"],
+  "exclude": ["../navigation/src/**/*.test.ts"]
 }

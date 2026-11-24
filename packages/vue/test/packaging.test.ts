@@ -25,7 +25,7 @@ describe.each(["production", "development"])("Vue packaging built with NODE_ENV=
   it.each([
     {
       loader: "module",
-      entry: pkg.exports["."].import,
+      entry: pkg.exports["."].import.default,
       imports: `
         import { createSSRApp } from "vue";
         import { renderToString } from "vue/server-renderer";
@@ -34,7 +34,7 @@ describe.each(["production", "development"])("Vue packaging built with NODE_ENV=
     },
     {
       loader: "commonjs",
-      entry: pkg.exports["."].require,
+      entry: pkg.exports["."].require.default,
       imports: `
         const { createSSRApp } = require("vue");
         const { renderToString } = require("vue/server-renderer");

@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { copyFileSync } from "node:fs";
 import { defineConfig, type Plugin } from "vite";
 import dts from "vite-plugin-dts";
+import { bundledDeclarations } from "../../scripts/bundledDeclarations.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -27,13 +28,12 @@ function cdnUmdCopy(): Plugin {
 
 export default defineConfig({
   plugins: [
-    dts({
-      // Declarations land at dist/index.d.ts. Without entryRoot the plugin
-      // infers a root from the TypeScript version and flips between dist/ and dist/src/.
-      entryRoot: "src",
-      include: ["src/**/*"],
-      exclude: ["vite.config.ts", "src/**/*.test.ts"],
-    }),
+    dts(
+      bundledDeclarations(__dirname, {
+        include: ["src/**/*"],
+        exclude: ["vite.config.ts", "src/**/*.test.ts"],
+      }),
+    ),
     cdnUmdCopy(),
   ],
   build: {

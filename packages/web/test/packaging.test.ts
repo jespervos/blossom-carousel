@@ -24,9 +24,10 @@ describe("Web packaging", () => {
     ["types", pkg.types],
     ["unpkg", pkg.unpkg],
     ["jsdelivr", pkg.jsdelivr],
-    ['exports["."].types', pkg.exports["."].types],
-    ['exports["."].import', pkg.exports["."].import],
-    ['exports["."].require', pkg.exports["."].require],
+    ['exports["."].import.types', pkg.exports["."].import.types],
+    ['exports["."].import.default', pkg.exports["."].import.default],
+    ['exports["."].require.types', pkg.exports["."].require.types],
+    ['exports["."].require.default', pkg.exports["."].require.default],
     ['exports["./style.css"]', pkg.exports["./style.css"]],
   ])("ships the file referenced by %s", (_field, file) => {
     expect(fs.existsSync(path.join(packageDir, file))).toBe(true);

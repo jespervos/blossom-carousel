@@ -42,9 +42,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/blossom-carousel-react.js",
-      "require": "./dist/blossom-carousel-react.umd.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/blossom-carousel-react.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/blossom-carousel-react.umd.cjs"
+      }
     },
     "./style.css": "./dist/blossom-carousel-react.css"
   },
@@ -62,6 +67,7 @@
   },
   "devDependencies": {
     "@blossom-carousel/navigation": "workspace:*",
+    "@microsoft/api-extractor": "^7.58.1",
     "@types/react": "^19.2.18",
     "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.2.2",

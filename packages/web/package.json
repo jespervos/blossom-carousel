@@ -44,9 +44,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/blossom-carousel-web.es.js",
-      "require": "./dist/blossom-carousel-web.umd.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/blossom-carousel-web.es.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/blossom-carousel-web.umd.cjs"
+      }
     },
     "./style.css": "./dist/blossom-carousel-web.css"
   },
@@ -61,6 +66,7 @@
   "devDependencies": {
     "@blossom-carousel/core": "^1.1.8",
     "@blossom-carousel/navigation": "workspace:*",
+    "@microsoft/api-extractor": "^7.58.1",
     "@types/node": "^25.8.0",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",

@@ -22,6 +22,9 @@ const props = defineProps<{
   for: string;
   behavior?: ScrollBehavior;
 }>();
+// Declared explicitly: the inferred slot type refers to a generated helper
+// variable that the declaration bundler drops, leaving a dangling name.
+defineSlots<{ default?: () => unknown }>();
 
 const command = COMMANDS.prev;
 const state = useBlossomNavigation(toRef(props, "for"));

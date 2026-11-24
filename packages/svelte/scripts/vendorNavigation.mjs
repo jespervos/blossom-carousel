@@ -58,6 +58,14 @@ for (const file of walk(distDir)) {
   );
 }
 
+// 4. Drop side-effect stylesheet imports from declarations. They carry no
+//    types, and TypeScript 6 reports them as unresolvable (TS2882) for
+//    consumers who type-check their dependencies. The .js files keep theirs.
+for (const file of walk(distDir)) {
+  if (!file.endsWith(".d.ts")) continue;
+  rewrite(file, (code) => code.replace(/^import\s+["'][^"']+\.css["'];?\r?\n/gm, ""));
+}
+
 // Fail loudly if a bare specifier survived (e.g. a file in a subdirectory,
 // where the fixed relative path above would be wrong).
 for (const file of walk(distDir)) {

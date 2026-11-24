@@ -1,5 +1,7 @@
 import "./style.css";
-import type { Point, HasOverflow, CarouselOptions } from "./types";
+import type { Point, HasOverflow, CarouselOptions, AlignOption } from "./types";
+
+export type { AlignOption, CarouselOptions, HasOverflow } from "./types";
 import StyleObserver, { ReturnFormat } from '@bramus/style-observer';
 import { createState } from "./state";
 import { damp, round, resolveCSSLength } from "./utils";
@@ -582,7 +584,7 @@ export const Blossom = (scroller: HTMLElement, options: CarouselOptions = {}) =>
     hasOverflow,
     init,
     destroy,
-    prev: (opts?: { align?: any }) => prev(state, opts),
-    next: (opts?: { align?: any }) => next(state, opts),
+    prev: (opts?: { align?: AlignOption }) => prev(state, opts),
+    next: (opts?: { align?: AlignOption }) => next(state, opts),
   };
 };

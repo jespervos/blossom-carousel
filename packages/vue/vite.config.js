@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import dts from "vite-plugin-dts";
 import path from "path";
+import { bundledDeclarations } from "../../scripts/bundledDeclarations.js";
 
 export default defineConfig(({ command }) => {
   // Vite reads NODE_ENV after loading this file. A development NODE_ENV in the
@@ -11,13 +12,12 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
-      dts({
-        // Declarations land at dist/index.d.ts. Without entryRoot the plugin
-        // infers a root from the TypeScript version and flips between dist/ and dist/src/.
-        entryRoot: "src",
-        include: ["src/**/*.ts", "src/**/*.vue"],
-        exclude: ["src/**/*.test.ts"],
-      }),
+      dts(
+        bundledDeclarations(__dirname, {
+          include: ["src/**/*.ts", "src/**/*.vue"],
+          exclude: ["src/**/*.test.ts"],
+        }),
+      ),
     ],
     build: {
       lib: {
